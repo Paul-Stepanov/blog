@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('title');
             $table->text('excerpt')->nullable();
             $table->longText('content');
+            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('author_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('cover_image_id')->nullable()->constrained('media_files')->nullOnDelete();
             $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
             $table->timestamp('published_at')->nullable();
@@ -27,6 +29,8 @@ return new class extends Migration
             $table->index('slug');
             $table->index('status');
             $table->index('published_at');
+            $table->index('category_id');
+            $table->index('author_id');
         });
     }
 

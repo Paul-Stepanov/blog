@@ -17,12 +17,16 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email');
+            $table->string('subject')->nullable();
             $table->text('message');
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
+            $table->boolean('is_read')->default(false);
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
 
             $table->index('created_at');
+            $table->index('is_read');
         });
     }
 

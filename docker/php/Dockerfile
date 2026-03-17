@@ -1,10 +1,10 @@
 # Multi-stage Dockerfile for Laravel Blog
-# PHP 8.3-FPM with PostgreSQL and Redis support
+# PHP 8.4-FPM with PostgreSQL and Redis support
 
 # ============================================
 # Base stage with common dependencies
 # ============================================
-FROM php:8.3-fpm-alpine AS base
+FROM php:8.4-fpm-alpine AS base
 
 # Install system dependencies
 RUN apk add --no-cache \
@@ -43,7 +43,7 @@ RUN docker-php-ext-install -j$(nproc) \
     bcmath
 
 # Install Redis extension
-RUN pecl install redis-6.0.2 && \
+RUN pecl install redis && \
     docker-php-ext-enable redis
 
 # ============================================
@@ -52,8 +52,11 @@ RUN pecl install redis-6.0.2 && \
 FROM base AS development
 
 # Install Xdebug for development
-RUN pecl install xdebug-3.3.1 && \
+RUN pecl install xdebug && \
     docker-php-ext-enable xdebug
+
+# Install su-exec for user switching (Alpine)
+RUN apk add --no-cache su-exec
 
 # Install Composer
 COPY --from=composer:2.8.4 /usr/bin/composer /usr/bin/composer
@@ -64,11 +67,15 @@ WORKDIR /var/www/html
 # Copy PHP configuration for development
 COPY docker/php/local.ini /usr/local/etc/php/conf.d/local.ini
 COPY docker/php/php.ini /usr/local/etc/php/php.ini
+COPY docker/php/www.conf /usr/local/etc/php-fpm.d/www.conf
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html
+# Copy entrypoint script
+COPY docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-USER www-data
+# Use entrypoint
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["php-fpm"]
 
 # ============================================
 # Builder stage for production
