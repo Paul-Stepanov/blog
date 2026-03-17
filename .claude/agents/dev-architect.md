@@ -4,7 +4,7 @@ description: |
   Архитектор ПО. Проектирует архитектуру, создаёт диаграммы, выбирает паттерны.
   Создаёт отчёт .claude/pipeline/02-design.md
   Использовать: Agent(subagent_type="dev-architect", description="Design: {задача}", prompt="Спроектируй архитектуру для: {описание}")
-skills: [design]
+skills: [design, plan]
 tools: Read, Grep, Glob, Write, mcp__sequential-thinking__sequentialthinking
 model: sonnet
 memory: user
