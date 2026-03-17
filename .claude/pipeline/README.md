@@ -10,130 +10,186 @@ Research → Design → [DevOps Setup] → Plan → 👤 Approval → Implement 
 
 ## Как работает
 
-1. **Вы вызываете агента** для текущего этапа
-2. **Агент создаёт файл** с результатами в этой директории
-3. **Вы проверяете** файл и либо:
+1. **Вы вызываете субагента** для текущего этапа через Agent tool
+2. **Агент работает изолированно** — не засоряет контекст
+3. **Агент создаёт файл отчёта** в этой директории
+4. **Вы проверяете** результат и либо:
    - ✅ Утверждаете → вызываете следующего агента
    - 🔄 Возвращаете на доработку → вызываете того же агента с замечаниями
 
-## Этапы и файлы
+---
 
-| # | Этап | Файл | Агент | Обязательный |
-|---|------|------|-------|--------------|
-| 1 | Research | `01-research.md` | `dev-researcher` | ✅ |
-| 2 | Design | `02-design.md` | `dev-architect` | ✅ |
-| 3 | DevOps Setup | `03-devops-setup.md` | `dev-devops` | ❌ |
-| 4 | Plan | `04-plan.md` | `dev-architect` или вы сами | ✅ |
-| — | **Approval** | — | **Вы** | ✅ |
-| 5 | Implement | `05-implement.md` | `dev-coder` | ✅ |
-| 6 | Review | `06-review.md` | `dev-reviewer` | ✅ |
-| 7 | Test | `07-test.md` | `dev-tester` | ✅ |
-| 8 | Deploy | `08-deploy.md` | `dev-devops` | ❌ |
+## Этапы и агенты
+
+| # | Этап | Агент | Файл отчёта | Обязательный |
+|---|------|-------|-------------|--------------|
+| 1 | Research | `dev-researcher` | `01-research.md` | ✅ |
+| 2 | Design | `dev-architect` | `02-design.md` | ✅ |
+| 3 | DevOps Setup | `dev-devops` | `03-devops-setup.md` | ❌ |
+| 4 | Plan | `dev-architect` | `04-plan.md` | ✅ |
+| — | **Approval** | **Вы** | — | ✅ |
+| 5 | Implement | `dev-coder` | `05-implement.md` | ✅ |
+| 6 | Review | `dev-reviewer` | `06-review.md` | ✅ |
+| 7 | Test | `dev-tester` | `07-test.md` | ✅ |
+| 8 | Deploy | `dev-devops` | `08-deploy.md` | ❌ |
+
+---
 
 ## Пример использования
 
 ### Этап 1: Research
 ```
-Вы: /research нужно реализовать аутентификацию пользователей
+Agent(
+  subagent_type="dev-researcher",
+  description="Research: Auth",
+  prompt="Исследуй задачу: реализовать аутентификацию пользователей"
+)
+```
 
-dev-researcher:
-- Анализирует требования
-- Изучает существующий код
-- Создаёт 01-research.md
+→ Создаёт `01-research.md`
+→ Возвращает summary
 
-Вы: читаете 01-research.md
-- ✅ Утверждаете → переходите к Design
-- 🔄 Замечания → /research учти: {ваши замечания}
+**Утверждение:** Проверьте файл. Если OK → переходите к Design.
+
+**Доработка:**
+```
+Agent(
+  subagent_type="dev-researcher",
+  description="Research: revise",
+  prompt="Переработай 01-research.md с учётом: добавить анализ безопасности"
+)
 ```
 
 ### Этап 2: Design
 ```
-Вы: /design на основе 01-research.md
-
-dev-architect:
-- Читает 01-research.md
-- Проектирует архитектуру
-- Создаёт диаграммы
-- Создаёт 02-design.md
-
-Вы: проверяете 02-design.md
+Agent(
+  subagent_type="dev-architect",
+  description="Design: Auth",
+  prompt="Спроектируй архитектуру на основе .claude/pipeline/01-research.md"
+)
 ```
 
-### Этап 4: Plan → Approval
+→ Создаёт `02-design.md`
+
+### Этап 3: DevOps Setup (если нужен)
 ```
-Вы: /plan на основе 01-research.md и 02-design.md
-
-dev-architect:
-- Создаёт 04-plan.md с фазами реализации
-
-Вы: читаете план
-- Задаёте вопросы
-- Утверждаете
-- ✅ Только после утверждения → Implement
+Agent(
+  subagent_type="dev-devops",
+  description="DevOps Setup",
+  prompt="Настрой Docker для проекта. Стек из .claude/pipeline/02-design.md"
+)
 ```
 
-### Этап 5-7: Implement → Review → Test
+→ Создаёт `03-devops-setup.md`, Dockerfile, docker-compose.yml
+
+### Этап 4: Plan
 ```
-Вы: /implement фаза 1 из 04-plan.md
-
-dev-coder:
-- Пишет код
-- Создаёт 05-implement.md
-
-Вы: /review
-
-dev-reviewer:
-- Проверяет код
-- Создаёт 06-review.md
-
-Вы: /test
-
-dev-tester:
-- Пишет тесты
-- Создаёт 07-test.md
+Agent(
+  subagent_type="dev-architect",
+  description="Plan: Auth",
+  prompt="Создай план реализации на основе 01-research.md и 02-design.md"
+)
 ```
 
-## Возврат на доработку
+→ Создаёт `04-plan.md`
 
-Если результат не устраивает:
+### 👤 Approval
+**Вы читаете план и утверждаете.**
+Только после утверждения — переходите к Implement.
+
+### Этап 5: Implement
+```
+Agent(
+  subagent_type="dev-coder",
+  description="Implement: Phase 1",
+  prompt="Реализуй Фазу 1 из .claude/pipeline/04-plan.md"
+)
+```
+
+→ Пишет код, создаёт `05-implement.md`
+
+### Этап 6: Review
+```
+Agent(
+  subagent_type="dev-reviewer",
+  description="Review",
+  prompt="Проверь код из .claude/pipeline/05-implement.md"
+)
+```
+
+→ Создаёт `06-review.md`
+
+**Если есть Critical issues** → dev-coder исправляет → повторить review
+
+### Этап 7: Test
+```
+Agent(
+  subagent_type="dev-tester",
+  description="Test",
+  prompt="Напиши тесты для кода из .claude/pipeline/05-implement.md"
+)
+```
+
+→ Пишет тесты, запускает, создаёт `07-test.md`
+
+### Этап 8: Deploy (если нужен)
+```
+Agent(
+  subagent_type="dev-devops",
+  description="Deploy",
+  prompt="Настрой CI/CD для проекта"
+)
+```
+
+→ Создаёт `08-deploy.md`, GitHub Actions
+
+---
+
+## Workflow Diagram
 
 ```
-Вы: /research переработай 01-research.md с учётом:
-- Нужно добавить анализ безопасности
-- Не хватает граничных случаев
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│  Research   │ ──► │   Design    │ ──► │  DevOps     │
+│  (haiku)    │     │  (sonnet)   │     │  (sonnet)   │
+└─────────────┘     └─────────────┘     └─────────────┘
+                                               │
+                                               ▼
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Deploy    │ ◄── │    Test     │ ◄── │   Review    │
+│  (sonnet)   │     │   (haiku)   │     │  (sonnet)   │
+└─────────────┘     └─────────────┘     └─────────────┘
+                           ▲                   ▲
+                           │                   │
+                    ┌──────┴──────┐      ┌─────┴─────┐
+                    │  Implement  │ ───► │  (цикл)   │
+                    │  (sonnet)   │      │  Revise   │
+                    └─────────────┘      └───────────┘
 ```
 
-Агент перечитает свой предыдущий файл и учтёт замечания.
+---
 
 ## Статусы в файлах
 
-Каждый файл содержит в конце:
+Каждый файл отчёта содержит в конце:
 
 ```markdown
 ---
-## Статус
-
 **Статус:** ⏳ ОЖИДАЕТ / ✅ УТВЕРЖДЕНО / 🔄 ДОРАБОТКА
 
-**Комментарии пользователя:**
-- ...
+**Комментарии:**
+_Заполняет пользователь_
+```
+
 ---
-```
 
-При доработке агент обновляет статус и добавляет правки.
+## Быстрый справочник
 
-## Sequential Thinking
-
-На этапах **Research**, **Design** и **Plan** агенты используют `mcp__sequential-thinking__sequentialthinking` для глубокого анализа перед созданием отчёта.
-
-## Быстрый старт
-
-```
-/research {задача}           → 01-research.md
-/design                      → 02-design.md
-/plan                        → 04-plan.md
---- УТВЕРЖДЕНИЕ ---
-/implement {фаза}            → 05-implement.md
-/review                      → 06-review.md
-/test                        → 07-test.md
-```
+| Команда | Агент | Что делает |
+|---------|-------|------------|
+| Research | `dev-researcher` | Анализирует требования, код, документацию |
+| Design | `dev-architect` | Проектирует архитектуру, диаграммы |
+| DevOps | `dev-devops` | Docker, CI/CD |
+| Plan | `dev-architect` | Декомпозиция на фазы |
+| Implement | `dev-coder` | Пишет код |
+| Review | `dev-reviewer` | Проверяет код |
+| Test | `dev-tester` | Пишет и запускает тесты |
