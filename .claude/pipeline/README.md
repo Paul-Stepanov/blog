@@ -5,7 +5,7 @@
 ## Pipeline
 
 ```
-Research → Design → [DevOps Setup] → Plan → 👤 Approval → Implement → Review → Test → [Deploy]
+Research → Design → [DevOps Setup] → Plan → Implement → Review → Test → [Deploy]
 ```
 
 ## Как работает
@@ -26,8 +26,7 @@ Research → Design → [DevOps Setup] → Plan → 👤 Approval → Implement 
 | 1 | Research | `dev-researcher` | `01-research.md` | ✅ |
 | 2 | Design | `dev-architect` | `02-design.md` | ✅ |
 | 3 | DevOps Setup | `dev-devops` | `03-devops-setup.md` | ❌ |
-| 4 | Plan | `dev-architect` | `04-plan.md` | ✅ |
-| — | **Approval** | **Вы** | — | ✅ |
+| 4 | Plan | `dev-planner` | `04-plan.md` | ✅ |
 | 5 | Implement | `dev-coder` | `05-implement.md` | ✅ |
 | 6 | Review | `dev-reviewer` | `06-review.md` | ✅ |
 | 7 | Test | `dev-tester` | `07-test.md` | ✅ |
@@ -85,17 +84,13 @@ Agent(
 ### Этап 4: Plan
 ```
 Agent(
-  subagent_type="dev-architect",
+  subagent_type="dev-planner",
   description="Plan: Auth",
   prompt="Создай план реализации на основе 01-research.md и 02-design.md"
 )
 ```
 
 → Создаёт `04-plan.md`
-
-### 👤 Approval
-**Вы читаете план и утверждаете.**
-Только после утверждения — переходите к Implement.
 
 ### Этап 5: Implement
 ```
@@ -154,6 +149,12 @@ Agent(
 └─────────────┘     └─────────────┘     └─────────────┘
                                                │
                                                ▼
+                                        ┌─────────────┐
+                                        │    Plan     │
+                                        │  (sonnet)   │
+                                        └─────────────┘
+                                               │
+                                               ▼
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
 │   Deploy    │ ◄── │    Test     │ ◄── │   Review    │
 │  (sonnet)   │     │   (haiku)   │     │  (sonnet)   │
@@ -175,7 +176,7 @@ Agent(
 | Research | `dev-researcher` | Анализирует требования, код, документацию |
 | Design | `dev-architect` | Проектирует архитектуру, диаграммы |
 | DevOps | `dev-devops` | Docker, CI/CD |
-| Plan | `dev-architect` | Декомпозиция на фазы |
+| Plan | `dev-planner` | Декомпозиция на фазы, критерии готовности |
 | Implement | `dev-coder` | Пишет код |
 | Review | `dev-reviewer` | Проверяет код |
 | Test | `dev-tester` | Пишет и запускает тесты |

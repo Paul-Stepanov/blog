@@ -1,7 +1,7 @@
 ---
 name: plan
 description: |
-  Инструкции для этапа планирования. Выполняется dev-architect.
+  Инструкции для этапа планирования. Выполняется dev-planner.
   Результат сохранять в `.claude/pipeline/04-plan.md`
 ---
 # Skill: Plan
