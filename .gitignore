@@ -1,6 +1,7 @@
 # IDE
 .idea
 .claude/settings.local.json
+/.claude/worktrees/
 
 # ============================================
 # Docker & Environment
