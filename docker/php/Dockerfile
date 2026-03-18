@@ -71,9 +71,19 @@ COPY docker/php/local.ini /usr/local/etc/php/conf.d/local.ini
 COPY docker/php/php.ini /usr/local/etc/php/php.ini
 COPY docker/php/www.conf /usr/local/etc/php-fpm.d/www.conf
 
+# Create healthcheck script for development (uses TCP port)
+RUN printf '#!/bin/sh\n\
+SCRIPT_NAME=/status SCRIPT_FILENAME=/status REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 2>&1 | grep -q "pool:" && exit 0\n\
+exit 1\n' > /usr/local/bin/php-fpm-healthcheck && \
+    chmod +x /usr/local/bin/php-fpm-healthcheck
+
 # Copy entrypoint script
 COPY docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD /usr/local/bin/php-fpm-healthcheck || exit 1
 
 # Use entrypoint
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
@@ -115,11 +125,9 @@ COPY --from=builder --chown=www-data:www-data /var/www/html .
 COPY docker/php/production.ini /usr/local/etc/php/conf.d/production.ini
 COPY docker/php/php.ini /usr/local/etc/php/php.ini
 
-# Create healthcheck script (must be done before switching user)
+# Create healthcheck script for production (uses TCP port)
 RUN printf '#!/bin/sh\n\
-if [ -S "/run/php/php-fpm.sock" ]; then\n\
-    cgi-fcgi -bind -connect /run/php/php-fpm.sock 2>&1 | grep -q "pool:" && exit 0\n\
-fi\n\
+SCRIPT_NAME=/status SCRIPT_FILENAME=/status REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 2>&1 | grep -q "pool:" && exit 0\n\
 exit 1\n' > /usr/local/bin/php-fpm-healthcheck && \
     chmod +x /usr/local/bin/php-fpm-healthcheck
 
