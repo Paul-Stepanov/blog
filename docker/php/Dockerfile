@@ -22,7 +22,9 @@ RUN apk add --no-cache \
     bash \
     git \
     zip \
-    unzip
+    unzip \
+    fcgi \
+    curl
 
 # Configure GD extension
 RUN docker-php-ext-configure gd \
@@ -113,16 +115,24 @@ COPY --from=builder --chown=www-data:www-data /var/www/html .
 COPY docker/php/production.ini /usr/local/etc/php/conf.d/production.ini
 COPY docker/php/php.ini /usr/local/etc/php/php.ini
 
+# Create healthcheck script (must be done before switching user)
+RUN printf '#!/bin/sh\n\
+if [ -S "/run/php/php-fpm.sock" ]; then\n\
+    cgi-fcgi -bind -connect /run/php/php-fpm.sock 2>&1 | grep -q "pool:" && exit 0\n\
+fi\n\
+exit 1\n' > /usr/local/bin/php-fpm-healthcheck && \
+    chmod +x /usr/local/bin/php-fpm-healthcheck
+
 # Set proper permissions
 RUN chown -R www-data:www-data /var/www/html && \
     chmod -R 755 /var/www/html/storage && \
     chmod -R 755 /var/www/html/bootstrap/cache
 
-# Switch to non-root user
-USER www-data
-
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD php-fpm-healthcheck || exit 1
+    CMD /usr/local/bin/php-fpm-healthcheck || exit 1
+
+# Switch to non-root user (after all setup is complete)
+USER www-data
 
 CMD ["php-fpm"]

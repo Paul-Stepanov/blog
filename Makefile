@@ -15,6 +15,7 @@ help:
 	@echo "  make up             - Start all containers"
 	@echo "  make down           - Stop all containers"
 	@echo "  make dev            - Start development environment"
+	@echo "  make dev-full       - Start with tools (Adminer, Mailpit)"
 	@echo ""
 	@echo "Laravel:"
 	@echo "  make composer-install  - Install PHP dependencies"
@@ -78,6 +79,16 @@ down:
 
 dev: up
 	@echo "Development environment started"
+	@echo "Frontend: http://localhost"
+	@echo "API: http://localhost/api"
+	@echo ""
+	@echo "To start with tools, run: make dev-full"
+
+dev-full:
+	@echo "Starting development environment with tools..."
+	docker compose --profile tools up -d
+	@echo ""
+	@echo "Development environment started with tools:"
 	@echo "Frontend: http://localhost"
 	@echo "API: http://localhost/api"
 	@echo "Adminer: http://localhost:8080"

@@ -1,0 +1,79 @@
+# ============================================
+# .dockerignore for Laravel Blog
+# Excludes files from Docker build context
+# ============================================
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Dependencies (will be installed in container)
+laravel/vendor/
+frontend/node_modules/
+
+# Build artifacts (generated at build time)
+frontend/dist/
+laravel/bootstrap/cache/*
+!laravel/bootstrap/cache/.gitkeep
+
+# IDE and Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.projectile
+.sublime-*
+
+# Logs
+*.log
+laravel/storage/logs/*
+docker/logs/
+
+# Environment files (use .env.example as template)
+.env
+.env.*
+!.env.example
+!.env.local.example
+
+# Tests (not needed in production image)
+laravel/tests/
+frontend/tests/
+frontend/**/__tests__/
+frontend/**/*.test.ts
+frontend/**/*.spec.ts
+frontend/coverage/
+frontend/.nyc_output/
+
+# Documentation (not needed in runtime)
+*.md
+!README.md
+docs/
+doc/
+LICENSE
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+circle.yml
+Jenkinsfile
+
+# Docker (prevent recursion)
+docker-compose*.yml
+Dockerfile*
+.docker/
+.dockerignore
+
+# Make
+Makefile
+
+# Misc
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
+*.temp
+.eslintcache
+.prettiercache

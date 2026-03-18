@@ -84,7 +84,12 @@ services:
     image: redis:7.4-alpine
     container_name: blog_redis
     restart: unless-stopped
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --requirepass ${REDIS_PASSWORD:-dev_redis_secret}
     volumes:
       - redis_data:/data
     ports:
@@ -92,7 +97,7 @@ services:
     networks:
       - blog_network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-dev_redis_secret}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -127,6 +132,8 @@ services:
     image: adminer:4.8.1-standalone
     container_name: blog_adminer
     restart: unless-stopped
+    profiles:
+      - tools
     ports:
       - "8080:8080"
     environment:
@@ -135,7 +142,8 @@ services:
     networks:
       - blog_network
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   # ============================================
   # Mailpit - Email Testing (optional)
@@ -144,6 +152,8 @@ services:
     image: axllent/mailpit:v1.21
     container_name: blog_mailpit
     restart: unless-stopped
+    profiles:
+      - tools
     ports:
       - "1025:1025"  # SMTP
       - "8025:8025"  # Web UI
