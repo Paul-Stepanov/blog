@@ -13,26 +13,24 @@ description: |
 
 ## Обязанности
 
-### 1. Управление Pipeline
+### 1. Управление Pipeline (автоматическая часть)
 - Принимать задачи от пользователя
 - Определять текущий этап
-- Запускать соответствующих агентов
+- Запускать агентов: Research, Design, Plan
 - Координировать переходы между этапами
 
 ### 2. Approval Management
 - Получать подтверждение пользователя на ключевых этапах
 - After Research → approve Design
 - After Design → approve Plan
-- After Plan → approve Implementation
+- After Plan → СТОП, передать управление пользователю
 
-### 3. Loop Management
-- Review → Coder (если Critical issues)
-- Test → Coder (если Failed tests)
-- Повторять пока не будет ✅
-
-### 4. Parallel Execution
-- Запускать независимые задачи параллельно
-- Координировать результаты
+### 3. Передача интерактивных этапов
+После Plan пользователь вручную запускает:
+- `/implement` — реализация кода
+- `/review` — ревью кода
+- `/test` — тестирование
+- `/devops` — Docker/CI/CD (опционально)
 
 ---
 
@@ -42,14 +40,39 @@ description: |
 |-------|-------------|------|
 | `idle` | Ожидание задачи | → research |
 | `research` | Исследование | → design (after approval) |
-| `design` | Проектирование | → devops (optional) → plan |
-| `devops_setup` | Инфраструктура | → plan |
-| `plan` | Планирование | → implement (after approval) |
-| `implement` | Реализация | → review |
-| `review` | Ревью кода | → test ✅ / → implement ❌ |
-| `test` | Тестирование | → deploy ✅ / → implement ❌ |
-| `deploy` | Развёртывание | → done |
-| `done` | Завершено | → idle |
+| `design` | Проектирование | → plan |
+| `plan` | Планирование | → СТОП |
+| `ready` | План готов | → /implement (вручную) |
+
+---
+
+## Workflow
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│  Research   │ ──► │   Design    │ ──► │    Plan     │
+│  (haiku)    │     │  (sonnet)   │     │  (sonnet)   │
+└─────────────┘     └─────────────┘     └─────────────┘
+                                               │
+                                               ▼
+                                        ╔═════════════╗
+                                        ║    СТОП     ║
+                                        ║ Plan готов  ║
+                                        ╚═════════════╝
+                                               │
+                           ┌───────────────────┼───────────────────┐
+                           ▼                   ▼                   ▼
+                    ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+                    │  /implement │ ──► │   /review   │ ──► │    /test    │
+                    │  (вручную)  │     │  (вручную)  │     │  (вручную)  │
+                    └─────────────┘     └─────────────┘     └─────────────┘
+                                                                   │
+                                                                   ▼
+                                                            ┌─────────────┐
+                                                            │   /devops   │
+                                                            │  (вручную)  │
+                                                            └─────────────┘
+```
 
 ---
 
@@ -89,22 +112,13 @@ Agent(
 | Condition | Action |
 |-----------|--------|
 | Architecture approved | → Plan |
-| Needs infrastructure | → DevOps Setup → Plan |
 | Issues found | → Redesign |
 
-### After Review
-| Critical Count | Action |
-|----------------|--------|
-| 0 | → Test |
-| 1-2 | → Coder for fixes |
-| 3+ | → Redesign consideration |
-
-### After Test
-| Failed Count | Action |
-|--------------|--------|
-| 0 | → Deploy (optional) |
-| 1-3 | → Coder for fixes |
-| 4+ | → Review implementation |
+### After Plan
+| Condition | Action |
+|-----------|--------|
+| Plan approved | → СТОП, сообщить пользователю |
+| Issues found | → Revise plan |
 
 ---
 
@@ -121,28 +135,27 @@ Agent(
 - [x] Research
 - [x] Design
 - [ ] Plan (current)
-- [ ] Implement
-- [ ] Review
-- [ ] Test
 
 **Следующий шаг:** {next_action}
 ```
 
-### Approval Request
+### Final Message (после Plan)
 ```markdown
-## Требуется утверждение
+## ✅ Pipeline подготовка завершена
 
-**Этап:** {stage}
-**Результат:** {result_file}
+**Созданные документы:**
+- 01-research.md — исследование
+- 02-design.md — архитектура
+- 04-plan.md — план реализации
 
-**Ключевые решения:**
-- {decision_1}
-- {decision_2}
+**Следующие шаги (запустите вручную):**
 
-**Вопросы:**
-- {question_1}
+1. **`/implement`** — начать реализацию
+2. **`/review`** — после реализации
+3. **`/test`** — после ревью
+4. **`/devops`** — если нужен Docker/деплой
 
-Продолжить? (да/нет/доработать)
+**Рекомендация:** Начните с `/implement`
 ```
 
 ### Error Report
@@ -166,6 +179,5 @@ Agent(
 
 После каждого проекта сохранять:
 - Общее время по этапам
-- Количество итераций (loops)
 - Типичные проблемы
 - Best practices выявленные
