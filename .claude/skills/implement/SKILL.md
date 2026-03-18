@@ -7,246 +7,521 @@ description: |
 
 # Skill: Implement
 
-Инструкции для разработчика.
+Инструкции для разработчика. Реализация кода строго по спецификации.
 
 ---
 
-## Обязанности
+## 1. Обязанности
 
-### 1. Реализация по спецификации
+### Реализация
 - Строго следуй `04-plan.md` и `02-design.md`
 - Реализовывай интерфейсы из Design
-- Соответствуй паттернам
+- Соответствуй паттернам проекта
 
-### 2. Качество кода
-- PSR-12 для PHP
-- Типизация: `declare(strict_types=1)`
+### Качество
+- PSR-12 + strict_types=1
+- Типы для всех аргументов и возвратов
 - PHPDoc для публичных API
-- Именование: camelCase (методы), PascalCase (классы)
 
-### 3. Интеграция
+### Интеграция
 - Не ломай существующий код
 - Интегрируй с существующей архитектурой
 
 ---
 
-## 🚨 КРИТИЧНО: Последовательное создание файлов
+## 2. Workflow создания файлов
 
-**ВАЖНО:** Создавай файлы СТРОГО ПО ОДНОМУ. НИКОГДА не создавай несколько файлов в одном ответе.
-
-## 🚫 Обработка отклонения файла (Reject)
-
-**ВАЖНО:** Если файл отклонён (reject), НЕ пытайся записать его другими способами!
-
-### Запрещено при reject:
-- ❌ Использовать Bash (cat >, echo >, tee)
-- ❌ Пытаться записать в другой путь
-- ❌ Повторять Write/Edit без изменений
-- ❌ Обходить permission system любыми средствами
-
-### Обязательные действия при reject:
-
-1. **Сразу задай вопрос в тексте ответа:**
-   ```markdown
-   Файл отклонён. Как вы хотите указать замечания?
-
-   1. **Редактировать draft-файл** — создам черновик для ваших пометок
-   2. **Описать проблемы текстом** — напишите что исправить
-   3. **Отменить создание файла** — пропустить этот файл
-
-   Выберите вариант (1/2/3) или опишите проблему.
-   ```
-
-2. **Если пользователь выбрал "1" или "draft" или "редактировать":**
-   - Создай файл `.claude/draft/{filename}.draft.php` с текущим кодом
-   - Напиши:
-     ```markdown
-     Черновик создан: `.claude/draft/{filename}.draft.php`
-
-     Добавьте маркеры в комментариях:
-     - `// REVIEW: ...` — что пересмотреть
-     - `// FIXME: ...` — что исправить
-     - `// TODO: ...` — что добавить
-
-     После редактирования напишите "готово" или "проверь".
-     ```
-   - **ЖДИ ответа пользователя!**
-   - При получении ответа → Read(draft) → найди маркеры → исправь → предложи снова
-
-3. **Если пользователь описал проблему текстом:**
-   - Внеси исправления согласно описанию
-   - Предложи исправленный вариант
-
-4. **Если пользователь выбрал "отменить":**
-   - Перейди к следующему файлу
-
-### ⚠️ КРИТИЧНО: Продолжение после draft
-
-**Если в предыдущем turn ты создал draft-файл и пользователь прислал ЛЮБОЕ сообщение:**
-
-1. `Read(.claude/draft/{filename}.draft.php)`
-2. Найди маркеры: `// REVIEW:`, `// FIXME:`, `// TODO:`, `// QUESTION:`
-3. Внеси исправления согласно маркерам
-4. Предложи исправленный файл через Write/Edit
-5. Если снова reject → задай вопрос снова
-
-**НЕ завершай работу пока файл не одобрен или не отменён!**
-
-### Пример диалога при reject:
-
-```
-[Turn 1] Пользователь: reject файла
-
-Агент: Файл отклонён. Как вы хотите указать замечания?
-
-1. Редактировать draft-файл — создам черновик для пометок
-2. Описать проблемы текстом — напишите что исправить
-3. Отменить создание файла — пропустить
-
-Выберите вариант (1/2/3) или опишите проблему.
-
-[Turn 1] Пользователь: 1
-
-Агент: Write(.claude/draft/UserService.php.draft.php)
-
-Черновик создан: `.claude/draft/UserService.php.draft.php`
-
-Добавьте маркеры:
-- `// REVIEW: ...` — пересмотреть
-- `// FIXME: ...` — исправить
-- `// TODO: ...` — добавить
-
-После редактирования напишите "готово" или "проверь".
-
---- Агент завершает turn, ЖДЁТ ответа ---
-
-[Turn 2] Пользователь: готово
-
-Агент: Read(.claude/draft/UserService.php.draft.php)
-→ нашёл маркеры: "// FIXME: неправильное имя переменной"
-→ исправил код
-→ Write(исправленный файл)
-
-Исправления внесены согласно замечаниям. Подтвердить?
-
-[Если одобрено] → удалить draft, перейти к следующему файлу
-[Если reject] → задать вопрос снова
-```
-
-### Правила:
+### Правила
 
 1. **Один файл — один ответ**
-   - Создай только ОДИН файл за раз
-   - Покажи результат пользователю
-   - Явно спроси подтверждение перед продолжением
+   - Создавай только ОДИН файл за раз
+   - Жди подтверждения перед следующим
 
-2. **Формат после создания каждого файла:**
-   ```markdown
-   ## ✅ Файл создан: `{путь_к_файлу}`
+2. **При reject файла:**
+   - НЕ обходи permission system
+   - Спроси пользователя как поступить:
+     1. Описать проблему текстом
+     2. Отменить создание файла
+   - Внеси исправления и предложи снова
 
-   **Назначение:** Краткое описание что делает файл
-
-   **Ключевые моменты:**
-   - Пункт 1
-   - Пункт 2
-
-   ---
-   **Подтвердить создание файла и перейти к следующему?** (да/нет/изменить)
-   ```
-
-3. **Жди подтверждения пользователя**
-   - Не создавай следующий файл, пока не получишь подтверждение
-   - Пользователь может попросить изменить текущий файл — внеси изменения и снова запроси подтверждение
-
-4. **Строгий порядок создания:**
-   1. Value Objects (по одному)
-   2. Domain Exceptions (по одному)
-   3. Entities (по одному)
-   4. Repository Interface (по одному)
-   5. DTO и Commands/Queries (по одному)
-   6. Handlers (по одному)
-   7. Factories (по одному)
-   8. Mappers (по одному)
-   9. Repository Implementation (по одному)
-   10. Form Request (по одному)
-   11. Controller (по одному)
-   12. Маршруты и ServiceProvider
-
-### ❌ НЕПРАВИЛЬНО:
-```
-Write(file1.php)
-Write(file2.php)
-Write(file3.php)
-// Все файлы созданы без ожидания подтверждения
-```
-
-### ✅ ПРАВИЛЬНО:
-```
-// Ответ 1
-Write(file1.php)
-"Файл создан. Подтвердить и продолжить?"
-
-// Пользователь подтверждает
-
-// Ответ 2
-Write(file2.php)
-"Файл создан. Подтвердить и продолжить?"
-```
+3. **Порядок создания:**
+   1. Value Objects
+   2. Domain Exceptions
+   3. Entities
+   4. Repository Interfaces
+   5. DTO / Commands / Queries
+   6. Handlers
+   7. Factories / Mappers
+   8. Repository Implementations
+   9. Form Requests
+   10. Controllers
+   11. Маршруты / ServiceProvider
 
 ---
 
-## Стандарты PHP
+## 3. Архитектурные Best Practices
+
+### Domain-Driven Design
 
 ```php
-<?php
-declare(strict_types=1);
-
-namespace App\Module;
-
-final class ClassName
+// Entity — имеет идентичность
+abstract class Entity
 {
-    public function __construct(
-        private readonly SomeService $service
-    ) {}
+    protected readonly Uuid $id;
 
-    public function methodName(int $id): ?string
+    public function equals(self $other): bool
     {
-        return $this->service->process($id);
+        return $this::class === $other::class
+            && $this->id->equals($other->id);
+    }
+}
+
+// Value Object — неизменяемый, без идентичности
+abstract readonly class ValueObject
+{
+    abstract public function equals(self $other): bool;
+}
+
+// Aggregate Root — точка входа в aggregate
+class Order extends Entity implements AggregateRoot
+{
+    /** @var DomainEvent[] */
+    private array $events = [];
+
+    public function addOrderItem(OrderItem $item): void
+    {
+        // Бизнес-логика
+        $this->events[] = new OrderItemAdded($this->id, $item);
+    }
+
+    public function releaseEvents(): array
+    {
+        $events = $this->events;
+        $this->events = [];
+        return $events;
     }
 }
 ```
 
-**Правила:**
-- `strict_types=1` — всегда
-- Типы аргументов и возвратов — обязательно
-- `readonly` для свойств в constructor
-- 4 пробела, строка ≤ 120 символов
+### Repository Pattern
+
+```php
+// Interface в Domain
+interface UserRepository
+{
+    public function find(Uuid $id): ?User;
+    public function save(User $user): void;
+    public function delete(User $user): void;
+}
+
+// Implementation в Infrastructure
+final readonly class EloquentUserRepository implements UserRepository
+{
+    public function __construct(
+        private UserModel $model
+    ) {}
+
+    public function find(Uuid $id): ?User
+    {
+        $model = $this->model->newQuery()
+            ->where('uuid', $id->toString())
+            ->first();
+
+        return $model ? $this->toDomain($model) : null;
+    }
+}
+```
+
+### Service Layer
+
+```php
+final readonly class UserService
+{
+    public function __construct(
+        private UserRepository $users,
+        private EventDispatcher $events,
+        private LoggerInterface $logger
+    ) {}
+
+    public function createUser(CreateUserCommand $command): User
+    {
+        $user = User::create(
+            $command->email,
+            $command->name
+        );
+
+        $this->users->save($user);
+        $this->events->dispatch($user->releaseEvents());
+
+        return $user;
+    }
+}
+```
+
+### Dependency Injection
+
+```php
+// ✅ Правильно — DI через конструктор
+final readonly class OrderService
+{
+    public function __construct(
+        private OrderRepository $orders,
+        private PaymentGateway $payments
+    ) {}
+}
+
+// ❌ Неправильно — создание внутри
+class OrderService
+{
+    public function process(int $orderId): void
+    {
+        $gateway = new StripeGateway(); // Жёсткая связь
+    }
+}
+```
 
 ---
 
-## Безопасность
+## 4. Laravel Best Practices
 
-| ❌ Никогда | ✅ Всегда |
-|-----------|----------|
-| Переменные в SQL | Prepared statements |
-| Неэкранированный вывод | htmlspecialchars() |
-| Невалидированный ввод | Валидация |
-| Секреты в коде | .env файлы |
+### Eloquent
+
+```php
+// ✅ Eager Loading — предотвращает N+1
+$users = User::query()
+    ->with(['posts', 'roles'])
+    ->where('active', true)
+    ->get();
+
+// ✅ Scopes для переиспользования
+class User extends Model
+{
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('active', true);
+    }
+
+    public function scopeWithRole(Builder $query, string $role): Builder
+    {
+        return $query->whereHas('roles', fn($q) => $q->where('name', $role));
+    }
+}
+
+// Использование
+$users = User::query()
+    ->active()
+    ->withRole('admin')
+    ->get();
+
+// ✅ Chunk для больших выборок
+User::query()
+    ->where('active', true)
+    ->chunk(100, function (Collection $users) {
+        foreach ($users as $user) {
+            // Обработка
+        }
+    });
+```
+
+### Form Requests
+
+```php
+final readonly class StoreUserRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'email' => ['required', 'email', 'unique:users,email'],
+            'name' => ['required', 'string', 'max:255'],
+            'role' => ['required', Rule::in(['admin', 'user'])],
+        ];
+    }
+
+    public function toDto(): CreateUserDto
+    {
+        return new CreateUserDto(
+            email: $this->validated('email'),
+            name: $this->validated('name'),
+            role: $this->validated('role'),
+        );
+    }
+}
+```
+
+### API Resources
+
+```php
+final readonly class UserResource extends JsonResource
+{
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->uuid,
+            'email' => $this->email,
+            'name' => $this->name,
+            'created_at' => $this->created_at->toISOString(),
+        ];
+    }
+}
+```
 
 ---
 
-## Чек-лист перед завершением
+## 5. PHP 8.3 Best Practices
 
-- [ ] Соответствует Design
+### Constructor Property Promotion + Readonly
+
+```php
+// ✅ Современный стиль
+final readonly class CreateUserHandler
+{
+    public function __construct(
+        private UserRepository $users,
+        private PasswordHasher $hasher,
+        private EventDispatcher $events,
+    ) {}
+
+    public function handle(CreateUserCommand $command): User
+    {
+        // ...
+    }
+}
+```
+
+### Named Arguments
+
+```php
+// ✅ Named arguments для читаемости
+$user = User::create(
+    email: $command->email,
+    name: $command->name,
+    role: $command->role,
+);
+
+// ✅ При вызове с many parameters
+$this->sendNotification(
+    to: $user,
+    subject: 'Welcome',
+    template: 'emails.welcome',
+    data: ['user' => $user],
+);
+```
+
+### Match Expressions
+
+```php
+// ✅ Match вместо switch
+$status = match ($order->status) {
+    OrderStatus::Pending => 'pending',
+    OrderStatus::Paid => 'paid',
+    OrderStatus::Shipped => 'shipped',
+    OrderStatus::Delivered => 'delivered',
+    default => 'unknown',
+};
+```
+
+### Attributes
+
+```php
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
+final readonly class Route
+{
+    public function __construct(
+        public string $path,
+        public string $method = 'GET',
+    ) {}
+}
+
+#[Route('/api/users', method: 'POST')]
+final readonly class CreateUserController
+{
+    // ...
+}
+```
+
+### Strict Types
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\User;
+
+use App\Domain\Shared\{Entity, Uuid};
+
+/**
+ * @psalm-immutable
+ */
+final readonly class User extends Entity
+{
+    /**
+     * @param non-empty-string $email
+     * @param non-empty-string $name
+     */
+    public function __construct(
+        Uuid $id,
+        private string $email,
+        private string $name,
+    ) {
+        parent::__construct($id);
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    public function email(): string
+    {
+        return $this->email;
+    }
+}
+```
+
+---
+
+## 6. Безопасность
+
+### SQL Injection
+
+```php
+// ❌ Никогда
+$sql = "SELECT * FROM users WHERE email = '{$email}'";
+
+// ✅ Prepared statements
+$users = User::query()
+    ->where('email', $email)
+    ->get();
+
+// ✅ Raw с биндингом
+$users = DB::select(
+    'SELECT * FROM users WHERE email = ?',
+    [$email]
+);
+```
+
+### Mass Assignment
+
+```php
+// ✅ Явное указание полей
+class User extends Model
+{
+    protected $fillable = ['name', 'email'];
+    // ИЛИ
+    protected $guarded = ['id', 'created_at', 'updated_at'];
+}
+
+// ✅ В контроллере
+$user = User::create($request->only(['name', 'email']));
+```
+
+### XSS Protection
+
+```php
+// В Blade автоматически экранируется
+{{ $user->name }}
+
+// Если нужен HTML (осторожно!)
+{!! $trustedHtml !!}
+
+// Явное экранирование
+htmlspecialchars($input, ENT_QUOTES, 'UTF-8')
+```
+
+### Authorization
+
+```php
+// ✅ Policy
+class UserPolicy
+{
+    public function update(User $authUser, User $target): bool
+    {
+        return $authUser->id === $target->id;
+    }
+}
+
+// В контроллере
+public function update(User $user): Response
+{
+    $this->authorize('update', $user);
+    // ...
+}
+```
+
+---
+
+## 7. Производительность
+
+### N+1 Prevention
+
+```php
+// ❌ N+1 проблема
+$posts = Post::all();
+foreach ($posts as $post) {
+    echo $post->author->name; // +1 запрос на каждый пост
+}
+
+// ✅ Eager loading
+$posts = Post::query()
+    ->with('author')
+    ->get();
+```
+
+### Caching
+
+```php
+// ✅ Cache remember
+$user = Cache::remember(
+    "user.{$id}",
+    ttl: 3600,
+    callback: fn() => User::findOrFail($id)
+);
+
+// ✅ Cache tags для инвалидации
+Cache::tags(['users', "user.{$id}"])
+    ->remember($key, $ttl, $callback);
+
+Cache::tags(['users'])->flush(); // Инвалидация всех users
+```
+
+### Query Optimization
+
+```php
+// ✅ Select только нужных полей
+$users = User::query()
+    ->select(['id', 'email', 'name'])
+    ->get();
+
+// ✅ Exists вместо count
+$hasOrders = Order::query()
+    ->where('user_id', $userId)
+    ->exists();
+
+// ✅ Index hints
+$users = User::query()
+    ->from('users USE INDEX (idx_email)')
+    ->where('email', $email)
+    ->first();
+```
+
+---
+
+## 8. Чек-лист перед завершением
+
+- [ ] Соответствует Design (`02-design.md`)
+- [ ] Соответствует Plan (`04-plan.md`)
+- [ ] `declare(strict_types=1)` в начале файла
 - [ ] Типы для всех аргументов/возвратов
 - [ ] PHPDoc для публичных API
-- [ ] Нет синтаксических ошибок (`php -l`)
-- [ ] Обработаны граничные случаи
-- [ ] Нет захардкоженных значений
+- [ ] Нет синтаксических ошибок (`php -l file.php`)
+- [ ] Нет захардкоженных значений (константы/env)
+- [ ] Обработаны граничные случаи (null, empty)
+- [ ] Нет N+1 проблем (eager loading)
+- [ ] Валидация входных данных
+- [ ] Авторизация действий
 
 ---
 
-## Формат отчёта
+## 9. Формат отчёта
 
 **Файл:** `.claude/pipeline/05-implement.md`
 
@@ -284,12 +559,14 @@ final class ClassName
 
 ## Проверки
 
-- [x] Синтаксис: OK
+- [x] Синтаксис: OK (`php -l`)
 - [x] PSR-12: OK
 - [x] Типизация: OK
 - [x] Безопасность: OK
+- [x] N+1: OK (eager loading)
 
 ## Замечания
+
 {Если были отклонения от плана}
 ```
 

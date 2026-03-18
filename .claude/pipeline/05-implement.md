@@ -204,3 +204,122 @@ node      Up            - Node.js 24 (Vite dev server)
 ---
 
 **Статус:** ЗАВЕРШЕНО
+
+---
+---
+
+# Implement: Фаза 2 - Shared Kernel (Domain Layer)
+
+**Дата:** 2026-03-18
+**Этап:** Implement (5/7)
+**Фаза:** 2 - Shared Kernel (Domain Layer)
+
+---
+
+## Созданные файлы
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `laravel/app/Domain/Shared/Entity.php` | Базовый класс для сущностей с UUID | 37 |
+| `laravel/app/Domain/Shared/ValueObject.php` | Базовый класс для Value Objects | 45 |
+| `laravel/app/Domain/Shared/Uuid.php` | UUID Value Object (Ramsey) | 74 |
+| `laravel/app/Domain/Shared/Timestamps.php` | Value Object для временных меток | 88 |
+| `laravel/app/Domain/Shared/PaginatedResult.php` | DTO для пагинации результатов | 154 |
+| `laravel/app/Domain/Shared/DomainEvent.php` | Базовый класс для доменных событий | 61 |
+| `laravel/app/Domain/Shared/Exceptions/DomainException.php` | Базовое доменное исключение | 37 |
+| `laravel/app/Domain/Shared/Exceptions/ValidationException.php` | Исключение валидации домена | 65 |
+
+**Всего:** 8 файлов, ~561 строк кода
+
+---
+
+## Реализованные классы
+
+### Entity (abstract)
+- `getId(): Uuid` — получение идентификатора
+- `equals(Entity): bool` — сравнение сущностей по ID
+
+### ValueObject (abstract)
+- `validateProperty(mixed)` — автовалидация через метод `validate()`
+- `__toString(): string` — JSON представление
+- `jsonSerialize(): array` — сериализация
+- `getValue(): mixed` — получение значения (abstract)
+
+### Uuid (final)
+- `fromString(string): self` — создание из строки
+- `generate(): self` — генерация UUID v4
+- `equals(Uuid): bool` — сравнение
+- `getValue(): string` — строковое представление
+
+### Timestamps (final)
+- `now(): self` — создание для новой сущности
+- `fromStrings(string, string): self` — из строк
+- `touch(): self` — обновление timestamp
+- `isModified(): bool` — проверка изменений
+
+### PaginatedResult (final readonly) - DTO
+- `fromLaravel(iterable, callable): self` — из Laravel paginator
+- `empty(int, int): self` — пустой результат
+- `map(callable): self` — трансформация элементов
+- `getMeta(): array` — метаданные пагинации
+- `jsonSerialize(): array` — JSON представление
+
+### DomainEvent (abstract)
+- `getEventName(): string` — имя события
+- `getOccurredAt(): DateTimeImmutable` — время события
+- `getPayload(): array` — данные события (abstract)
+- `toArray(): array` — полная сериализация
+
+### DomainException (abstract)
+- `getContext(): array` — контекст ошибки
+- `getErrorType(): string` — тип ошибки
+
+### ValidationException (final)
+- `forField(string, string): self` — ошибка одного поля
+- `getErrors(): array` — все ошибки
+- `hasError(string): bool` — проверка наличия ошибки
+
+---
+
+## Соответствие Design
+
+| Требование | Статус | Комментарий |
+|------------|--------|-------------|
+| Entity с UUID | ✅ | Ramsey UUID, equals() метод |
+| ValueObject базовый | ✅ | С валидацией и JSON сериализацией |
+| Uuid Value Object | ✅ | fromString(), generate(), equals() |
+| Timestamps | ✅ | now(), touch(), isModified() |
+| PaginatedResult | ✅ | DTO, не наследует ValueObject |
+| DomainEvent | ✅ | getEventName(), getPayload(), toArray() |
+| DomainException | ✅ | Базовый класс для доменных ошибок |
+| ValidationException | ✅ | Ошибки по полям |
+
+---
+
+## Проверки
+
+- [x] Синтаксис: OK (проверено IDE)
+- [x] PSR-12: OK
+- [x] Типизация: strict_types=1 везде
+- [x] PHPDoc: Все публичные методы документированы
+- [x] Именование: camelCase методы, PascalCase классы
+
+---
+
+## Отклонения от плана
+
+1. **PaginatedResult** — реализован как DTO (не наследует ValueObject), что корректно для контейнера данных пагинации
+
+---
+
+## Следующая фаза
+
+**Фаза 3: Domain Layer** — создание:
+- Entities (Article, Category, Tag, User, MediaFile, ContactMessage, SiteSetting)
+- ValueObjects (Slug, Email, ArticleStatus, UserRole, MimeType, FilePath, etc.)
+- Repository Interfaces
+- Domain Events
+
+---
+
+**Статус Фазы 2:** ✅ ЗАВЕРШЕНО
