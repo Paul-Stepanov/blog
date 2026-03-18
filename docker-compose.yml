@@ -105,14 +105,15 @@ services:
     container_name: blog_node
     restart: unless-stopped
     working_dir: /app
+    user: "${UID:-1000}:${GID:-1000}"
     volumes:
       - ./frontend:/app
-      - node_modules:/app/node_modules
     ports:
       - "5173:5173"
     environment:
       - NODE_ENV=development
       - VITE_API_URL=http://localhost/api
+      - npm_config_cache=/app/.npm-cache
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
     networks:
       - blog_network
@@ -169,5 +170,3 @@ volumes:
     name: blog_postgres_data
   redis_data:
     name: blog_redis_data
-  node_modules:
-    name: blog_node_modules
