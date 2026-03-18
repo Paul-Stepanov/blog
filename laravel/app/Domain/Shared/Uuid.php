@@ -76,7 +76,6 @@ final class Uuid extends ValueObject
 
     /**
      * @return array<string, string>
-     * @throws JsonException
      */
     public function jsonSerialize(): array
     {

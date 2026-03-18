@@ -323,3 +323,169 @@ node      Up            - Node.js 24 (Vite dev server)
 ---
 
 **Статус Фазы 2:** ✅ ЗАВЕРШЕНО
+
+---
+---
+
+# Implement: Фаза 3 - Domain Layer
+
+**Дата:** 2026-03-19
+**Этап:** Implement (5/7)
+**Фаза:** 3 - Domain Layer
+
+---
+
+## Созданные файлы
+
+### Value Objects (Article Domain)
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `laravel/app/Domain/Article/ValueObjects/Slug.php` | URL-friendly идентификатор с транслитерацией | ~85 |
+| `laravel/app/Domain/Article/ValueObjects/ArticleStatus.php` | Enum статуса статьи (DRAFT, PUBLISHED, ARCHIVED) | ~65 |
+| `laravel/app/Domain/Article/ValueObjects/ArticleContent.php` | HTML контент с wordCount(), readingTime(), getExcerpt() | ~95 |
+
+### Value Objects (Contact Domain)
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `laravel/app/Domain/Contact/ValueObjects/Email.php` | Валидированный email с getObfuscated(), getDomain() | ~75 |
+| `laravel/app/Domain/Contact/ValueObjects/IPAddress.php` | IPv4/IPv6 адрес с isPublic(), getAnonymized() | ~95 |
+
+### Value Objects (User Domain)
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `laravel/app/Domain/User/ValueObjects/UserRole.php` | Enum роли (ADMIN, EDITOR, AUTHOR) с permission methods | ~85 |
+| `laravel/app/Domain/User/ValueObjects/Password.php` | Bcrypt хеш с fromPlain(), verify(), needsRehash() | ~75 |
+
+### Value Objects (Media Domain)
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `laravel/app/Domain/Media/ValueObjects/FilePath.php` | Относительные пути с generateForUpload(), security checks | ~90 |
+| `laravel/app/Domain/Media/ValueObjects/MimeType.php` | MIME type валидация с isImage(), isAllowed() | ~95 |
+| `laravel/app/Domain/Media/ValueObjects/ImageDimensions.php` | Ширина/высота с getAspectRatio(), resizeToFit() | ~85 |
+
+### Value Objects (Settings Domain)
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `laravel/app/Domain/Settings/ValueObjects/SettingKey.php` | Ключ настройки (group.name) с KNOWN_KEYS whitelist | ~75 |
+| `laravel/app/Domain/Settings/ValueObjects/SettingValue.php` | Типизированные значения (string, integer, boolean, json) | ~95 |
+
+### Entities
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `laravel/app/Domain/Article/Entities/Article.php` | Aggregate Root с publish(), archive(), updateContent() | ~180 |
+| `laravel/app/Domain/Article/Entities/Category.php` | Категория с slug, rename() | ~75 |
+| `laravel/app/Domain/Article/Entities/Tag.php` | Тег с slug, rename() | ~70 |
+| `laravel/app/Domain/User/Entities/User.php` | Пользователь с changePassword(), changeRole() | ~120 |
+| `laravel/app/Domain/Media/Entities/MediaFile.php` | Метаданные файла с updateAltText(), rename() | ~140 |
+| `laravel/app/Domain/Contact/Entities/ContactMessage.php` | Сообщение формы контактов с markAsRead() | ~95 |
+| `laravel/app/Domain/Settings/Entities/SiteSetting.php` | Настройка с key/value, updateValue() | ~80 |
+
+### Repository Interfaces
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `laravel/app/Domain/Article/Repositories/ArticleRepositoryInterface.php` | CRUD + search + pagination | ~110 |
+| `laravel/app/Domain/Article/Repositories/CategoryRepositoryInterface.php` | Категории с article count | ~72 |
+| `laravel/app/Domain/Article/Repositories/TagRepositoryInterface.php` | Теги с syncForArticle() | ~104 |
+| `laravel/app/Domain/User/Repositories/UserRepositoryInterface.php` | Пользователи с findByEmailForAuth() | ~95 |
+| `laravel/app/Domain/Media/Repositories/MediaRepositoryInterface.php` | Медиа с getUnused(), getTotalSize() | ~111 |
+| `laravel/app/Domain/Contact/Repositories/ContactRepositoryInterface.php` | Контактные сообщения | ~105 |
+| `laravel/app/Domain/Settings/Repositories/SettingsRepositoryInterface.php` | Настройки с key-value pairs | ~95 |
+
+### Domain Services
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `laravel/app/Domain/Media/Services/FileStorageInterface.php` | Интерфейс хранения файлов (local, S3, etc.) | ~120 |
+
+### Domain Events
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `laravel/app/Domain/Article/Events/ArticlePublished.php` | Событие публикации статьи | ~85 |
+| `laravel/app/Domain/Article/Events/ArticleArchived.php` | Событие архивации статьи | ~90 |
+| `laravel/app/Domain/Contact/Events/ContactMessageReceived.php` | Событие получения сообщения | ~85 |
+
+**Всего:** 27 файлов, ~2800 строк кода
+
+---
+
+## Реализованные классы
+
+### Entities (mutable)
+
+| Класс | Методы | Описание |
+|-------|--------|----------|
+| **Article** | `create()`, `reconstitute()`, `publish()`, `archive()`, `updateContent()` | Aggregate Root с Domain Events |
+| **Category** | `create()`, `reconstitute()`, `rename()` | Категория статей |
+| **Tag** | `create()`, `reconstitute()`, `rename()` | Тег статей |
+| **User** | `create()`, `reconstitute()`, `changePassword()`, `changeRole()` | Пользователь системы |
+| **MediaFile** | `create()`, `reconstitute()`, `updateAltText()`, `rename()` | Медиа файл |
+| **ContactMessage** | `create()`, `reconstitute()`, `markAsRead()` | Сообщение обратной связи |
+| **SiteSetting** | `create()`, `reconstitute()`, `updateValue()` | Настройка сайта |
+
+### Value Objects (immutable)
+
+| Класс | Методы | Описание |
+|-------|--------|----------|
+| **Slug** | `fromTitle()`, `getValue()` | URL-friendly идентификатор |
+| **ArticleStatus** | `isDraft()`, `isPublished()`, `isArchived()` | Enum статуса |
+| **ArticleContent** | `wordCount()`, `readingTime()`, `getExcerpt()` | HTML контент |
+| **Email** | `getObfuscated()`, `getDomain()` | Email адрес |
+| **IPAddress** | `isPublic()`, `isPrivate()`, `getAnonymized()` | IP адрес |
+| **UserRole** | `isAdmin()`, `isEditor()`, `isAuthor()`, `canManageArticles()` | Enum роли |
+| **Password** | `fromPlain()`, `verify()`, `needsRehash()` | Хеш пароля |
+| **FilePath** | `generateForUpload()`, `getExtension()` | Путь к файлу |
+| **MimeType** | `isImage()`, `isVideo()`, `isDocument()`, `isAllowed()` | MIME тип |
+| **ImageDimensions** | `getAspectRatio()`, `resizeToFit()`, `isPortrait()`, `isLandscape()` | Размеры |
+| **SettingKey** | `getGroup()`, `getName()` | Ключ настройки |
+| **SettingValue** | `asString()`, `asInteger()`, `asBoolean()`, `asJson()` | Значение |
+
+---
+
+## Соответствие Design
+
+| Требование | Статус | Комментарий |
+|------------|--------|-------------|
+| Entities mutable | ✅ | Только immutable свойства readonly |
+| Value Objects immutable | ✅ | readonly классы |
+| UUID идентификаторы | ✅ | Ramsey UUID во всех Entity |
+| Repository Interfaces | ✅ | В Domain, реализации в Infrastructure |
+| Domain Events | ✅ | ArticlePublished, ArticleArchived, ContactMessageReceived |
+| Factory methods | ✅ | create(), reconstitute() во всех Entity |
+| Strict types | ✅ | declare(strict_types=1) везде |
+| PHPDoc | ✅ | Все публичные методы документированы |
+
+---
+
+## Проверки
+
+- [x] Синтаксис: OK
+- [x] PSR-12: OK
+- [x] Типизация: strict_types=1 везде
+- [x] PHPDoc: Все публичные методы документированы
+- [x] Именование: camelCase методы, PascalCase классы
+- [x] Безопасность: Валидация в Value Objects
+- [x] DDD паттерны: Entity, ValueObject, Aggregate Root, Domain Events
+
+---
+
+## Ключевые архитектурные решения
+
+1. **Entities mutable** — сущности могут изменяться (publish, archive, updateContent), только immutable свойства объявлены readonly
+
+2. **ValidationException** — используется кастомное исключение вместо PHP InvalidArgumentException
+
+3. **PaginatedResult как DTO** — не наследует ValueObject, корректно для контейнера данных
+
+4. **FileStorageInterface** — абстракция над хранилищем файлов (local, S3, etc.)
+
+---
+
+**Статус Фазы 3:** ✅ ЗАВЕРШЕНО

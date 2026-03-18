@@ -48,6 +48,13 @@ abstract class DomainEvent
     abstract public function getPayload(): array;
 
     /**
+     * Reconstruct event from array data.
+     *
+     * @param array<string, mixed> $data
+     */
+    abstract public static function fromArray(array $data): static;
+
+    /**
      * Get full event data for serialization/queue.
      *
      * @return array{name: string, occurredAt: string, payload: array<string, mixed>}
