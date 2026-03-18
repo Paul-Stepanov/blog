@@ -4,7 +4,7 @@ description: |
   Senior developer implementing code from specifications. Use proactively after Plan approval.
   Use immediately when code implementation is needed.
 skills: [implement]
-tools: Read, Grep, Glob, Write, Edit, Bash
+tools: Read, Grep, Glob, Write, Edit, Bash, AskUserQuestion
 disallowedTools: Agent
 model: sonnet
 memory: user
