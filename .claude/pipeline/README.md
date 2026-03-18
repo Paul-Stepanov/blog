@@ -2,222 +2,257 @@
 
 Эта директория содержит документы, создаваемые на каждом этапе pipeline разработки.
 
-## Pipeline
+## 🎯 Двухфазная архитектура
 
+### Фаза 1: ПОДГОТОВКА (автономные subagents)
 ```
-Research → Design → Plan → СТОП → [ручные интерактивные этапы]
+Research ──► Design ──► Plan
+(haiku)      (sonnet)    (sonnet)
 ```
+- Координатор запускает subagents последовательно
+- Approval арбитра между этапами
 
-## Как работает
-
-### Автоматическая часть (агенты)
-
-1. **Вы вызываете субагента** для текущего этапа через Agent tool
-2. **Агент работает изолированно** — не засоряет контекст
-3. **Агент создаёт файл отчёта** в этой директории
-4. **Вы проверяете** результат и либо:
-   - ✅ Утверждаете → вызываете следующего агента
-   - 🔄 Возвращаете на доработку → вызываете того же агента с замечаниями
-
-### Интерактивная часть (скилы)
-
-После создания плана пользователь вручную запускает скилы в основной сессии:
-- `/implement` — реализация с подтверждением каждого файла
-- `/review` — ревью с обсуждением проблем
-- `/test` — тестирование с анализом результатов
-- `/devops` — Docker/CI/CD (опционально)
+### Фаза 2: РЕАЛИЗАЦИЯ (интерактивные teammates + арбитр)
+```
+Team Assembly ──► Implement ──► Review ──► Test
+(coordinator)    (teammate)    (teammate)  (teammate)
+                      │             │           │
+                      └─────────────┴───────────┘
+                           👤 АРБИТР
+                    (пользователь подтверждает/отклоняет)
+```
+- Координатор собирает команду и передаёт управление
+- Арбитр (пользователь) управляет teammates
 
 ---
 
+## Роли в команде
+
+| Роль | Кто | Обязанности |
+|------|-----|-------------|
+| **Team Lead** | dev-coordinator | Запускает агентов, собирает команду, передаёт управление |
+| **Арбитр** | Пользователь | Подтверждает/отклоняет файлы, решает конфликты, approve на этапах |
+| **Teammates** | dev-coder, dev-reviewer, dev-tester | Выполняют работу, запрашивают подтверждения |
+
+---
+
+## Pipeline
+
+```
+Research → Design → Plan → [Team Assembly] → Implement → Review → Test → [Deploy]
+```
+
 ## Этапы и агенты
 
-### Автоматические (агенты)
+| # | Этап | Агент | Файл отчёта | Тип | Фаза |
+|---|------|-------|-------------|-----|------|
+| 1 | Research | `dev-researcher` | `01-research.md` | Subagent | Подготовка |
+| 2 | Design | `dev-architect` | `02-design.md` | Subagent | Подготовка |
+| 3 | Plan | `dev-planner` | `04-plan.md` | Subagent | Подготовка |
+| - | **Team Assembly** | `dev-coordinator` | - | Coordinator | Переход |
+| 4 | DevOps Setup | `dev-devops` | `03-devops-setup.md` | **Teammate** | Реализация |
+| 5 | Implement | `dev-coder` | `05-implement.md` | **Teammate** | Реализация |
+| 6 | Review | `dev-reviewer` | `06-review.md` | **Teammate** | Реализация |
+| 7 | Test | `dev-tester` | `07-test.md` | **Teammate** | Реализация |
+| 8 | Deploy | `dev-devops` | `08-deploy.md` | **Teammate** | Реализация |
 
-| # | Этап | Агент | Файл отчёта | Обязательный | Модель |
-|---|------|-------|-------------|--------------|--------|
-| 1 | Research | `dev-researcher` | `01-research.md` | ✅ | haiku |
-| 2 | Design | `dev-architect` | `02-design.md` | ✅ | sonnet |
-| 3 | Plan | `dev-planner` | `04-plan.md` | ✅ | sonnet |
-
-**Координатор:** `dev-coordinator` — управляет автоматической частью pipeline
-
-### Интерактивные (скилы)
-
-| Скил | Описание | Когда запускать |
-|------|----------|-----------------|
-| `/implement` | Реализация кода | После утверждения плана |
-| `/review` | Ревью кода | После реализации |
-| `/test` | Тестирование | После ревью |
-| `/devops` | Docker/CI/CD | Setup или Deploy |
+**Координатор:** `dev-coordinator` — управляет Фазой 1 и Team Assembly
 
 ---
 
 ## Workflow Diagram
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  Research   │ ──► │   Design    │ ──► │    Plan     │
-│  (haiku)    │     │  (sonnet)   │     │  (sonnet)   │
-│  maxTurns:20│     │  maxTurns:15│     │  maxTurns:15│
-│  background │     │  figma      │     │             │
-└─────────────┘     └─────────────┘     └─────────────┘
-                                               │
-                                               ▼
-                                        ╔═════════════╗
-                                        ║    СТОП     ║
-                                        ║ Plan готов  ║
-                                        ╚═════════════╝
-                                               │
-                           ┌───────────────────┼───────────────────┐
-                           ▼                   ▼                   ▼
-                    ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-                    │  /implement │ ──► │   /review   │ ──► │    /test    │
-                    │  ИНТЕРАКТИВ │     │  ИНТЕРАКТИВ │     │  ИНТЕРАКТИВ │
-                    │  (в сессии) │     │  (в сессии) │     │  (в сессии) │
-                    └─────────────┘     └─────────────┘     └─────────────┘
-                                                                   │
-                                                                   ▼
-                                                            ┌─────────────┐
-                                                            │   /devops   │
-                                                            │  (optional) │
-                                                            └─────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                    ФАЗА 1: ПОДГОТОВКА                        │
+│                                                              │
+│  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐    │
+│  │  Research   │ ──► │   Design    │ ──► │    Plan     │    │
+│  │  (subagent) │     │  (subagent) │     │  (subagent) │    │
+│  │  haiku      │     │  sonnet     │     │  sonnet     │    │
+│  │  context7   │     │  context7   │     │  context7   │    │
+│  │  web-reader │     │  figma      │     │             │    │
+│  └─────────────┘     └─────────────┘     └─────────────┘    │
+│        │                   │                   │            │
+│        └───────────────────┴───────────────────┘            │
+│                      👤 Approval арбитра                    │
+└─────────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                ФАЗА 2: TEAM ASSEMBLY                         │
+│                                                              │
+│  Координатор:                                                │
+│  1. TeamCreate("dev-implementation")                        │
+│  2. TaskCreate для фаз из 04-plan.md                        │
+│  3. Spawn teammates (coder, reviewer, tester)               │
+│  4. Передача управления арбитру                             │
+└─────────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                ФАЗА 3: РЕАЛИЗАЦИЯ                            │
+│                                                              │
+│  ┌─────────────┐ (опционально)                              │
+│  │   DevOps    │ ──► Docker/инфраструктура                  │
+│  │  (teammate) │                                             │
+│  └─────────────┘                                             │
+│         │                                                    │
+│         ▼                                                    │
+│  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐    │
+│  │  Implement  │ ──► │   Review    │ ──► │    Test     │    │
+│  │  (teammate) │     │  (teammate) │     │  (teammate) │    │
+│  │  sonnet     │     │  sonnet     │     │  haiku      │    │
+│  │  context7   │     │             │     │  chrome     │    │
+│  │  knowledge  │     │             │     │             │    │
+│  └─────────────┘     └─────────────┘     └─────────────┘    │
+│         ▲                   │                   │           │
+│         └───────────────────┴───────────────────┘           │
+│                    Loop при issues/fails                     │
+│                                                              │
+│  👤 АРБИТР (пользователь):                                   │
+│     - Подтверждает/отклоняет файлы                          │
+│     - Решает конфликты между агентами                       │
+│     - Даёт approve на переход между этапами                  │
+│     - Shift+Down для переключения между teammates           │
+└─────────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+                    ┌─────────────┐
+                    │   Deploy    │
+                    │  (teammate) │
+                    │  sonnet     │
+                    │  context7   │
+                    └─────────────┘
 ```
 
 ---
 
 ## Пример использования
 
-### Вариант 1: Ручной вызов агентов
-
-#### Этап 1: Research
-```
-Agent(
-  subagent_type="dev-researcher",
-  description="Research: Auth",
-  prompt="Исследуй задачу: реализовать аутентификацию пользователей"
-)
-```
-
-→ Создаёт `01-research.md`
-→ Возвращает summary
-
-**Утверждение:** Проверьте файл. Если OK → переходите к Design.
-
-**Доработка:**
-```
-Agent(
-  subagent_type="dev-researcher",
-  description="Research: revise",
-  prompt="Переработай 01-research.md с учётом: добавить анализ безопасности"
-)
-```
-
-#### Этап 2: Design
-```
-Agent(
-  subagent_type="dev-architect",
-  description="Design: Auth",
-  prompt="Спроектируй архитектуру на основе .claude/pipeline/01-research.md"
-)
-```
-
-→ Создаёт `02-design.md`
-
-#### Этап 3: Plan
-```
-Agent(
-  subagent_type="dev-planner",
-  description="Plan: Auth",
-  prompt="Создай план реализации на основе 01-research.md и 02-design.md"
-)
-```
-
-→ Создаёт `04-plan.md`
-
-#### После Plan — СТОП, запуск интерактивных скилов
-
-```
-/implement    — начать реализацию (интерактивно)
-/review       — ревью кода (интерактивно)
-/test         — тестирование (интерактивно)
-/devops       — Docker/CI/CD (опционально)
-```
-
----
-
-### Вариант 2: Через координатора
+### Запуск через координатора (рекомендуется)
 
 ```
 Agent(
   subagent_type="dev-coordinator",
   description="Pipeline: Auth Feature",
-  prompt="Реализуй аутентификацию пользователей. Координируй pipeline от Research до Plan."
+  prompt="Реализуй аутентификацию пользователей. Координируй весь pipeline."
 )
 ```
 
-Координатор автоматически:
-1. Запустит dev-researcher
-2. После approval → dev-architect
-3. После approval → dev-planner
-4. **СТОП** — сообщит что план готов
-
-Затем пользователь вручную запускает `/implement`, `/review`, `/test`.
-
----
-
-## Особенности агентов
-
-### dev-researcher
-- **background: true** — можно запускать параллельно несколько исследований
-- **MCP:** context7, web-reader, web-search-prime
-
-### dev-architect
-- **MCP:** context7, figma (для диаграмм)
-
-### dev-planner
-- **Обязательно:** sequential-thinking для анализа
-
-### Все агенты
-- **maxTurns** — ограничение итераций
-- **memory: user** — накопление знаний между сессиями
-- **skills** — предзагруженные инструкции
+**Workflow:**
+1. **Research** → dev-researcher (subagent) → 👤 Approval
+2. **Design** → dev-architect (subagent) → 👤 Approval
+3. **Plan** → dev-planner (subagent) → 👤 Approval
+4. **Team Assembly** → координатор собирает команду
+5. **Передача управления** → арбитр (ты) управляет teammates
+6. **Implement** → dev-coder (teammate) ← *интерактивно с арбитром*
+7. **Review** → dev-reviewer (teammate) ← *интерактивно*
+8. **Test** → dev-tester (teammate) ← *интерактивно*
+9. При issues → loop back к соответствующему teammate
 
 ---
 
-## Интерактивные скилы
+## 👤 Роль Арбитра
 
-### /implement
-- Создание файлов **по одному**
-- Подтверждение каждого файла пользователем
-- Обработка reject через draft-файлы
-- Соответствие плану и архитектуре
+Как арбитр ты:
 
-### /review
-- Проверка качества, безопасности, производительности
-- Категории: Critical, Warning, Suggestion
-- Обсуждение найденных проблем
+### Подтверждаешь/отклоняешь файлы
+Когда teammate создаёт файл:
+- ✅ **Approve** — файл принят, teammate продолжает
+- ❌ **Reject** — файл отклонён, teammate спрашивает как исправить
 
-### /test
-- Unit, Integration, E2E тесты
-- Анализ покрытия
-- Исправление падающих тестов
+### Решаешь конфликты
+Когда агенты disagree:
+```
+## ⚠️ Конфликт
+Coder хочет X, Reviewer рекомендует Y.
+Выбери: 1) X  2) Y  3) Свой вариант
+```
 
-### /devops
-- Docker setup (Dockerfile, docker-compose)
-- CI/CD (GitHub Actions)
-- Deploy конфигурации
+### Даёшь approval на переходы
+Между этапами Фазы 1:
+- Research → Design
+- Design → Plan
+- Plan → Team Assembly
+
+### Переключаешься между teammates
+**Shift+Down** для переключения на конкретного teammate.
+
+---
+
+## 🔄 Интерактивный диалог при reject
+
+Когда teammate (coder) получает reject файла:
+
+1. **Teammate спрашивает:**
+   ```
+   Файл отклонён. Как вы хотите указать замечания?
+
+   1. Редактировать draft-файл
+   2. Описать проблемы текстом
+   3. Отменить создание файла
+   ```
+
+2. **Ты отвечаешь** (Shift+Down для переключения на teammate)
+
+3. **Teammate продолжает** работу с учётом замечаний
+
+---
+
+## Типы агентов
+
+### Subagents (автономные) — Фаза 1
+- `dev-researcher` — анализ требований, кода, документации
+- `dev-architect` — проектирование архитектуры, диаграммы
+- `dev-planner` — декомпозиция на фазы, критерии готовности
+
+### Teammates (интерактивные) — Фаза 2
+- `dev-devops` — Docker, CI/CD, инфраструктура
+- `dev-coder` — реализация кода по спецификации
+- `dev-reviewer` — ревью кода (read-only)
+- `dev-tester` — написание и запуск тестов
+
+### Orchestrator
+- `dev-coordinator` — Team Lead, управляет pipeline
+
+---
+
+## MCP интеграция
+
+| Агент | MCP Servers |
+|-------|-------------|
+| dev-researcher | context7, web-reader, web-search-prime |
+| dev-architect | context7, figma |
+| dev-planner | context7 |
+| dev-devops | context7, knowledge-graph |
+| dev-coder | context7, knowledge-graph |
+| dev-reviewer | knowledge-graph |
+| dev-tester | chrome-devtools, knowledge-graph |
+| dev-coordinator | knowledge-graph |
+
+---
+
+## Hooks
+
+| Hook | Файл | Назначение |
+|------|------|------------|
+| validate-bash.sh | hooks/ | Блокирует опасные команды |
+| run-linter.sh | hooks/ | Запускает линтер после изменений |
+| validate-sql.sh | hooks/ | Блокирует SQL write операции |
 
 ---
 
 ## Быстрый справочник
 
-| Команда | Агент/Скил | Что делает |
-|---------|------------|------------|
-| Research | `dev-researcher` | Анализирует требования, код, документацию |
-| Design | `dev-architect` | Проектирует архитектуру, диаграммы |
-| Plan | `dev-planner` | Декомпозиция на фазы, критерии готовности |
-| `/implement` | скил | Пишет код интерактивно |
-| `/review` | скил | Проверяет код интерактивно |
-| `/test` | скил | Пишет и запускает тесты интерактивно |
-| `/devops` | скил | Docker, CI/CD |
-| Coordinate | `dev-coordinator` | Управляет Research → Design → Plan |
+| Команда | Агент | Тип | Фаза | Что делает |
+|---------|-------|-----|------|------------|
+| Research | `dev-researcher` | Subagent | Подготовка | Анализирует требования |
+| Design | `dev-architect` | Subagent | Подготовка | Проектирует архитектуру |
+| Plan | `dev-planner` | Subagent | Подготовка | Декомпозиция на фазы |
+| Team Assembly | `dev-coordinator` | Coordinator | Переход | Собирает команду |
+| DevOps | `dev-devops` | Teammate | Реализация | Docker, CI/CD |
+| Implement | `dev-coder` | Teammate | Реализация | Пишет код |
+| Review | `dev-reviewer` | Teammate | Реализация | Проверяет код |
+| Test | `dev-tester` | Teammate | Реализация | Тесты |
+| Coordinate | `dev-coordinator` | Orchestrator | - | Управляет pipeline |
