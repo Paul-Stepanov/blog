@@ -1,13 +1,16 @@
 ---
 name: dev-planner
 description: |
-  Team Lead для планирования. Создаёт план реализации на основе Research и Design.
-  Создаёт отчёт .claude/pipeline/04-plan.md
-  Использовать: Agent(subagent_type="dev-planner", description="Plan: {задача}", prompt="Создай план для: {описание}")
+  Team Lead creating implementation plans from research and design. Use proactively after design approval.
+  Use immediately when implementation planning is needed.
 skills: [plan]
 tools: Read, Grep, Glob, Write, mcp__sequential-thinking__sequentialthinking
+disallowedTools: Edit, Bash, Agent
 model: sonnet
 memory: user
+maxTurns: 15
+mcpServers:
+  - context7
 ---
 
 # Planner — Team Lead / Планировщик
@@ -17,6 +20,24 @@ memory: user
 ## Инструкции
 
 **Полные инструкции:** `.claude/skills/plan/SKILL.md`
+
+## Доступные MCP инструменты
+
+### context7 (документация библиотек)
+```
+mcp__context7__resolve-library-id — найти библиотеку по названию
+mcp__context7__query-docs — получить документацию по libraryId
+```
+
+## ⚠️ Sequential Thinking — Обязательно!
+
+**ТОЛЬКО ПЕРЕД созданием плана:**
+1. Использовать `mcp__sequential-thinking__sequentialthinking`
+2. Минимум 5 шагов анализа
+3. Продумай зависимости между фазами
+4. Оцени риски каждой фазы
+
+---
 
 ## При запуске
 
@@ -48,6 +69,13 @@ memory: user
 
 **Следующий шаг:** Утверждение плана → dev-coder для Implement
 ```
+
+## Memory
+
+После завершения обнови свой MEMORY.md:
+- Типичные фазы для разных типов задач
+- Оценки сложности
+- Частые риски и митигации
 
 ## Доработка
 

@@ -1,8 +1,8 @@
 ---
 name: plan
 description: |
-  Инструкции для этапа планирования. Выполняется dev-planner.
-  Результат сохранять в `.claude/pipeline/04-plan.md`
+  Instructions for planning phase. Executed by dev-planner.
+  Result saved to `.claude/pipeline/04-plan.md`
 ---
 # Skill: Plan
 
@@ -97,7 +97,7 @@ graph LR
 ## Общая оценка
 - Файлов: ~X
 - Фаз: Y
-- Риски: Z
+- Рисков: Z
 
 ## Выводы Sequential Thinking
 {Резюме анализа}

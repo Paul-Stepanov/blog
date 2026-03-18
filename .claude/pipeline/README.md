@@ -21,22 +21,62 @@ Research → Design → [DevOps Setup] → Plan → Implement → Review → Tes
 
 ## Этапы и агенты
 
-| # | Этап | Агент | Файл отчёта | Обязательный |
-|---|------|-------|-------------|--------------|
-| 1 | Research | `dev-researcher` | `01-research.md` | ✅ |
-| 2 | Design | `dev-architect` | `02-design.md` | ✅ |
-| 3 | DevOps Setup | `dev-devops` | `03-devops-setup.md` | ❌ |
-| 4 | Plan | `dev-planner` | `04-plan.md` | ✅ |
-| 5 | Implement | `dev-coder` | `05-implement.md` | ✅ |
-| 6 | Review | `dev-reviewer` | `06-review.md` | ✅ |
-| 7 | Test | `dev-tester` | `07-test.md` | ✅ |
-| 8 | Deploy | `dev-devops` | `08-deploy.md` | ❌ |
+| # | Этап | Агент | Файл отчёта | Обязательный | Модель |
+|---|------|-------|-------------|--------------|--------|
+| 1 | Research | `dev-researcher` | `01-research.md` | ✅ | haiku |
+| 2 | Design | `dev-architect` | `02-design.md` | ✅ | sonnet |
+| 3 | DevOps Setup | `dev-devops` | `03-devops-setup.md` | ❌ | sonnet |
+| 4 | Plan | `dev-planner` | `04-plan.md` | ✅ | sonnet |
+| 5 | Implement | `dev-coder` | `05-implement.md` | ✅ | sonnet |
+| 6 | Review | `dev-reviewer` | `06-review.md` | ✅ | sonnet |
+| 7 | Test | `dev-tester` | `07-test.md` | ✅ | haiku |
+| 8 | Deploy | `dev-devops` | `08-deploy.md` | ❌ | sonnet |
+
+**Координатор:** `dev-coordinator` — управляет всем pipeline
+
+---
+
+## Workflow Diagram
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│  Research   │ ──► │   Design    │ ──► │  DevOps     │
+│  (haiku)    │     │  (sonnet)   │     │  (sonnet)   │
+│  maxTurns:20│     │  maxTurns:15│     │  maxTurns:15│
+│  background │     │             │     │             │
+└─────────────┘     └─────────────┘     └─────────────┘
+                                               │
+                                               ▼
+                                        ┌─────────────┐
+                                        │    Plan     │
+                                        │  (sonnet)   │
+                                        │  maxTurns:15│
+                                        └─────────────┘
+                                               │
+                                               ▼
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Deploy    │ ◄── │    Test     │ ◄── │   Review    │
+│  (sonnet)   │     │   (haiku)   │     │  (sonnet)   │
+│  maxTurns:15│     │  maxTurns:20│     │  maxTurns:15│
+└─────────────┘     │  background │     └─────────────┘
+                    └─────────────┘            │
+                           ▲                   │
+                           │                   ▼
+                    ┌──────┴──────┐      ┌───────────┐
+                    │  Implement  │ ───► │  Review   │
+                    │  (sonnet)   │      │   Loop    │
+                    │  maxTurns:30│      └───────────┘
+                    │  worktree   │
+                    └─────────────┘
+```
 
 ---
 
 ## Пример использования
 
-### Этап 1: Research
+### Вариант 1: Ручной вызов агентов
+
+#### Этап 1: Research
 ```
 Agent(
   subagent_type="dev-researcher",
@@ -59,7 +99,7 @@ Agent(
 )
 ```
 
-### Этап 2: Design
+#### Этап 2: Design
 ```
 Agent(
   subagent_type="dev-architect",
@@ -70,7 +110,7 @@ Agent(
 
 → Создаёт `02-design.md`
 
-### Этап 3: DevOps Setup (если нужен)
+#### Этап 3: DevOps Setup (если нужен)
 ```
 Agent(
   subagent_type="dev-devops",
@@ -81,7 +121,7 @@ Agent(
 
 → Создаёт `03-devops-setup.md`, Dockerfile, docker-compose.yml
 
-### Этап 4: Plan
+#### Этап 4: Plan
 ```
 Agent(
   subagent_type="dev-planner",
@@ -92,7 +132,7 @@ Agent(
 
 → Создаёт `04-plan.md`
 
-### Этап 5: Implement
+#### Этап 5: Implement
 ```
 Agent(
   subagent_type="dev-coder",
@@ -103,7 +143,7 @@ Agent(
 
 → Пишет код, создаёт `05-implement.md`
 
-### Этап 6: Review
+#### Этап 6: Review
 ```
 Agent(
   subagent_type="dev-reviewer",
@@ -116,7 +156,7 @@ Agent(
 
 **Если есть Critical issues** → dev-coder исправляет → повторить review
 
-### Этап 7: Test
+#### Этап 7: Test
 ```
 Agent(
   subagent_type="dev-tester",
@@ -127,7 +167,7 @@ Agent(
 
 → Пишет тесты, запускает, создаёт `07-test.md`
 
-### Этап 8: Deploy (если нужен)
+#### Этап 8: Deploy (если нужен)
 ```
 Agent(
   subagent_type="dev-devops",
@@ -140,32 +180,54 @@ Agent(
 
 ---
 
-## Workflow Diagram
+### Вариант 2: Через координатора
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  Research   │ ──► │   Design    │ ──► │  DevOps     │
-│  (haiku)    │     │  (sonnet)   │     │  (sonnet)   │
-└─────────────┘     └─────────────┘     └─────────────┘
-                                               │
-                                               ▼
-                                        ┌─────────────┐
-                                        │    Plan     │
-                                        │  (sonnet)   │
-                                        └─────────────┘
-                                               │
-                                               ▼
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Deploy    │ ◄── │    Test     │ ◄── │   Review    │
-│  (sonnet)   │     │   (haiku)   │     │  (sonnet)   │
-└─────────────┘     └─────────────┘     └─────────────┘
-                           ▲                   ▲
-                           │                   │
-                    ┌──────┴──────┐      ┌─────┴─────┐
-                    │  Implement  │ ───► │  (цикл)   │
-                    │  (sonnet)   │      │  Revise   │
-                    └─────────────┘      └───────────┘
+Agent(
+  subagent_type="dev-coordinator",
+  description="Pipeline: Auth Feature",
+  prompt="Реализуй аутентификацию пользователей. Координируй весь pipeline от Research до Test."
+)
 ```
+
+Координатор автоматически:
+1. Запустит dev-researcher
+2. После approval → dev-architect
+3. После approval → dev-planner
+4. После approval → dev-coder
+5. → dev-reviewer
+6. Если issues → loop back
+7. → dev-tester
+8. Если fails → loop back
+
+---
+
+## Особенности агентов
+
+### dev-coder
+- **isolation: worktree** — работает в изолированной копии репозитория
+- **hooks** — валидация опасных команд
+
+### dev-researcher
+- **background: true** — можно запускать параллельно несколько исследований
+
+### dev-tester
+- **background: true** — тесты могут работать параллельно
+
+### Все агенты
+- **maxTurns** — ограничение итераций
+- **memory: user** — накопление знаний между сессиями
+- **skills** — предзагруженные инструкции
+
+---
+
+## Hooks
+
+| Hook | Файл | Назначение |
+|------|------|------------|
+| validate-bash.sh | hooks/ | Блокирует опасные команды |
+| run-linter.sh | hooks/ | Запускает линтер после изменений |
+| validate-sql.sh | hooks/ | Блокирует SQL write операции |
 
 ---
 
@@ -177,6 +239,7 @@ Agent(
 | Design | `dev-architect` | Проектирует архитектуру, диаграммы |
 | DevOps | `dev-devops` | Docker, CI/CD |
 | Plan | `dev-planner` | Декомпозиция на фазы, критерии готовности |
-| Implement | `dev-coder` | Пишет код |
-| Review | `dev-reviewer` | Проверяет код |
+| Implement | `dev-coder` | Пишет код (в worktree) |
+| Review | `dev-reviewer` | Проверяет код (read-only) |
 | Test | `dev-tester` | Пишет и запускает тесты |
+| Coordinate | `dev-coordinator` | Управляет всем pipeline |
