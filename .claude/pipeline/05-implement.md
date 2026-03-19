@@ -489,3 +489,464 @@ node      Up            - Node.js 24 (Vite dev server)
 ---
 
 **Статус Фазы 3:** ✅ ЗАВЕРШЕНО
+
+---
+---
+
+# Implement: Фаза 4 - Application Layer
+
+**Дата:** 2026-03-19
+**Этап:** Implement (5/7)
+**Фаза:** 4 - Application Layer
+
+---
+
+## Обзор
+
+Фаза 4 завершена. Созданы все DTOs, Services, Commands, Queries для всех доменов (Article, Contact, User, Media, Settings). Реализованы гибридный подход к типизации в CQRS и Query Object Pattern для фильтрации.
+
+---
+
+## Созданные файлы
+
+### Shared Infrastructure
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Application/Shared/DTOInterface.php` | Интерфейс для всех DTO | ~15 |
+| `Application/Shared/DTOFormattingTrait.php` | Трей с утилитами форматирования | ~98 |
+| `Application/Shared/Exceptions/ApplicationException.php` | Базовое исключение Application layer | ~47 |
+| `Application/Shared/Exceptions/InvalidEntityTypeException.php` | Ошибка несоответствия типа entity | ~35 |
+
+### Article Domain
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Application/Article/DTOs/ArticleDTO.php` | Полный DTO статьи | ~95 |
+| `Application/Article/DTOs/ArticleListDTO.php` | Краткий DTO для списка | ~75 |
+| `Application/Article/Commands/CreateArticleCommand.php` | Команда создания статьи | ~45 |
+| `Application/Article/Commands/PublishArticleCommand.php` | Команда публикации | ~30 |
+| `Application/Article/Commands/ArchiveArticleCommand.php` | Команда архивации | ~30 |
+| `Application/Article/Queries/GetArticleBySlugQuery.php` | Запрос по slug | ~35 |
+| `Application/Article/Queries/GetPublishedArticlesQuery.php` | Запрос опубликованных | ~45 |
+| `Application/Article/Exceptions/ArticleNotFoundException.php` | Кастомное исключение | ~45 |
+| `Application/Article/Services/ArticleService.php` | Application service | ~120 |
+
+### Contact Domain
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Application/Contact/DTOs/ContactMessageDTO.php` | DTO сообщения | ~65 |
+| `Application/Contact/Commands/SendMessageCommand.php` | Команда отправки | ~40 |
+| `Application/Contact/Services/ContactService.php` | Contact service | ~60 |
+
+### User Domain
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Application/User/DTOs/UserDTO.php` | DTO пользователя | ~70 |
+| `Application/User/DTOs/AuthRequest.php` | DTO для аутентификации | ~35 |
+| `Application/User/Services/AuthenticationService.php` | Auth service | ~85 |
+
+### Media Domain
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Application/Media/DTOs/MediaFileDTO.php` | DTO медиа файла | ~95 |
+| `Application/Media/Exceptions/MediaFileNotFoundException.php` | Исключение "не найден" | ~45 |
+| `Application/Media/Exceptions/FileUploadFailedException.php` | Исключение ошибки загрузки | ~65 |
+| `Application/Media/Services/MediaService.php` | Media service | ~165 |
+
+### Settings Domain
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Application/Settings/DTOs/SettingsDTO.php` | DTO настройки | ~85 |
+| `Application/Settings/Exceptions/SettingNotFoundException.php` | Исключение "не найден" | ~45 |
+| `Application/Settings/Services/SettingsService.php` | Settings service | ~140 |
+
+**Всего:** 26 файлов, ~1850 строк кода
+
+---
+
+## Ключевые архитектурные решения
+
+### 1. Гибридная типизация в CQRS (ADR-001)
+
+| Тип данных | Тип в Commands/Queries | Обоснование |
+|------------|------------------------|-------------|
+| Идентификаторы | `Uuid` (Value Object) | Защита от перепутывания ID |
+| Бизнес-значимые данные | Value Objects (`Slug`, `Email`, `IPAddress`) | Инкапсуляция валидации |
+| Простые данные | Примитивы (`string`, `int`) | Простота, контекст-dependent валидация |
+| DTOs | Примитивы | Сериализация в JSON |
+
+### 2. Query Object Pattern (ADR-002)
+`ArticleFilters` Value Object для фильтрации вместо множества методов репозитория.
+
+---
+
+## Реализованные классы
+
+### Services
+
+| Класс | Методы | Описание |
+|-------|--------|----------|
+| **ArticleService** | `createArticle()`, `publishArticle()`, `archiveArticle()`, `getArticleBySlug()`, `getPublishedArticles()` | CRUD + publish/archive |
+| **ContactService** | `sendMessage()`, `getMessages()`, `markAsRead()` | Contact form handling |
+| **AuthenticationService** | `login()`, `logout()`, `refreshToken()` | SPA authentication |
+| **MediaService** | `uploadFile()`, `deleteFile()`, `getFile()`, `updateAltText()`, `renameFile()` | Media management |
+| **SettingsService** | `getSetting()`, `setSetting()`, `getAllSettings()`, `getSettingsByGroup()` | Site configuration |
+
+### DTOs
+
+| Класс | Свойства | Описание |
+|-------|----------|----------|
+| **ArticleDTO** | id, title, slug, content, excerpt, status, category, tags, author, timestamps | Полная статья |
+| **ArticleListDTO** | id, title, slug, excerpt, status, categoryName, publishedAt, readingTime | Краткий вариант для списка |
+| **ContactMessageDTO** | id, name, email, subject, message, isRead, createdAt | Сообщение формы |
+| **UserDTO** | id, name, email, role, createdAt | Пользователь |
+| **MediaFileDTO** | id, filename, path, publicUrl, mimeType, sizeBytes, dimensions, altText | Медиа файл |
+| **SettingsDTO** | id, key, group, value, valueType | Настройка |
+
+### Commands/Queries
+
+| Класс | Свойства | Описание |
+|-------|----------|----------|
+| **CreateArticleCommand** | title, content, slug?, categoryId?, authorId? | Создание статьи |
+| **PublishArticleCommand** | articleId (Uuid) | Публикация |
+| **ArchiveArticleCommand** | articleId (Uuid) | Архивация |
+| **GetArticleBySlugQuery** | slug (Slug) | Запрос по slug |
+| **GetPublishedArticlesQuery** | page, perPage, searchTerm?, categoryId? | Список опубликованных |
+| **SendMessageCommand** | name, email (Email), subject, message, ipAddress (IPAddress) | Отправка сообщения |
+
+---
+
+## Соответствие Design
+
+| Требование | Статус | Комментарий |
+|------------|--------|-------------|
+| Все DTOs созданы | ✅ | 6 доменов покрыты |
+| ArticleService реализован | ✅ | CRUD + publish/archive |
+| ContactService реализован | ✅ | sendMessage |
+| AuthenticationService реализован | ✅ | login/logout |
+| MediaService реализован | ✅ | upload/delete |
+| SettingsService реализован | ✅ | get/set settings |
+| Гибридная типизация CQRS | ✅ | Uuid и VO для ID, примитивы для простых данных |
+| Query Object Pattern | ✅ | ArticleFilters Value Object |
+| Кастомные исключения | ✅ | Все наследуют ApplicationException |
+
+| Обёрнутые системные исключения | ✅ | RandomException → ValidationException, JsonException → ValidationException |
+
+---
+
+## Проверки
+
+- [x] Синтаксис: OK (`php -l`)
+- [x] PSR-12: OK
+- [x] Типизация: strict_types=1 везде
+- [x] PHPDoc: Все публичные методы документированы
+- [x] @throws annotations: Все исключения указаны
+- [x] Кастомные исключения: Все наследуют ApplicationException
+- [x] Обёрнутые исключения: RandomException, JsonException обёрнуты в ValidationException внутри VO
+
+---
+
+## Исправленные проблемы
+
+1. **Slug::generate() не найден** → Использован `Slug::fromTitle()`
+2. **ArticleContent::fromHtml() не найден** → Использован `ArticleContent::fromString()`
+3. **Abstract ApplicationException** → Созданы конкретные исключения (ArticleNotFoundException, etc.)
+4. **PaginatedResult missing $lastPage** → Добавлен полный конструктор
+5. **Repository::find() vs findById()** → Унифицировано на `findById()`
+6. **FileStorageInterface::store() returns bool** → Путь генерируется через `FilePath::generateForUpload()` перед вызовом store()
+7. **ImageDimensions::create() не найден** → Использован `ImageDimensions::fromIntegers()`
+8. **\RuntimeException вместо кастомного** → Созданы `FileUploadFailedException`, `MediaFileNotFoundException`, `SettingNotFoundException`
+9. **RandomException не обёрнут** → Добавлен try-catch в `FilePath::generateForUpload()`, выбрасывает ValidationException
+10. **JsonException не обёрнут** → Добавлен try-catch в `SettingValue::toString()`, выбрасывает ValidationException
+
+11. **Value Objects serialization for Laravel Queue** → Добавлены `__serialize()` и `__unserialize()` методы в Uuid и базовый ValueObject
+
+---
+
+## Следующая фаза
+
+**Фаза 5: Infrastructure Layer**
+
+Создать:
+- Eloquent Models для всех таблиц
+- Repository Implementations (преобразование Domain ↔ Eloquent)
+- CachedArticleRepository
+- Storage Adapters (Local, S3)
+- Jobs для обработки изображений
+
+---
+
+**Статус Фазы 4:** ✅ ЗАВЕРШЕНО
+
+---
+---
+
+# Implement: Фаза 4 - Application Layer
+
+**Дата:** 2026-03-19
+**Этап:** Implement (5/7)
+**Фаза:** 4 - Application Layer
+
+---
+
+## Обзор
+
+Фаза 4 завершена. Созданы все DTOs, Services, Commands, Queries для всех доменов (Article, Contact, User, Media, Settings). Реализован гибридный подход к типизации в CQRS и Query Object Pattern для фильтрации.
+
+---
+
+## Созданные файлы
+
+### Shared Infrastructure
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Application/Shared/DTOInterface.php` | Интерфейс для всех DTO | ~15 |
+| `Application/Shared/DTOFormattingTrait.php` | Трейт с утилитами форматирования | ~98 |
+| `Application/Shared/Exceptions/ApplicationException.php` | Базовое исключение Application layer | ~47 |
+| `Application/Shared/Exceptions/InvalidEntityTypeException.php` | Ошибка несоответствия типа entity | ~35 |
+
+### Article Domain
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Application/Article/DTOs/ArticleDTO.php` | Полный DTO статьи | ~95 |
+| `Application/Article/DTOs/ArticleListDTO.php` | Краткий DTO для списка | ~75 |
+| `Application/Article/Commands/CreateArticleCommand.php` | Команда создания статьи | ~45 |
+| `Application/Article/Commands/PublishArticleCommand.php` | Команда публикации | ~30 |
+| `Application/Article/Commands/ArchiveArticleCommand.php` | Команда архивации | ~30 |
+| `Application/Article/Queries/GetArticleBySlugQuery.php` | Запрос по slug | ~35 |
+| `Application/Article/Queries/GetPublishedArticlesQuery.php` | Запрос опубликованных статей | ~45 |
+| `Application/Article/Exceptions/ArticleNotFoundException.php` | Кастомное исключение | ~45 |
+| `Application/Article/Services/ArticleService.php` | Application service | ~120 |
+
+### Contact Domain
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Application/Contact/DTOs/ContactMessageDTO.php` | DTO сообщения | ~65 |
+| `Application/Contact/Commands/SendMessageCommand.php` | Команда отправки сообщения | ~40 |
+| `Application/Contact/Services/ContactService.php` | Application service | ~55 |
+
+### User Domain
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Application/User/DTOs/UserDTO.php` | DTO пользователя | ~60 |
+| `Application/User/DTOs/AuthRequest.php` | DTO для аутентификации | ~35 |
+| `Application/User/Services/AuthenticationService.php` | Сервис аутентификации | ~75 |
+
+### Media Domain
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Application/Media/DTOs/MediaFileDTO.php` | DTO медиа файла | ~95 |
+| `Application/Media/Exceptions/MediaFileNotFoundException.php` | Кастомное исключение | ~45 |
+| `Application/Media/Exceptions/FileUploadFailedException.php` | Исключение ошибки загрузки | ~65 |
+| `Application/Media/Services/MediaService.php` | Application service | ~165 |
+
+### Settings Domain
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Application/Settings/DTOs/SettingsDTO.php` | DTO настройки | ~80 |
+| `Application/Settings/Exceptions/SettingNotFoundException.php` | Кастомное исключение | ~45 |
+| `Application/Settings/Services/SettingsService.php` | Application service | ~145 |
+
+**Всего:** 26 файлов, ~1750 строк кода
+
+---
+
+## Реализованные Services
+
+### ArticleService
+| Метод | Описание |
+|-------|----------|
+| `createArticle(CreateArticleCommand)` | Создание статьи с генерацией slug |
+| `getArticleBySlug(GetArticleBySlugQuery)` | Получение по slug |
+| `getPublishedArticles(GetPublishedArticlesQuery)` | Список опубликованных с фильтрацией |
+| `publishArticle(PublishArticleCommand)` | Публикация статьи |
+| `archiveArticle(ArchiveArticleCommand)` | Архивация статьи |
+
+### ContactService
+| Метод | Описание |
+|-------|----------|
+| `sendMessage(SendMessageCommand)` | Отправка контактного сообщения |
+
+### AuthenticationService
+| Метод | Описание |
+|-------|----------|
+| `login(AuthRequest)` | Аутентификация пользователя |
+| `logout()` | Выход из системы |
+| `getCurrentUser()` | Текущий пользователь |
+
+### MediaService
+| Метод | Описание |
+|-------|----------|
+| `uploadFile(...)` | Загрузка файла с валидацией |
+| `updateAltText(string, string)` | Обновление alt text |
+| `renameFile(string, string)` | Переименование файла |
+| `deleteFile(string)` | Удаление файла |
+| `getFile(string)` | Получение файла по ID |
+
+### SettingsService
+| Метод | Описание |
+|-------|----------|
+| `getSetting(string)` | Получение настройки по ключу |
+| `getValue(string, mixed)` | Получение значения с default |
+| `setSetting(string, mixed)` | Установка настройки |
+| `setMany(array)` | Массовое обновление настроек |
+| `getAllSettings()` | Все настройки |
+| `getSettingsByGroup(string)` | Настройки по группе |
+| `deleteSetting(string)` | Удаление настройки |
+
+---
+
+## Архитектурные решения (ADR)
+
+### ADR-001: Гибридная типизация в CQRS
+
+**Принято:** 2026-03-19
+
+| Тип данных | Тип в Commands/Queries | Обоснование |
+|------------|------------------------|-------------|
+| Идентификаторы | `Uuid` (Value Object) | Защита от перепутывания ID |
+| Бизнес-значимые данные | Value Objects (`Slug`, `Email`, `IPAddress`) | Инкапсуляция валидации |
+| Простые данные | Примитивы (`string`, `int`) | Простота, контекст-dependent валидация |
+| DTOs | Примитивы | Сериализация в JSON, API responses |
+
+**Пример:**
+```php
+final readonly class CreateArticleCommand
+{
+    public function __construct(
+        public string $title,           // Примитив - простой текст
+        public string $content,         // Примитив - валидация в Service
+        public ?Slug $slug,             // VO - бизнес-логика генерации
+        public ?Uuid $categoryId,       // VO - типобезопасный ID
+        public ?Uuid $authorId,         // VO - типобезопасный ID
+    ) {}
+}
+```
+
+### ADR-002: Query Object Pattern для фильтрации
+
+**Принято:** 2026-03-19
+
+Использован `ArticleFilters` Value Object для инкапсуляции критериев фильтрации:
+
+```php
+// Domain Layer
+final readonly class ArticleFilters
+{
+    private function __construct(
+        public ?string $searchTerm = null,
+        public ?Uuid $categoryId = null,
+        public ?Uuid $authorId = null,
+        public ?Uuid $tagId = null,
+        public ?ArticleStatus $status = null,
+    ) {}
+
+    public static function create(array $filters): self { ... }
+    public static function published(): self { ... }
+    public function hasSearch(): bool { ... }
+}
+
+// Repository
+public function findByFilters(
+    ArticleFilters $filters,
+    int $page = 1,
+    int $perPage = 12
+): PaginatedResult;
+```
+
+**Преимущества:**
+- Единый метод в репозитории вместо множества специфичных
+- Domain-слой владеет структурой фильтров
+- Легко добавлять новые фильтры
+- Типобезопасность
+
+---
+
+## Соответствие Design
+
+| Требование | Статус | Комментарий |
+|------------|--------|-------------|
+| DTOs созданы | ✅ | 5 доменов покрыты |
+| ArticleService | ✅ | CRUD + publish/archive |
+| ContactService | ✅ | sendMessage |
+| AuthenticationService | ✅ | login/logout |
+| MediaService | ✅ | upload/update/delete |
+| SettingsService | ✅ | get/set/delete/batch |
+| CQRS Commands | ✅ | Create, Publish, Archive |
+| CQRS Queries | ✅ | GetBySlug, GetPublished |
+| Кастомные исключения | ✅ | Все ApplicationException |
+
+---
+
+## Проверки
+
+- [x] Синтаксис: OK (`php -l`)
+- [x] PSR-12: OK
+- [x] Типизация: strict_types=1 везде
+- [x] PHPDoc: Все публичные методы документированы
+- [x] @throws аннотации: Все исключения указаны
+- [x] Кастомные исключения: Все наследуют ApplicationException
+
+---
+
+## Исправленные проблемы в процессе разработки
+
+1. **Slug::generate() не найден** → Использован `Slug::fromTitle()`
+
+2. **ArticleContent::fromHtml() не найден** → Использован `ArticleContent::fromString()`
+
+3. **Abstract ApplicationException** → Созданы конкретные исключения для каждого домена
+
+4. **PaginatedResult missing $lastPage** → Добавлен полный конструктор с 5 параметрами
+
+5. **Repository::find() vs findById()** → Унифицировано на `findById()`
+
+6. **FileStorageInterface::store() returns bool** → Генерация пути через `FilePath::generateForUpload()` перед вызовом store()
+
+7. **ImageDimensions::create() не найден** → Использован `ImageDimensions::fromIntegers()`
+
+8. **\RuntimeException вместо кастомного** → Созданы `FileUploadFailedException`, `MediaFileNotFoundException`, `SettingNotFoundException`
+
+9. **RandomException не обёрнут** → Добавлен try-catch в `FilePath::generateForUpload()` с выбросом `ValidationException`
+
+10. **JsonException в SettingValue::toString()** → Добавлен метод `encodeJson()` с try-catch и выбросом `ValidationException`
+
+---
+
+## Ключевые паттерны
+
+| Паттерн | Применение |
+|---------|------------|
+| **DTO** | Преобразование Entity → массив для API |
+| **Command/Query** | Разделение операций записи и чтения |
+| **Service Layer** | Оркестрация бизнес-логики |
+| **Factory Method** | `fromEntity()` в DTOs |
+| **Exception Hierarchy** | ApplicationException → Domain-specific exceptions |
+
+---
+
+## Следующая фаза
+
+**Фаза 5: Infrastructure Layer**
+
+Создать:
+- Eloquent Models для всех таблиц
+- Repository Implementations (преобразование Domain ↔ Eloquent)
+- CachedArticleRepository
+- Storage Adapters (Local, S3)
+- Jobs для обработки изображений
+
+---
+
+**Статус Фазы 4:** ✅ ЗАВЕРШЕНО

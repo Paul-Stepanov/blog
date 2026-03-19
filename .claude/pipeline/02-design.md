@@ -200,6 +200,121 @@ Domain/Shared/
 | **Factory** | Создание сложных объектов | ArticleFactory, MediaFactory |
 | **Adapter** | Интеграция с внешними сервисами | StorageAdapter (local/S3) |
 | **Facade** | Упрощение сложных операций | ArticleFacade (для контроллеров) |
+| **Query Object** | Инкапсуляция критериев фильтрации в объект | ArticleFilters Value Object |
+
+---
+
+## Архитектурные решения (ADR)
+
+### ADR-001: Гибридная типизация в CQRS Commands и Queries
+
+**Статус:** Принято (2026-03-19)
+
+**Проблема:** Как типизировать свойства в Commands/Queries — примитивы или Value Objects?
+
+**Решение:** Гибридный подход:
+
+| Тип данных | Тип в Commands/Queries | Обоснование |
+|------------|------------------------|-------------|
+| Идентификаторы | `Uuid` (Value Object) | Защита от перепутывания ID |
+| Бизнес-значимые данные | Value Objects (`Slug`, `Email`, `IPAddress`) | Инкапсуляция валидации |
+| Простые данные | Примитивы (`string`, `int`) | Простота, контекст-dependent валидация |
+| DTOs | Примитивы | Сериализация в JSON, API responses |
+
+**Примеры:**
+```php
+// ✅ ПРАВИЛЬНО - гибридный подход
+final readonly class CreateArticleCommand
+{
+    public function __construct(
+        public string $title,           // Примитив - простой текст
+        public string $content,         // Примитив - контент валидируется в Service
+        public ?Slug $slug,             // VO - бизнес-логика генерации
+        public ?Uuid $categoryId,       // VO - типобезопасный ID
+        public ?Uuid $authorId,         // VO - типобезопасный ID
+    ) {}
+}
+
+final readonly class SendMessageCommand
+{
+    public function __construct(
+        public string $name,
+        public Email $email,            // VO - валидация формата
+        public string $subject,
+        public string $message,
+        public IPAddress $ipAddress,    // VO - бизнес-логика
+    ) {}
+}
+```
+
+**Сериализация для Laravel Queue:**
+Value Objects должны поддерживать `__serialize()`/`__unserialize()`.
+
+---
+
+### ADR-002: Query Object Pattern для фильтрации
+
+**Статус:** Принято (2026-03-19)
+
+**Проблема:** Множество специфичных методов репозитория (`findPublished()`, `findByCategory()`, `search()`) или if-else в Service — неэлегантно и сложно расширять.
+
+**Решение:** Query Object Pattern с `ArticleFilters` Value Object.
+
+**Преимущества:**
+1. Единый метод `findByFilters()` в репозитории
+2. Domain-слой владеет структурой фильтров
+3. Легко добавлять новые фильтры
+4. Типобезопасность
+5. Валидация в одном месте
+
+**Реализация:**
+```php
+// Domain Layer
+final readonly class ArticleFilters
+{
+    private function __construct(
+        public ?string $searchTerm = null,
+        public ?Uuid $categoryId = null,
+        public ?Uuid $authorId = null,
+        public ?Uuid $tagId = null,
+        public ?ArticleStatus $status = null,
+    ) {}
+
+    public static function create(array $filters): self { ... }
+    public static function published(): self { ... }
+    public function hasSearch(): bool { ... }
+}
+
+// Repository Interface
+interface ArticleRepositoryInterface
+{
+    public function findByFilters(
+        ArticleFilters $filters,
+        int $page = 1,
+        int $perPage = 12
+    ): PaginatedResult;
+}
+
+// Application Service
+final readonly class ArticleService
+{
+    public function getPublishedArticles(GetPublishedArticlesQuery $query): PaginatedResult
+    {
+        $filters = ArticleFilters::create([
+            'search' => $query->searchTerm,
+            'category_id' => $query->categoryId,
+            'status' => ArticleStatus::PUBLISHED->value,
+        ]);
+
+        return $this->articleRepository->findByFilters($filters, $query->page, $query->perPage);
+    }
+}
+```
+
+**Удалены методы:**
+- ~~findPublished()~~ → `findByFilters(ArticleFilters::published())`
+- ~~findByCategory()~~ → `findByFilters(ArticleFilters::create(['category_id' => $id]))`
+- ~~search()~~ → `findByFilters(ArticleFilters::create(['search' => $term]))`
 
 ---
 

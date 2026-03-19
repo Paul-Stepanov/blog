@@ -48,4 +48,14 @@ abstract class ValueObject implements JsonSerializable
      * Returns the raw value of the value object.
      */
     abstract public function getValue(): mixed;
+
+    /**
+     * Serialize for Laravel Queue support.
+     *
+     * @return array{value: mixed}
+     */
+    public function __serialize(): array
+    {
+        return ['value' => $this->getValue()];
+    }
 }

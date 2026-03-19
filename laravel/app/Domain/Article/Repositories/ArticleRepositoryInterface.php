@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Article\Repositories;
 
 use App\Domain\Article\Entities\Article;
+use App\Domain\Article\ValueObjects\ArticleFilters;
 use App\Domain\Shared\PaginatedResult;
 use App\Domain\Shared\Uuid;
 
@@ -15,6 +16,20 @@ use App\Domain\Shared\Uuid;
  */
 interface ArticleRepositoryInterface
 {
+    /**
+     * Find articles by filters with pagination.
+     *
+     * Universal method for all article queries with filtering.
+     * Replaces multiple specific query methods (findPublished, search, etc).
+     *
+     * @return PaginatedResult<Article>
+     */
+    public function findByFilters(
+        ArticleFilters $filters,
+        int $page = 1,
+        int $perPage = 12
+    ): PaginatedResult;
+
     /**
      * Find article by ID.
      */
@@ -28,6 +43,7 @@ interface ArticleRepositoryInterface
     /**
      * Find all published articles with pagination.
      *
+     * @deprecated Use findByFilters(ArticleFilters::published(), ...)
      * @return PaginatedResult<Article>
      */
     public function findPublished(int $page = 1, int $perPage = 12): PaginatedResult;

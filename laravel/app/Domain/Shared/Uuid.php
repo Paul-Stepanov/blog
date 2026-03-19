@@ -81,4 +81,14 @@ final class Uuid extends ValueObject
     {
         return ['uuid' => $this->getValue()];
     }
+
+    /**
+     * Unserialize for Laravel Queue support.
+     *
+     * @param array{value: string} $data
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->value = RamseyUuid::fromString($data['value']);
+    }
 }

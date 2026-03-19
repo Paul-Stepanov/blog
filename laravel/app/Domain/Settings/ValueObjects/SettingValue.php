@@ -175,14 +175,30 @@ final class SettingValue extends ValueObject
 
     /**
      * Get value as string (for database storage).
+     *
+     * @throws ValidationException If JSON encoding fails
      */
     public function toString(): string
     {
         return match ($this->type) {
             self::TYPE_BOOLEAN => $this->value ? 'true' : 'false',
-            self::TYPE_JSON => json_encode($this->value, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE),
+            self::TYPE_JSON => $this->encodeJson(),
             default => (string) $this->value,
         };
+    }
+
+    /**
+     * Encode JSON value to string.
+     *
+     * @throws ValidationException If JSON encoding fails
+     */
+    private function encodeJson(): string
+    {
+        try {
+            return json_encode($this->value, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        } catch (\JsonException $e) {
+            throw ValidationException::forField('value', 'Failed to encode JSON: ' . $e->getMessage());
+        }
     }
 
     /**

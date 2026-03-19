@@ -46,7 +46,11 @@ final class FilePath extends ValueObject
 
     /**
      * Generate a unique file path for upload.
-     * @throws RandomException
+     *
+     * @param string $directory Base directory
+     * @param string $filename Original filename
+     * @param string|null $extension Override extension (optional)
+     * @throws ValidationException If random bytes generation fails
      */
     public static function generateForUpload(
         string $directory,
@@ -54,7 +58,15 @@ final class FilePath extends ValueObject
         ?string $extension = null
     ): self {
         $timestamp = date('Y/m/d');
-        $hash = bin2hex(random_bytes(8));
+
+        try {
+            $hash = bin2hex(random_bytes(8));
+        } catch (RandomException) {
+            throw ValidationException::forField(
+                'path',
+                'Failed to generate unique file path: insufficient system entropy'
+            );
+        }
 
         $name = pathinfo($filename, PATHINFO_FILENAME);
         $ext = $extension ?? pathinfo($filename, PATHINFO_EXTENSION);

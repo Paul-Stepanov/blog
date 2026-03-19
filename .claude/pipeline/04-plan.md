@@ -230,6 +230,39 @@ src/
 
 ---
 
+## Принятые архитектурные решения (ADR)
+
+### ADR-001: Гибридная типизация в CQRS
+
+**Статус:** Принято (2026-03-19)
+
+**Гибридный подход к типизации в Commands/Queries:**
+
+| Тип данных | Тип в Commands/Queries | Обоснование |
+|------------|------------------------|-------------|
+| Идентификаторы | `Uuid` (Value Object) | Защита от перепутывания ID |
+| Бизнес-значимые данные | Value Objects (`Slug`, `Email`, `IPAddress`) | Инкапсуляция валидации |
+| Простые данные | Примитивы (`string`, `int`) | Простота, контекст-dependent валидация |
+| DTOs | Примитивы | Сериализация в JSON, API responses |
+
+**Подробнее:** `.claude/pipeline/adr-cqrs-typing.md`
+
+### ADR-002: Query Object Pattern для фильтрации
+
+**Статус:** Принято (2026-03-19)
+
+**Query Object Pattern** с `ArticleFilters` Value Object вместо множества специфичных методов репозитория.
+
+**Преимущества:**
+- Единый метод `findByFilters()` в репозитории
+- Domain-слой владеет структурой фильтров
+- Легко добавлять новые фильтры
+- Типобезопасность
+
+**Подробнее:** `.claude/pipeline/adr-search-filter.md`, `.claude/pipeline/design-article-filters.md`
+
+---
+
 ### Фаза 5: Infrastructure Layer
 
 **Задачи:**
