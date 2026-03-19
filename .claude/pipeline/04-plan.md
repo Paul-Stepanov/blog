@@ -1,10 +1,11 @@
 # Plan: Блог с DDD архитектурой и Bento Grid дизайном
 
-**Дата:** 2026-03-18
+**Дата:** 2026-03-19 (обновлено)
 **Pipeline этап:** Plan (4/7)
-**Research:** 01-research.md
-**Design:** 02-design.md
+**Research:** 01-research.md, research-storage.md, research-model-map.md
+**Design:** 02-design.md, 02-design-storage.md, design-mappers.md
 **DevOps:** 03-devops-setup.md (уже реализован)
+**Implement:** 05-implement-storage.md (Local Storage), 05-implement-mappers.md (Data Mappers)
 
 ---
 
@@ -230,9 +231,9 @@ src/
 
 ---
 
-## Принятые архитектурные решения (ADR)
+### Принятые архитектурные решения (ADR)
 
-### ADR-001: Гибридная типизация в CQRS
+#### ADR-001: Гибридная типизация в CQRS
 
 **Статус:** Принято (2026-03-19)
 
@@ -245,9 +246,7 @@ src/
 | Простые данные | Примитивы (`string`, `int`) | Простота, контекст-dependent валидация |
 | DTOs | Примитивы | Сериализация в JSON, API responses |
 
-**Подробнее:** `.claude/pipeline/adr-cqrs-typing.md`
-
-### ADR-002: Query Object Pattern для фильтрации
+#### ADR-002: Query Object Pattern для фильтрации
 
 **Статус:** Принято (2026-03-19)
 
@@ -259,20 +258,56 @@ src/
 - Легко добавлять новые фильтры
 - Типобезопасность
 
-**Подробнее:** `.claude/pipeline/adr-search-filter.md`, `.claude/pipeline/design-article-filters.md`
-
 ---
 
 ### Фаза 5: Infrastructure Layer
 
+> **Детальные планы:**
+> - `05-implement-storage.md` (Local Storage)
+> - `05-implement-mappers.md` (Data Mappers) ✨ **NEW**
+
 **Задачи:**
+
+*Data Mappers (типобезопасная трансформация Domain <-> Eloquent):*
+- Создать Custom Casts (7 штук): UuidCast, SlugCast, EmailCast, IPAddressCast, MimeTypeCast, FilePathCast, SettingKeyCast
+- Создать BaseMapper trait с общими методами маппинга
+- Создать типизированные Mappers (7 штук): ArticleMapper, CategoryMapper, TagMapper, UserMapper, MediaFileMapper, ContactMessageMapper, SiteSettingMapper
+- Обновить Eloquent Models с Custom Casts
+- Интегрировать Mappers в Repositories
+
+*Persistence (Eloquent):*
 - Создать Eloquent Models для всех таблиц
 - Реализовать Repository Implementations (преобразование Domain <-> Eloquent)
 - Создать CachedArticleRepository для кэширования
-- Реализовать Storage Adapters (Local и S3)
+
+*Storage (Local):*
+- Реализовать Local Storage (LocalStorageAdapter, InterventionImageProcessor)
+- Создать FileDownloadController для приватных файлов
+- Настроить StorageServiceProvider (DI bindings)
 - Создать Jobs для обработки изображений
 
 **Файлы:**
+
+*Custom Casts (7):*
+- `laravel/app/Infrastructure/Persistence/Casts/UuidCast.php`
+- `laravel/app/Infrastructure/Persistence/Casts/SlugCast.php`
+- `laravel/app/Infrastructure/Persistence/Casts/EmailCast.php`
+- `laravel/app/Infrastructure/Persistence/Casts/IPAddressCast.php`
+- `laravel/app/Infrastructure/Persistence/Casts/MimeTypeCast.php`
+- `laravel/app/Infrastructure/Persistence/Casts/FilePathCast.php`
+- `laravel/app/Infrastructure/Persistence/Casts/SettingKeyCast.php`
+
+*Mappers (8):*
+- `laravel/app/Infrastructure/Persistence/Eloquent/Mappers/BaseMapper.php` (trait)
+- `laravel/app/Infrastructure/Persistence/Eloquent/Mappers/ArticleMapper.php`
+- `laravel/app/Infrastructure/Persistence/Eloquent/Mappers/CategoryMapper.php`
+- `laravel/app/Infrastructure/Persistence/Eloquent/Mappers/TagMapper.php`
+- `laravel/app/Infrastructure/Persistence/Eloquent/Mappers/UserMapper.php`
+- `laravel/app/Infrastructure/Persistence/Eloquent/Mappers/MediaFileMapper.php`
+- `laravel/app/Infrastructure/Persistence/Eloquent/Mappers/ContactMessageMapper.php`
+- `laravel/app/Infrastructure/Persistence/Eloquent/Mappers/SiteSettingMapper.php`
+
+*Persistence (Eloquent):*
 - `laravel/app/Infrastructure/Persistence/Eloquent/Models/ArticleModel.php`
 - `laravel/app/Infrastructure/Persistence/Eloquent/Models/CategoryModel.php`
 - `laravel/app/Infrastructure/Persistence/Eloquent/Models/TagModel.php`
@@ -288,22 +323,49 @@ src/
 - `laravel/app/Infrastructure/Persistence/Eloquent/Repositories/EloquentMediaRepository.php`
 - `laravel/app/Infrastructure/Persistence/Eloquent/Repositories/EloquentSettingsRepository.php`
 - `laravel/app/Infrastructure/Persistence/Cache/CachedArticleRepository.php`
+
+*Storage (Local):*
 - `laravel/app/Infrastructure/Storage/LocalStorageAdapter.php`
-- `laravel/app/Infrastructure/Storage/S3StorageAdapter.php`
+- `laravel/app/Infrastructure/Storage/InterventionImageProcessor.php`
+- `laravel/app/Infrastructure/Http/Controllers/FileDownloadController.php`
+- `laravel/app/Infrastructure/Providers/StorageServiceProvider.php`
+- `laravel/config/image.php`
 - `laravel/app/Infrastructure/Queue/ProcessImageJob.php`
 
+**Зависимости:**
+- `intervention/image:^3.0` (composer)
+- Docker volume для storage/app
+- Nginx X-Accel-Redirect для приватных файлов
+
+**Порядок имплементации (Mappers):**
+```
+Custom Casts (7) --> BaseMapper Trait --> Mappers (7) --> Интеграция Models & Repositories
+```
+
 **Критерий готовности:**
+- [ ] Все Custom Casts созданы и работают
+- [ ] BaseMapper trait создан
+- [ ] Все 7 Mappers созданы с типизированными сигнатурами
+- [ ] Eloquent Models обновлены с $casts
+- [ ] Repositories используют Mappers
 - [ ] Все Eloquent Models созданы с relationships
-- [ ] Все Repository Implementations работают
 - [ ] CachedArticleRepository реализован
-- [ ] LocalStorageAdapter работает
+- [ ] LocalStorageAdapter работает (public/private диски)
+- [ ] InterventionImageProcessor работает (resize, WebP, AVIF)
+- [ ] FileDownloadController отдаёт приватные файлы через X-Accel-Redirect
+- [ ] StorageServiceProvider зарегистрирован
 - [ ] Интеграционные тесты для Repositories проходят
+- [ ] Unit тесты для Mappers и LocalStorageAdapter проходят
 
 **Риски:**
 | Риск | Митигация |
 |------|-----------|
-| Сложность маппинга Domain <-> Eloquent | Четкие методы toDomain() и toEloquent() |
+| Сложность маппинга Domain <-> Eloquent | Типизированные Mappers с BaseMapper trait |
 | Performance (N+1 queries) | Eager loading, индексы в миграциях |
+| Потеря файлов при redeploy | Docker named volume для storage/app |
+| GD/Imagick недоступен | Fallback на GD, проверить Dockerfile |
+| Несанкционированный доступ к приватным файлам | Signed URLs + Nginx internal location |
+| Отсутствие методов reconstitute в Entities | Проверить наличие перед имплементацией |
 
 ---
 
