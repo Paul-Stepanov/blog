@@ -2,10 +2,10 @@
 
 **Дата:** 2026-03-19 (обновлено)
 **Pipeline этап:** Plan (4/7)
-**Research:** 01-research.md, research-storage.md, research-model-map.md, research-repository-issues.md
-**Design:** 02-design.md, 02-design-storage.md, design-mappers.md, 02-design-repositories.md
+**Research:** 01-research.md, research-storage.md, research-model-map.md, research-repository-issues.md, research-http-api.md
+**Design:** 02-design.md, 02-design-storage.md, design-mappers.md, 02-design-repositories.md, 02-design-http-api.md
 **DevOps:** 03-devops-setup.md (уже реализован)
-**Implement:** 05-implement-storage.md (Local Storage), 05-implement-mappers.md (Data Mappers)
+**Implement:** 05-implement-storage.md (Local Storage), 05-implement-mappers.md (Data Mappers), 05-implement-http-api.md (HTTP API)
 
 ---
 
@@ -420,15 +420,63 @@ Custom Casts (7) --> BaseMapper Trait --> Mappers (7) --> Интеграция M
 
 ### Фаза 6: HTTP Layer (API)
 
+> **Детальный план:** `05-implement-http-api.md`
+> **Design:** `02-design-http-api.md`
+> **Research:** `research-http-api.md`
+
 **Задачи:**
-- Создать Controllers для Public API (ArticleController, CategoryController, TagController, ContactController, SettingsController, HealthController)
-- Создать Controllers для Admin API (AdminArticleController, AdminCategoryController, AdminTagController, AdminMediaController, AdminMessageController, AdminSettingsController, AdminUserController, AuthController)
-- Создать Form Requests для валидации
-- Создать API Resources для форматирования ответов
-- Настроить Routes (api.php)
+
+*Exception Handling:*
+- Обновить Handler для API exception handling
+- EntityNotFoundException → 404, ValidationException → 422, AuthenticationException → 401
+
+*Public API Controllers (5):*
+- ArticleController (index, show) - список и детальный просмотр статей
+- CategoryController (index, show) - категории
+- TagController (index, show) - теги
+- ContactController (store) - контактная форма
+- SettingsController (index, show) - публичные настройки
+
+*Admin API Controllers (8):*
+- AuthController (login, logout, user) - аутентификация
+- AdminArticleController (CRUD + publish/archive/syncTags) - управление статьями
+- AdminCategoryController (CRUD) - категории
+- AdminTagController (CRUD) - теги
+- AdminMediaController (CRUD + recent + unused) - медиа файлы
+- AdminMessageController (index, show, destroy, markAsRead, markAsUnread) - сообщения
+- AdminSettingsController (index, show, update, destroy, byGroup, deleteGroup) - настройки
+- AdminUserController (CRUD) - пользователи
+
+*Form Requests (10):*
+- ContactRequest - валидация контактной формы
+- LoginRequest - валидация логина
+- CreateArticleRequest - создание статьи
+- UpdateArticleRequest - обновление статьи
+- ArticleTagsRequest - синхронизация тегов
+- CategoryRequest - CRUD категорий
+- TagRequest - CRUD тегов
+- MediaRequest - загрузка медиа
+- SettingsRequest - настройки
+- UserRequest - пользователи
+
+*API Resources (13):*
+- ArticleResource, ArticleListResource - статьи
+- CategoryResource, CategoryCollectionResource - категории
+- TagResource, TagCollectionResource - теги
+- MediaResource, MediaCollectionResource - медиа
+- SettingsResource, SettingsCollectionResource - настройки
+- UserResource - пользователи
+- ContactMessageResource - сообщения
+- PaginatedResource - универсальная обёртка
+
+*Routes & Middleware:*
+- Public routes с rate limiting (60/мин, contact 3/час)
+- Admin routes с auth:sanctum (120/мин, login 5/мин)
+- CORS configuration для SPA
 
 **Файлы:**
-- `laravel/app/Infrastructure/Http/Controllers/Api/HealthController.php`
+
+*Controllers (13):*
 - `laravel/app/Infrastructure/Http/Controllers/Api/ArticleController.php`
 - `laravel/app/Infrastructure/Http/Controllers/Api/CategoryController.php`
 - `laravel/app/Infrastructure/Http/Controllers/Api/TagController.php`
@@ -442,32 +490,100 @@ Custom Casts (7) --> BaseMapper Trait --> Mappers (7) --> Интеграция M
 - `laravel/app/Infrastructure/Http/Controllers/Admin/AdminMessageController.php`
 - `laravel/app/Infrastructure/Http/Controllers/Admin/AdminSettingsController.php`
 - `laravel/app/Infrastructure/Http/Controllers/Admin/AdminUserController.php`
-- `laravel/app/Infrastructure/Http/Requests/CreateArticleRequest.php`
-- `laravel/app/Infrastructure/Http/Requests/UpdateArticleRequest.php`
-- `laravel/app/Infrastructure/Http/Requests/ContactRequest.php`
-- `laravel/app/Infrastructure/Http/Requests/LoginRequest.php`
+
+*Requests (10):*
+- `laravel/app/Infrastructure/Http/Requests/Api/ContactRequest.php`
+- `laravel/app/Infrastructure/Http/Requests/Api/CreateArticleRequest.php`
+- `laravel/app/Infrastructure/Http/Requests/Api/UpdateArticleRequest.php`
+- `laravel/app/Infrastructure/Http/Requests/Api/SettingsRequest.php`
+- `laravel/app/Infrastructure/Http/Requests/Admin/LoginRequest.php`
+- `laravel/app/Infrastructure/Http/Requests/Admin/ArticleTagsRequest.php`
+- `laravel/app/Infrastructure/Http/Requests/Admin/CategoryRequest.php`
+- `laravel/app/Infrastructure/Http/Requests/Admin/TagRequest.php`
+- `laravel/app/Infrastructure/Http/Requests/Admin/MediaRequest.php`
+- `laravel/app/Infrastructure/Http/Requests/Admin/UserRequest.php`
+
+*Resources (13):*
 - `laravel/app/Infrastructure/Http/Resources/ArticleResource.php`
 - `laravel/app/Infrastructure/Http/Resources/ArticleListResource.php`
 - `laravel/app/Infrastructure/Http/Resources/CategoryResource.php`
+- `laravel/app/Infrastructure/Http/Resources/CategoryCollectionResource.php`
 - `laravel/app/Infrastructure/Http/Resources/TagResource.php`
+- `laravel/app/Infrastructure/Http/Resources/TagCollectionResource.php`
 - `laravel/app/Infrastructure/Http/Resources/MediaResource.php`
+- `laravel/app/Infrastructure/Http/Resources/MediaCollectionResource.php`
 - `laravel/app/Infrastructure/Http/Resources/SettingsResource.php`
-- `laravel/routes/api.php`
+- `laravel/app/Infrastructure/Http/Resources/SettingsCollectionResource.php`
+- `laravel/app/Infrastructure/Http/Resources/UserResource.php`
+- `laravel/app/Infrastructure/Http/Resources/ContactMessageResource.php`
+- `laravel/app/Infrastructure/Http/Resources/PaginatedResource.php`
+
+*Config & Routes:*
+- `laravel/app/Exceptions/Handler.php` (изменить)
+- `laravel/routes/api.php` (изменить)
+- `laravel/config/cors.php` (изменить)
+
+**Endpoints Summary:**
+
+*Public API:*
+```
+GET  /api/articles           - throttle:60,1
+GET  /api/articles/{slug}    - throttle:60,1
+GET  /api/categories         - throttle:60,1
+GET  /api/categories/{slug}  - throttle:60,1
+GET  /api/tags               - throttle:60,1
+GET  /api/tags/{slug}        - throttle:60,1
+GET  /api/settings           - throttle:60,1
+POST /api/contact            - throttle:3,60 (3/час)
+GET  /api/health             - no throttle
+```
+
+*Admin API:*
+```
+POST   /api/admin/auth/login      - throttle:5,1
+POST   /api/admin/auth/logout     - auth:sanctum
+GET    /api/admin/user            - auth:sanctum
+GET    /api/admin/articles        - auth:sanctum
+POST   /api/admin/articles        - auth:sanctum
+PUT    /api/admin/articles/{id}   - auth:sanctum
+DELETE /api/admin/articles/{id}   - auth:sanctum
+POST   /api/admin/articles/{id}/publish  - auth:sanctum
+POST   /api/admin/articles/{id}/archive  - auth:sanctum
+PUT    /api/admin/articles/{id}/tags     - auth:sanctum
+... (остальные admin routes)
+```
+
+**Порядок имплементации (13 подпунктов):**
+```
+1. Exception Handler → 2. Public Controllers → 3. Form Requests (Public)
+    → 4. API Resources → 5. Public Routes → 6. AuthController
+    → 7. Admin Articles → 8. Admin Categories/Tags → 9. Admin Media
+    → 10. Admin Messages/Settings/Users → 11. Admin Routes
+    → 12. Middleware Config → 13. Feature Testing
+```
 
 **Критерий готовности:**
-- [ ] Все Public API endpoints работают
-- [ ] Все Admin API endpoints работают
-- [ ] Sanctum аутентификация работает
-- [ ] Form Request validation работает
-- [ ] API Resources возвращают правильный JSON
+- [ ] Exception Handler возвращает правильные HTTP статусы (404, 422, 401)
+- [ ] Все Public API endpoints работают без аутентификации
+- [ ] Все Admin API endpoints защищены auth:sanctum
+- [ ] Form Request validation возвращает 422 с errors
+- [ ] API Resources возвращают согласованный JSON
+- [ ] Rate limiting работает (проверить throttle)
+- [ ] CORS настроен для SPA origins
+- [ ] CSRF защита работает
 - [ ] Postman/Insomnia collection создана
-- [ ] Feature тесты для API проходят
+- [ ] Feature тесты для всех endpoints проходят
 
 **Риски:**
 | Риск | Митигация |
 |------|-----------|
-| Неполная валидация данных | Form Requests для всех endpoints |
-| Отсутствие авторизации | Sanctum middleware для admin routes |
+| SQL Injection в фильтрах | ArticleFilters экранирует LIKE спецсимволы |
+| XSS в контенте статей | CSP headers + экранирование |
+| CSRF на SPA | Sanctum middleware включён |
+| Brute force на login | throttle:5,1 middleware |
+| Unauthenticated admin access | auth:sanctum на всех /api/admin/* |
+| Неполная валидация | Form Requests для всех endpoints |
+| Slug collision | Repository slugExists() проверка |
 
 ---
 
@@ -709,18 +825,19 @@ graph LR
 
 ## Общая оценка
 
-- **Файлов:** ~230
+- **Файлов:** ~280 (увеличено за счёт HTTP Layer)
 - **Фаз:** 10
 - **Риски:** 5 критических (SEO, DDD, Security, Responsive, Performance)
 
 **Оценка времени:**
 - Фаза 1: 1-2 дня
-- Фазы 2-6: 5-7 дней (Backend)
+- Фазы 2-5: 4-5 дней (Domain/Application/Infrastructure)
+- Фаза 6: 5-7 дней (HTTP API - 13 подпунктов)
 - Фаза 7: 2-3 дня (Frontend Base)
 - Фаза 8: 3-4 дня (Public Pages)
 - Фаза 9: 4-5 дней (Admin Panel)
 - Фаза 10: 2-3 дня (SEO/SSG)
-- **Итого: 17-24 дня** (с учётом параллельной работы)
+- **Итого: 21-29 дней** (с учётом параллельной работы)
 
 **Приоритеты реализации:**
 1. **MVP:** Фазы 1-6 + 7-8 (Backend API + Public Frontend)
