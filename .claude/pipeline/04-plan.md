@@ -2,8 +2,8 @@
 
 **Дата:** 2026-03-19 (обновлено)
 **Pipeline этап:** Plan (4/7)
-**Research:** 01-research.md, research-storage.md, research-model-map.md
-**Design:** 02-design.md, 02-design-storage.md, design-mappers.md
+**Research:** 01-research.md, research-storage.md, research-model-map.md, research-repository-issues.md
+**Design:** 02-design.md, 02-design-storage.md, design-mappers.md, 02-design-repositories.md
 **DevOps:** 03-devops-setup.md (уже реализован)
 **Implement:** 05-implement-storage.md (Local Storage), 05-implement-mappers.md (Data Mappers)
 
@@ -258,6 +258,31 @@ src/
 - Легко добавлять новые фильтры
 - Типобезопасность
 
+#### ADR-003: Разделение findById() и getById() в репозиториях
+
+**Статус:** Принято (2026-03-19)
+
+**Проблема:** Неоднозначность возвращаемого значения при поиске сущности - `null` или `Exception`?
+
+**Решение:** Разделять методы по семантике:
+
+| Метод | Возврат | Когда использовать |
+|-------|---------|-------------------|
+| `findById(Uuid $id)` | `?Entity` | Опциональный поиск, сущность может не существовать |
+| `getById(Uuid $id)` | `Entity` | Обязательный поиск, выбрасывает `EntityNotFoundException` |
+
+**Обоснование:**
+- Martin Fowler: `find()` vs `get()` семантика
+- Vaughn Vernon: Optional vs Mandatory lookup
+- Явная обработка ошибок на уровне Domain
+
+**Aggregate Boundary (many-to-many sync):**
+- Отношение `article_tag` принадлежит **Article Aggregate**
+- `syncTags()` находится в **ArticleRepository**, не в TagRepository
+- Tag Aggregate не должен знать об Article
+
+**Детали:** `research-repository-issues.md`, `02-design-repositories.md`
+
 ---
 
 ### Фаза 5: Infrastructure Layer
@@ -308,6 +333,7 @@ src/
 - `laravel/app/Infrastructure/Persistence/Eloquent/Mappers/SiteSettingMapper.php`
 
 *Persistence (Eloquent):*
+- `laravel/app/Domain/Shared/Exceptions/EntityNotFoundException.php` ✨ **NEW**
 - `laravel/app/Infrastructure/Persistence/Eloquent/Models/ArticleModel.php`
 - `laravel/app/Infrastructure/Persistence/Eloquent/Models/CategoryModel.php`
 - `laravel/app/Infrastructure/Persistence/Eloquent/Models/TagModel.php`
@@ -323,6 +349,7 @@ src/
 - `laravel/app/Infrastructure/Persistence/Eloquent/Repositories/EloquentMediaRepository.php`
 - `laravel/app/Infrastructure/Persistence/Eloquent/Repositories/EloquentSettingsRepository.php`
 - `laravel/app/Infrastructure/Persistence/Cache/CachedArticleRepository.php`
+- `laravel/app/Exceptions/Handler.php` (update - EntityNotFoundException handling) ✨ **NEW**
 
 *Storage (Local):*
 - `laravel/app/Infrastructure/Storage/LocalStorageAdapter.php`
@@ -342,11 +369,30 @@ src/
 Custom Casts (7) --> BaseMapper Trait --> Mappers (7) --> Интеграция Models & Repositories
 ```
 
+**Порядок имплементации (Repositories):** ✨ **NEW**
+```
+1. EntityNotFoundException (Domain)
+2. Обновить интерфейсы (добавить getById, getBySlug)
+3. EloquentArticleRepository (с syncTags)
+4. EloquentCategoryRepository
+5. EloquentTagRepository (БЕЗ syncForArticle!)
+6. EloquentUserRepository
+7. EloquentMediaRepository
+8. EloquentContactRepository
+9. EloquentSettingsRepository
+10. Exception Handler (Laravel)
+11. CachedArticleRepository (decorator)
+```
+
 **Критерий готовности:**
 - [ ] Все Custom Casts созданы и работают
 - [ ] BaseMapper trait создан
 - [ ] Все 7 Mappers созданы с типизированными сигнатурами
 - [ ] Eloquent Models обновлены с $casts
+- [ ] **EntityNotFoundException создан в Domain\Shared\Exceptions** ✨ **NEW**
+- [ ] **Все репозитории имеют findById() (nullable) и getById() (throws)** ✨ **NEW**
+- [ ] **ArticleRepository.syncTags() реализован, syncForArticle удалён из TagRepository** ✨ **NEW**
+- [ ] **Exception Handler перехватывает EntityNotFoundException → HTTP 404** ✨ **NEW**
 - [ ] Repositories используют Mappers
 - [ ] Все Eloquent Models созданы с relationships
 - [ ] CachedArticleRepository реализован
@@ -366,6 +412,9 @@ Custom Casts (7) --> BaseMapper Trait --> Mappers (7) --> Интеграция M
 | GD/Imagick недоступен | Fallback на GD, проверить Dockerfile |
 | Несанкционированный доступ к приватным файлам | Signed URLs + Nginx internal location |
 | Отсутствие методов reconstitute в Entities | Проверить наличие перед имплементацией |
+| **EntityNotFoundException не перехвачен** ✨ **NEW** | Глобальный Exception Handler → HTTP 404 |
+| **Путаница между find/get методами** ✨ **NEW** | Чёткие PHPDoc и code review |
+| **Scopes не работают через query()** ✨ **NEW** | Явные запросы в репозитории, удалить scopes |
 
 ---
 
