@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Repositories;
 
+use App\Domain\Shared\Exceptions\EntityNotFoundException;
 use App\Domain\Shared\PaginatedResult;
 use App\Domain\Shared\Uuid;
 use App\Domain\User\Entities\User;
@@ -17,17 +18,45 @@ use App\Domain\User\ValueObjects\UserRole;
 interface UserRepositoryInterface
 {
     /**
-     * Find user by ID.
+     * Find user by ID - optional lookup.
+     *
+     * Use this when the user may or may not exist.
+     * For mandatory lookups, use getById().
      */
     public function findById(Uuid $id): ?User;
 
     /**
-     * Find user by email.
+     * Get user by ID - mandatory lookup.
+     *
+     * Use this when the user MUST exist by business logic.
+     *
+     * @throws EntityNotFoundException If user not found
+     */
+    public function getById(Uuid $id): User;
+
+    /**
+     * Find user by email - optional lookup.
+     *
+     * Use this when the user may or may not exist.
+     * For mandatory lookups, use getByEmailOrFail().
      */
     public function findByEmail(string $email): ?User;
 
     /**
+     * Get user by email - mandatory lookup.
+     *
+     * Use this when the user MUST exist by business logic (e.g., authentication).
+     *
+     * @throws EntityNotFoundException If user not found
+     */
+    public function getByEmailOrFail(string $email): User;
+
+    /**
      * Find user by email for authentication (includes password).
+     *
+     * This method is specifically for authentication flow.
+     *
+     * @deprecated Use getByEmailOrFail() for mandatory, findByEmail() for optional
      */
     public function findByEmailForAuth(string $email): ?User;
 

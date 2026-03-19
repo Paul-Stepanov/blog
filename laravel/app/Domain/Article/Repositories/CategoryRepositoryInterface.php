@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Article\Repositories;
 
 use App\Domain\Article\Entities\Category;
+use App\Domain\Shared\Exceptions\EntityNotFoundException;
 use App\Domain\Shared\Uuid;
 
 /**
@@ -15,14 +16,38 @@ use App\Domain\Shared\Uuid;
 interface CategoryRepositoryInterface
 {
     /**
-     * Find category by ID.
+     * Find category by ID - optional lookup.
+     *
+     * Use this when the category may or may not exist.
+     * For mandatory lookups, use getById().
      */
     public function findById(Uuid $id): ?Category;
 
     /**
-     * Find category by slug.
+     * Get category by ID - mandatory lookup.
+     *
+     * Use this when the category MUST exist by business logic.
+     *
+     * @throws EntityNotFoundException If category not found
+     */
+    public function getById(Uuid $id): Category;
+
+    /**
+     * Find category by slug - optional lookup.
+     *
+     * Use this when the category may or may not exist.
+     * For mandatory lookups, use getBySlug().
      */
     public function findBySlug(string $slug): ?Category;
+
+    /**
+     * Get category by slug - mandatory lookup.
+     *
+     * Use this when the category MUST exist by business logic.
+     *
+     * @throws EntityNotFoundException If category not found
+     */
+    public function getBySlug(string $slug): Category;
 
     /**
      * Find all categories.

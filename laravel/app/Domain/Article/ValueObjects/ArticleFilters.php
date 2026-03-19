@@ -203,6 +203,28 @@ final readonly class ArticleFilters
     }
 
     /**
+     * Convert filters to array for serialization (cache keys, logging, etc).
+     *
+     * @return array{
+     *     search: string|null,
+     *     category_id: string|null,
+     *     author_id: string|null,
+     *     tag_id: string|null,
+     *     status: string|null
+     * }
+     */
+    public function toArray(): array
+    {
+        return [
+            'search' => $this->searchTerm,
+            'category_id' => $this->categoryId?->getValue(),
+            'author_id' => $this->authorId?->getValue(),
+            'tag_id' => $this->tagId?->getValue(),
+            'status' => $this->status?->value,
+        ];
+    }
+
+    /**
      * Resolve UUID from string or UUID object.
      */
     private static function resolveUuid(string|Uuid|null $value): ?Uuid

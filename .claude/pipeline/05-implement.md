@@ -950,3 +950,214 @@ public function findByFilters(
 ---
 
 **Статус Фазы 4:** ✅ ЗАВЕРШЕНО
+
+---
+---
+
+# Implement: Фаза 5 - Infrastructure Layer
+
+**Дата:** 2026-03-19
+**Этап:** Implement (5/7)
+**Фаза:** 5 - Infrastructure Layer
+
+---
+
+## Обзор
+
+Фаза 5 завершена. Созданы все компоненты Infrastructure Layer:
+
+- ✅ 7 Eloquent Repository Implementations
+- ✅ CachedArticleRepository (decorator)
+- ✅ Exception Handler для EntityNotFoundException → HTTP 404
+- ✅ Storage компоненты (LocalStorageAdapter, InterventionImageProcessor, FileDownloadController)
+- ✅ StorageServiceProvider
+- ✅ ProcessImageJob для очереди
+- ✅ config/image.php
+- ✅ Зависимость intervention/image:^3.0 установлена
+
+---
+
+## Созданные файлы
+
+### Repository Implementations (7)
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Infrastructure/Persistence/Eloquent/Repositories/EloquentArticleRepository.php` | Article repository с syncTags() | ~250 |
+| `Infrastructure/Persistence/Eloquent/Repositories/EloquentTagRepository.php` | Tag repository без syncForArticle() | ~120 |
+| `Infrastructure/Persistence/Eloquent/Repositories/EloquentCategoryRepository.php` | Category repository | ~160 |
+| `Infrastructure/Persistence/Eloquent/Repositories/EloquentUserRepository.php` | User repository | ~200 |
+| `Infrastructure/Persistence/Eloquent/Repositories/EloquentMediaRepository.php` | Media repository с getUnused() | ~240 |
+| `Infrastructure/Persistence/Eloquent/Repositories/EloquentContactRepository.php` | Contact repository с search() | ~220 |
+| `Infrastructure/Persistence/Eloquent/Repositories/EloquentSettingsRepository.php` | Settings repository с key-value | ~190 |
+
+### Cache Layer (1)
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Infrastructure/Persistence/Cache/Repositories/CachedArticleRepository.php` | Cache decorator для Article | ~290 |
+
+### Storage Components (5)
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Domain/Media/Services/ImageProcessorInterface.php` | Image processing contract | ~118 |
+| `Infrastructure/Storage/LocalStorageAdapter.php` | Local filesystem adapter | ~250 |
+| `Infrastructure/Storage/InterventionImageProcessor.php` | Intervention Image v3 processor | ~160 |
+| `Infrastructure/Http/Controllers/FileDownloadController.php` | Private file download | ~110 |
+| `Infrastructure/Providers/StorageServiceProvider.php` | DI bindings for storage | ~73 |
+
+### Queue Jobs (1)
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `Infrastructure/Queue/Jobs/ProcessImageJob.php` | Image processing queue job | ~200 |
+
+### Exception Handling (1)
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `bootstrap/app.php` | EntityNotFoundException → HTTP 404 | ~30 |
+
+### Configuration (1)
+
+| Файл | Описание | Строк |
+|------|----------|-------|
+| `config/image.php` | Image processing config | ~95 |
+
+### Routes (1)
+
+| Файл | Изменения |
+|------|----------|
+| `routes/web.php` | Добавлены маршруты files.download, files.stream |
+
+### Dependencies (1)
+
+| Файл | Изменения |
+|------|----------|
+| `composer.json` | Добавлены `intervention/image:^3.0`, `ext-gd:*` |
+
+**Всего:** 18 файлов, ~2700 строк кода
+
+---
+
+## Установленные зависимости
+
+```json
+{
+    "intervention/image": "^3.11",
+    "intervention/gif": "^4.2"
+}
+```
+
+---
+
+## Ключевые архитектурные решения
+
+### ADR-003: find() vs get() Pattern
+
+**Принято:** 2026-03-19
+
+| Метод | Возврат | Использование |
+|-------|---------|---------------|
+| `findById(Uuid)` | `?Entity` | Optional lookup |
+| `getById(Uuid)` | `Entity` | Mandatory lookup (throws EntityNotFoundException) |
+| `findBySlug(string)` | `?Entity` | Optional lookup |
+| `getBySlug(string)` | `Entity` | Mandatory lookup (throws EntityNotFoundException) |
+
+### syncTags() в ArticleRepository
+
+**Решение:** Метод `syncTags()` размещён в ArticleRepository, а не в TagRepository.
+
+**Обоснование:** Article является Aggregate Root для отношения article_tag.
+
+---
+
+## Реализованные классы
+
+### Repositories
+
+| Класс | Ключевые методы |
+|-------|-----------------|
+| **EloquentArticleRepository** | findByFilters(), syncTags(), getLatest(), getFeatured() |
+| **EloquentTagRepository** | findBySlug(), findAll(), search() |
+| **EloquentCategoryRepository** | findBySlug(), getWithPublishedArticles(), hasArticles() |
+| **EloquentUserRepository** | findByEmail(), findByEmailForAuth(), emailExists() |
+| **EloquentMediaRepository** | getUnused(), getTotalSize(), countByType() |
+| **EloquentContactRepository** | search(), countUnread(), countByDate() |
+| **EloquentSettingsRepository** | getValue(), getAllAsKeyValue(), getGroupAsKeyValue() |
+
+### CachedArticleRepository
+
+| Метод | TTL |
+|-------|-----|
+| findById(), getById(), findBySlug(), getBySlug() | 1 hour |
+| findByFilters(), findPublished(), findByCategory() | 30 minutes |
+| countByStatus() | 5 minutes |
+| search() | Не кешируется |
+
+### Storage Components
+
+| Класс | Описание |
+|-------|----------|
+| **LocalStorageAdapter** | Реализация FileStorageInterface для local filesystem |
+| **InterventionImageProcessor** | Обработка изображений через Intervention Image v3 |
+| **FileDownloadController** | Отдача приватных файлов через X-Accel-Redirect |
+
+### ProcessImageJob
+
+| Функция | Описание |
+|---------|----------|
+| Thumbnails | Генерация thumb, small, medium размеров |
+| WebP конверсия | Автоматическое создание WebP версии |
+| Оптимизация | Сжатие оригинала с настраиваемым качеством |
+| Retry | 3 попытки, timeout 120 сек |
+| Logging | Детальное логирование на каждом этапе |
+
+---
+
+## Проверки
+
+- [x] Синтаксис: OK (`php -l`)
+- [x] PSR-12: OK
+- [x] Типизация: strict_types=1 везде
+- [x] PHPDoc: Все публичные методы документированы
+- [x] PaginatedResult::create() используется везде
+- [x] EntityNotFoundException обрабатывается в Exception Handler
+- [x] syncTags() в ArticleRepository, syncForArticle удалён из TagRepository
+- [x] intervention/image установлен
+
+---
+
+## Исправленные проблемы
+
+1. **PaginatedResult missing $lastPage** → Добавлен factory метод `PaginatedResult::create()`
+2. **SettingValue.toNative() не найден** → Использован `$setting->getValue()->getValue()`
+3. **ArticleFilters.toArray() не найден** → Добавлен метод `toArray()` в ArticleFilters
+4. **readonly property default value** → Убраны default values из readonly свойств в ProcessImageJob
+
+---
+
+## Статус Фазы 5
+
+**✅ ЗАВЕРШЕНО**
+
+**Выполнено:**
+- [x] 7 Eloquent Repository Implementations
+- [x] CachedArticleRepository (decorator)
+- [x] Exception Handler (EntityNotFoundException → HTTP 404)
+- [x] LocalStorageAdapter
+- [x] InterventionImageProcessor
+- [x] FileDownloadController
+- [x] StorageServiceProvider
+- [x] ProcessImageJob для очереди
+- [x] config/image.php
+- [x] intervention/image установлен
+
+**Осталось (следующие фазы):**
+- [ ] Unit тесты для Repositories и Storage
+- [ ] Интеграционные тесты
+
+---
+
+**Дата обновления:** 2026-03-19

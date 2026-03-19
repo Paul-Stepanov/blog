@@ -6,6 +6,7 @@ namespace App\Domain\Article\Repositories;
 
 use App\Domain\Article\Entities\Article;
 use App\Domain\Article\ValueObjects\ArticleFilters;
+use App\Domain\Shared\Exceptions\EntityNotFoundException;
 use App\Domain\Shared\PaginatedResult;
 use App\Domain\Shared\Uuid;
 
@@ -31,14 +32,38 @@ interface ArticleRepositoryInterface
     ): PaginatedResult;
 
     /**
-     * Find article by ID.
+     * Find article by ID - optional lookup.
+     *
+     * Use this when the article may or may not exist.
+     * For mandatory lookups, use getById().
      */
     public function findById(Uuid $id): ?Article;
 
     /**
-     * Find article by slug.
+     * Get article by ID - mandatory lookup.
+     *
+     * Use this when the article MUST exist by business logic.
+     *
+     * @throws EntityNotFoundException If article not found
+     */
+    public function getById(Uuid $id): Article;
+
+    /**
+     * Find article by slug - optional lookup.
+     *
+     * Use this when the article may or may not exist.
+     * For mandatory lookups, use getBySlug().
      */
     public function findBySlug(string $slug): ?Article;
+
+    /**
+     * Get article by slug - mandatory lookup.
+     *
+     * Use this when the article MUST exist by business logic.
+     *
+     * @throws EntityNotFoundException If article not found
+     */
+    public function getBySlug(string $slug): Article;
 
     /**
      * Find all published articles with pagination.
@@ -123,4 +148,16 @@ interface ArticleRepositoryInterface
      * Count articles by status.
      */
     public function countByStatus(): array;
+
+    /**
+     * Sync tags for an article.
+     *
+     * Article owns the relationship with tags (article_tag pivot table).
+     * This method manages the many-to-many relationship.
+     *
+     * @param Uuid $articleId Article UUID
+     * @param array<Uuid> $tagIds Array of tag UUIDs to sync
+     * @throws EntityNotFoundException If article not found
+     */
+    public function syncTags(Uuid $articleId, array $tagIds): void;
 }

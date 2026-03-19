@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Shared;
 
-use Countable;
 use IteratorAggregate;
 use JsonSerializable;
 use Traversable;
@@ -71,6 +70,32 @@ final readonly class PaginatedResult implements IteratorAggregate, JsonSerializa
             page: $page,
             perPage: $perPage,
             lastPage: 1
+        );
+    }
+
+    /**
+     * Create a new paginated result with automatic lastPage calculation.
+     *
+     * @param array<T> $items Items on current page
+     * @param int $total Total number of items across all pages
+     * @param int $page Current page number (1-based)
+     * @param int $perPage Items per page
+     * @return self<T>
+     */
+    public static function create(
+        array $items,
+        int $total,
+        int $page = 1,
+        int $perPage = 12
+    ): self {
+        $lastPage = $perPage > 0 ? (int) ceil($total / $perPage) : 1;
+
+        return new self(
+            items: $items,
+            total: $total,
+            page: $page,
+            perPage: $perPage,
+            lastPage: max(1, $lastPage),
         );
     }
 

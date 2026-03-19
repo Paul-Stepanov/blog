@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Article\Repositories;
 
 use App\Domain\Article\Entities\Tag;
+use App\Domain\Shared\Exceptions\EntityNotFoundException;
 use App\Domain\Shared\Uuid;
 
 /**
@@ -15,12 +16,24 @@ use App\Domain\Shared\Uuid;
 interface TagRepositoryInterface
 {
     /**
-     * Find tag by ID.
+     * Find tag by ID - optional lookup.
+     *
+     * Use this when the tag may or may not exist.
+     * For mandatory lookups, use getById().
      */
     public function findById(Uuid $id): ?Tag;
 
     /**
-     * Find tag by slug.
+     * Get tag by ID - mandatory lookup.
+     *
+     * Use this when the tag MUST exist by business logic.
+     *
+     * @throws EntityNotFoundException If tag not found
+     */
+    public function getById(Uuid $id): Tag;
+
+    /**
+     * Find tag by slug - optional lookup.
      */
     public function findBySlug(string $slug): ?Tag;
 
@@ -74,13 +87,6 @@ interface TagRepositoryInterface
      * @return array<Tag>
      */
     public function getForArticle(Uuid $articleId): array;
-
-    /**
-     * Sync tags for an article.
-     *
-     * @param Uuid[] $tagIds
-     */
-    public function syncForArticle(Uuid $articleId, array $tagIds): void;
 
     /**
      * Save tag (create or update).
