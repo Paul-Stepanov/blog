@@ -1,5 +1,6 @@
 # IDE
 .idea
+CLAUDE.md
 .claude/settings.local.json
 /.claude/worktrees/
 
