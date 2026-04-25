@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\Models;
 
+use App\Infrastructure\Persistence\Casts\EmailCast;
+use App\Infrastructure\Persistence\Casts\IPAddressCast;
+use Database\Factories\ContactMessageFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -13,10 +17,17 @@ use Illuminate\Database\Eloquent\Model;
  */
 final class ContactMessageModel extends Model
 {
+    use HasFactory;
+
     /**
      * @var string
      */
     protected $table = 'contact_messages';
+
+    /**
+     * @var class-string<\Illuminate\Database\Eloquent\Factories\Factory>
+     */
+    protected static $factory = ContactMessageFactory::class;
 
     /**
      * @var array<int, string>
@@ -33,9 +44,11 @@ final class ContactMessageModel extends Model
     ];
 
     /**
-     * @var array<string, string>
+     * @var array<string, class-string<\Illuminate\Contracts\Database\Eloquent\CastsAttributes>|string>
      */
     protected $casts = [
+        'email' => EmailCast::class,
+        'ip_address' => IPAddressCast::class,
         'is_read' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

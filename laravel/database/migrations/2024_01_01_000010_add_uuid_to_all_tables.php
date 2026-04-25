@@ -58,10 +58,7 @@ return new class extends Migration
             $table->uuid('uuid')->nullable()->after('id')->unique();
         });
 
-        // Add uuid to site_settings
-        Schema::table('site_settings', function (Blueprint $table): void {
-            $table->uuid('uuid')->nullable()->after('id')->unique();
-        });
+        // Note: site_settings uuid is added in create_site_settings_table migration
     }
 
     /**
@@ -93,8 +90,6 @@ return new class extends Migration
             $table->dropColumn('uuid');
         });
 
-        Schema::table('site_settings', function (Blueprint $table): void {
-            $table->dropColumn('uuid');
-        });
+        // Note: site_settings uuid is removed in create_site_settings_table migration
     }
 };

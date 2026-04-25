@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\Models;
 
+use App\Infrastructure\Persistence\Casts\SlugCast;
+use Database\Factories\CategoryFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -14,10 +17,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 final class CategoryModel extends Model
 {
+    use HasFactory;
+
     /**
      * @var string
      */
     protected $table = 'categories';
+
+    /**
+     * @var class-string<\Illuminate\Database\Eloquent\Factories\Factory>
+     */
+    protected static $factory = CategoryFactory::class;
 
     /**
      * @var array<int, string>
@@ -30,9 +40,10 @@ final class CategoryModel extends Model
     ];
 
     /**
-     * @var array<string, string>
+     * @var array<string, class-string<\Illuminate\Contracts\Database\Eloquent\CastsAttributes>|string>
      */
     protected $casts = [
+        'slug' => SlugCast::class,
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -42,7 +53,7 @@ final class CategoryModel extends Model
      */
     public function articles(): HasMany
     {
-        return $this->hasMany(ArticleModel::class, 'category_id', 'id');
+        return $this->hasMany(ArticleModel::class, 'category_uuid', 'uuid');
     }
 
     /**

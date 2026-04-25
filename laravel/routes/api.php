@@ -11,6 +11,7 @@ use App\Infrastructure\Http\Controllers\Admin\{
     AdminTagController,
     AdminUserController
 };
+use App\Infrastructure\Http\Controllers\Admin\AuthController;
 use App\Infrastructure\Http\Controllers\Api\{
     ArticleController,
     CategoryController,
@@ -71,6 +72,21 @@ Route::middleware(['throttle:60,1'])->group(function (): void {
 
 Route::middleware(['throttle:3,60'])->group(function (): void {
     Route::post('/contact', [ContactController::class, 'submitMessage'])->name('api.contact.send');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Admin Auth Routes (login - strict rate limiting: 5/minute)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['throttle:5,1'])->prefix('admin/auth')->name('api.admin.auth.')->group(function (): void {
+    Route::post('login', [AuthController::class, 'login'])->name('login');
+});
+
+Route::middleware(['auth:sanctum'])->prefix('admin/auth')->name('api.admin.auth.')->group(function (): void {
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('user', [AuthController::class, 'getCurrentUser'])->name('user');
 });
 
 /*

@@ -148,7 +148,7 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     {
         $models = TagModel::query()
             ->withCount('articles')
-            ->having('articles_count', '>', 0)
+            ->whereHas('articles')
             ->orderBy('articles_count', 'desc')
             ->limit($limit)
             ->get()

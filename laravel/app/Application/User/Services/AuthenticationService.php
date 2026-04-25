@@ -27,7 +27,7 @@ final readonly class AuthenticationService
      */
     public function login(AuthRequest $request): ?UserDTO
     {
-        $user = $this->userRepository->findByEmail($request->email);
+        $user = $this->userRepository->findByEmail($request->email->getValue());
 
         if ($user === null) {
             return null;

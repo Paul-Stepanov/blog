@@ -53,8 +53,6 @@ final class ArticleMapper
             'author_uuid' => $this->getUuidValue($entity->getAuthorId()),
             'cover_image_uuid' => $this->getUuidValue($entity->getCoverImageId()),
             'published_at' => $this->formatDateTime($entity->getPublishedAt()),
-            'created_at' => $entity->getTimestamps()->getCreatedAt(),
-            'updated_at' => $entity->getTimestamps()->getUpdatedAt(),
         ];
     }
 

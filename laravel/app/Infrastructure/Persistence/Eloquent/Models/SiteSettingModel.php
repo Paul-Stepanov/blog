@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\Models;
 
+use App\Infrastructure\Persistence\Casts\UuidCast;
+use Database\Factories\SiteSettingFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -13,10 +16,17 @@ use Illuminate\Database\Eloquent\Model;
  */
 final class SiteSettingModel extends Model
 {
+    use HasFactory;
+
     /**
      * @var string
      */
     protected $table = 'site_settings';
+
+    /**
+     * @var class-string<\Illuminate\Database\Eloquent\Factories\Factory>
+     */
+    protected static $factory = SiteSettingFactory::class;
 
     /**
      * @var array<int, string>
@@ -29,9 +39,10 @@ final class SiteSettingModel extends Model
     ];
 
     /**
-     * @var array<string, string>
+     * @var array<string, class-string<\Illuminate\Contracts\Database\Eloquent\CastsAttributes>|string>
      */
     protected $casts = [
+        'uuid' => UuidCast::class,
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

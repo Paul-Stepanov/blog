@@ -201,7 +201,9 @@ final readonly class ArticleService
     }
 
     /**
-     * Get a single article by slug.
+     * Get a single published article by slug.
+     *
+     * Only returns published articles for public API.
      *
      * @throws ArticleNotFoundException
      */
@@ -210,6 +212,11 @@ final readonly class ArticleService
         $article = $this->articleRepository->findBySlug($query->slug->getValue());
 
         if ($article === null) {
+            throw ArticleNotFoundException::bySlug($query->slug->getValue());
+        }
+
+        // For public API, only return published articles
+        if (!$article->getStatus()->isPublic()) {
             throw ArticleNotFoundException::bySlug($query->slug->getValue());
         }
 

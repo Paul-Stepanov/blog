@@ -33,38 +33,6 @@ final class ArticleResource extends JsonResource
         /** @var ArticleDTO $article */
         $article = $this->resource;
 
-        return [
-            'id' => $article->id,
-            'title' => $article->title,
-            'slug' => $article->slug,
-            'content' => $article->content,
-            'excerpt' => $article->excerpt,
-            'status' => $article->status,
-            'category' => $article->category ? [
-                'id' => $article->category['id'],
-                'name' => $article->category['name'],
-                'slug' => $article->category['slug'],
-            ] : null,
-            'tags' => array_map(fn(array $tag) => [
-                'id' => $tag['id'],
-                'name' => $tag['name'],
-                'slug' => $tag['slug'],
-            ], $article->tags),
-            'author' => [
-                'id' => $article->author['id'],
-                'name' => $article->author['name'],
-                'email' => $article->author['email'],
-            ],
-            'cover_image' => $article->coverImage ? [
-                'id' => $article->coverImage['id'],
-                'url' => $article->coverImage['url'],
-                'alt_text' => $article->coverImage['alt_text'],
-            ] : null,
-            'published_at' => $article->publishedAt,
-            'created_at' => $article->createdAt,
-            'updated_at' => $article->updatedAt,
-            'reading_time' => $article->readingTime,
-            'word_count' => $article->wordCount,
-        ];
+        return $article->toArray();
     }
 }

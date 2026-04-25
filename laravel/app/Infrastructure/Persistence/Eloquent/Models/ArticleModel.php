@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\Models;
 
+use App\Domain\Article\ValueObjects\ArticleStatus;
+use App\Infrastructure\Persistence\Casts\SlugCast;
+use Database\Factories\ArticleFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,10 +20,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 final class ArticleModel extends Model
 {
+    use HasFactory;
+
     /**
      * @var string
      */
     protected $table = 'articles';
+
+    /**
+     * @var class-string<\Illuminate\Database\Eloquent\Factories\Factory>
+     */
+    protected static $factory = ArticleFactory::class;
 
     /**
      * @var array<int, string>
@@ -31,11 +42,8 @@ final class ArticleModel extends Model
         'content',
         'excerpt',
         'status',
-        'category_id',
         'category_uuid',
-        'author_id',
         'author_uuid',
-        'cover_image_id',
         'cover_image_uuid',
         'published_at',
     ];
@@ -44,9 +52,8 @@ final class ArticleModel extends Model
      * @var array<string, class-string<\Illuminate\Contracts\Database\Eloquent\CastsAttributes>|string>
      */
     protected $casts = [
-        'uuid' => \App\Infrastructure\Persistence\Casts\UuidCast::class,
-        'slug' => \App\Infrastructure\Persistence\Casts\SlugCast::class,
-        'status' => \App\Domain\Article\ValueObjects\ArticleStatus::class,
+        'slug' => SlugCast::class,
+        'status' => ArticleStatus::class,
         'published_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -57,7 +64,7 @@ final class ArticleModel extends Model
      */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(CategoryModel::class, 'category_id', 'id');
+        return $this->belongsTo(CategoryModel::class, 'category_uuid', 'uuid');
     }
 
     /**
@@ -65,7 +72,7 @@ final class ArticleModel extends Model
      */
     public function author(): BelongsTo
     {
-        return $this->belongsTo(UserModel::class, 'author_id', 'id');
+        return $this->belongsTo(UserModel::class, 'author_uuid', 'uuid');
     }
 
     /**
@@ -73,7 +80,7 @@ final class ArticleModel extends Model
      */
     public function coverImage(): BelongsTo
     {
-        return $this->belongsTo(MediaFileModel::class, 'cover_image_id', 'id');
+        return $this->belongsTo(MediaFileModel::class, 'cover_image_uuid', 'uuid');
     }
 
     /**
@@ -86,7 +93,7 @@ final class ArticleModel extends Model
             'article_tag',
             'article_id',
             'tag_id'
-        )->withTimestamps();
+        );
     }
 
     /**

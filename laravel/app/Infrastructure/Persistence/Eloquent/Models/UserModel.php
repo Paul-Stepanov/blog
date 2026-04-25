@@ -4,16 +4,27 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Domain\User\ValueObjects\UserRole;
+use App\Infrastructure\Persistence\Casts\EmailCast;
+use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * Eloquent Model for User persistence.
  *
  * Represents users in the system (admin, editor, author).
  */
-final class UserModel extends Model
+final class UserModel extends Authenticatable
 {
+    use HasFactory, Notifiable;
+
+    /**
+     * @var class-string<\Illuminate\Database\Eloquent\Factories\Factory>
+     */
+    protected static $factory = UserFactory::class;
     /**
      * @var string
      */
@@ -32,9 +43,11 @@ final class UserModel extends Model
     ];
 
     /**
-     * @var array<string, string>
+     * @var array<string, class-string<\Illuminate\Contracts\Database\Eloquent\CastsAttributes>|string>
      */
     protected $casts = [
+        'email' => EmailCast::class,
+        'role' => UserRole::class,
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

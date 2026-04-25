@@ -53,13 +53,13 @@ final class ContactController extends Controller
             userAgent: $request->userAgent(),
         );
 
-        $message = $this->contactService->sendMessage($command);
+        $dto = $this->contactService->sendMessage($command);
 
         return response()->json([
             'success' => true,
-            'message' => 'Your message has been sent successfully.',
+            'message' => 'Message sent successfully.',
             'data' => [
-                'id' => $message->id,
+                'id' => $dto->id,
             ],
         ], 201);
     }

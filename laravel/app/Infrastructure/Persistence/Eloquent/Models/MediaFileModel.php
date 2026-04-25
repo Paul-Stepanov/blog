@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\Models;
 
+use App\Domain\Media\ValueObjects\MimeType;
+use Database\Factories\MediaFileFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -14,16 +17,24 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 final class MediaFileModel extends Model
 {
+    use HasFactory;
+
     /**
      * @var string
      */
     protected $table = 'media_files';
 
     /**
+     * @var class-string<\Illuminate\Database\Eloquent\Factories\Factory>
+     */
+    protected static $factory = MediaFileFactory::class;
+
+    /**
      * @var array<int, string>
      */
     protected $fillable = [
         'uuid',
+        'uploader_uuid',
         'filename',
         'path',
         'url',
@@ -32,13 +43,13 @@ final class MediaFileModel extends Model
         'width',
         'height',
         'alt_text',
-        'uploader_id',
     ];
 
     /**
-     * @var array<string, string>
+     * @var array<string, class-string<\Illuminate\Contracts\Database\Eloquent\CastsAttributes>|string>
      */
     protected $casts = [
+        'mime_type' => MimeType::class,
         'size_bytes' => 'integer',
         'width' => 'integer',
         'height' => 'integer',
@@ -51,7 +62,7 @@ final class MediaFileModel extends Model
      */
     public function uploader(): BelongsTo
     {
-        return $this->belongsTo(UserModel::class, 'uploader_id', 'id');
+        return $this->belongsTo(UserModel::class, 'uploader_uuid', 'uuid');
     }
 
     /**

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\Models;
 
+use App\Infrastructure\Persistence\Casts\SlugCast;
+use Database\Factories\TagFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -14,10 +17,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 final class TagModel extends Model
 {
+    use HasFactory;
+
     /**
      * @var string
      */
     protected $table = 'tags';
+
+    /**
+     * @var class-string<\Illuminate\Database\Eloquent\Factories\Factory>
+     */
+    protected static $factory = TagFactory::class;
 
     /**
      * @var array<int, string>
@@ -29,9 +39,10 @@ final class TagModel extends Model
     ];
 
     /**
-     * @var array<string, string>
+     * @var array<string, class-string<\Illuminate\Contracts\Database\Eloquent\CastsAttributes>|string>
      */
     protected $casts = [
+        'slug' => SlugCast::class,
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -46,7 +57,7 @@ final class TagModel extends Model
             'article_tag',
             'tag_id',
             'article_id'
-        )->withTimestamps();
+        );
     }
 
     /**
