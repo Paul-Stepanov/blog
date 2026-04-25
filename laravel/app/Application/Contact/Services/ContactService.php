@@ -8,6 +8,7 @@ use App\Application\Contact\Commands\SendMessageCommand;
 use App\Application\Contact\DTOs\ContactMessageDTO;
 use App\Domain\Contact\Entities\ContactMessage;
 use App\Domain\Contact\Repositories\ContactRepositoryInterface;
+use App\Domain\Shared\PaginatedResult;
 use App\Domain\Shared\Uuid;
 
 /**
@@ -67,5 +68,47 @@ final readonly class ContactService
             $message->markAsUnread();
             $this->contactRepository->save($message);
         }
+    }
+
+    /**
+     * Get all messages with pagination.
+     *
+     * @return PaginatedResult<ContactMessageDTO>
+     */
+    public function getAllMessages(int $page = 1, int $perPage = 20): PaginatedResult
+    {
+        return $this->contactRepository->findAll($page, $perPage)
+            ->map(fn(ContactMessage $message) => ContactMessageDTO::fromEntity($message));
+    }
+
+    /**
+     * Get message by ID.
+     */
+    public function getMessageById(string $id): ?ContactMessageDTO
+    {
+        $message = $this->contactRepository->findById(Uuid::fromString($id));
+
+        if ($message === null) {
+            return null;
+        }
+
+        return ContactMessageDTO::fromEntity($message);
+    }
+
+    /**
+     * Delete a message.
+     */
+    public function deleteMessage(string $id): bool
+    {
+        $uuid = Uuid::fromString($id);
+        $message = $this->contactRepository->findById($uuid);
+
+        if ($message === null) {
+            return false;
+        }
+
+        $this->contactRepository->delete($uuid);
+
+        return true;
     }
 }

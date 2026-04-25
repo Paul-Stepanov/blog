@@ -20,4 +20,14 @@ final readonly class PublishArticleCommand
     public function __construct(
         public Uuid $articleId,
     ) {}
+
+    /**
+     * Create command from article ID string.
+     */
+    public static function fromId(string $articleId): self
+    {
+        return new self(
+            articleId: Uuid::fromString($articleId),
+        );
+    }
 }

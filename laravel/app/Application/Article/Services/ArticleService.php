@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Article\Services;
 
-use App\Application\Article\Commands\{ArchiveArticleCommand, CreateArticleCommand, PublishArticleCommand};
+use App\Application\Article\Commands\{ArchiveArticleCommand, CreateArticleCommand, PublishArticleCommand, UpdateArticleCommand};
 use App\Application\Article\DTOs\{ArticleDTO, ArticleListDTO};
 use App\Application\Article\Exceptions\ArticleNotFoundException;
 use App\Application\Article\Queries\{GetArticleBySlugQuery, GetPublishedArticlesQuery};
@@ -43,7 +43,127 @@ final readonly class ArticleService
             authorId: $command->authorId,
         );
 
+        // Set cover image if provided
+        if ($command->coverImageId !== null) {
+            $article->setCoverImage($command->coverImageId);
+        }
+
         $this->articleRepository->save($article);
+
+        // Sync tags if provided
+        if (!empty($command->tags)) {
+            $tagIds = array_map(fn(string $id) => Uuid::fromString($id), $command->tags);
+            $this->articleRepository->syncTags($article->getId(), $tagIds);
+        }
+
+        return ArticleDTO::fromEntity($article);
+    }
+
+    /**
+     * Get all articles (including drafts) for admin panel.
+     *
+     * @return PaginatedResult<ArticleListDTO>
+     */
+    public function getAllArticles(int $page = 1, int $perPage = 15): PaginatedResult
+    {
+        $filters = ArticleFilters::create([]);
+
+        $result = $this->articleRepository->findByFilters(
+            filters: $filters,
+            page: $page,
+            perPage: $perPage,
+        );
+
+        return $result->map(
+            fn(Article $article) => ArticleListDTO::fromEntity($article)
+        );
+    }
+
+    /**
+     * Get article by ID.
+     */
+    public function getArticleById(string $id): ?ArticleDTO
+    {
+        $article = $this->articleRepository->findById(Uuid::fromString($id));
+
+        if ($article === null) {
+            return null;
+        }
+
+        return ArticleDTO::fromEntity($article);
+    }
+
+    /**
+     * Update an existing article.
+     */
+    public function updateArticle(UpdateArticleCommand $command): ?ArticleDTO
+    {
+        $article = $this->articleRepository->findById(
+            Uuid::fromString($command->articleId)
+        );
+
+        if ($article === null) {
+            return null;
+        }
+
+        // Update content if provided
+        if ($command->title !== null || $command->content !== null) {
+            $article->updateContent(
+                title: $command->title ?? $article->getTitle(),
+                content: $command->content !== null
+                    ? ArticleContent::fromString($command->content)
+                    : $article->getContent(),
+                newSlug: $command->slug !== null
+                    ? Slug::fromString($command->slug)
+                    : null,
+            );
+        }
+
+        // Update category if provided
+        if ($command->categoryId !== null) {
+            $article->changeCategory($command->categoryId);
+        }
+
+        // Update cover image if provided
+        if ($command->coverImageId !== null) {
+            $article->setCoverImage($command->coverImageId);
+        }
+
+        $this->articleRepository->save($article);
+
+        return ArticleDTO::fromEntity($article);
+    }
+
+    /**
+     * Delete an article.
+     */
+    public function deleteArticle(string $id): bool
+    {
+        $articleId = Uuid::fromString($id);
+        $article = $this->articleRepository->findById($articleId);
+
+        if ($article === null) {
+            return false;
+        }
+
+        $this->articleRepository->delete($articleId);
+
+        return true;
+    }
+
+    /**
+     * Sync tags for an article.
+     */
+    public function syncArticleTags(string $id, array $tagIds): ?ArticleDTO
+    {
+        $article = $this->articleRepository->findById(Uuid::fromString($id));
+
+        if ($article === null) {
+            return null;
+        }
+
+        $uuids = array_map(fn(string $tagId) => Uuid::fromString($tagId), $tagIds);
+        $this->articleRepository->syncTags($article->getId(), $uuids);
 
         return ArticleDTO::fromEntity($article);
     }
