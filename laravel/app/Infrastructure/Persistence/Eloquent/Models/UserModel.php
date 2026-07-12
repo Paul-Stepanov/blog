@@ -136,7 +136,7 @@ final class UserModel extends Authenticatable
      */
     public function hasRole(string $role): bool
     {
-        return $this->role === $role;
+        return $this->role->value === $role;
     }
 
     /**
@@ -144,7 +144,7 @@ final class UserModel extends Authenticatable
      */
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === UserRole::ADMIN;
     }
 
     /**
@@ -152,7 +152,7 @@ final class UserModel extends Authenticatable
      */
     public function isEditor(): bool
     {
-        return $this->role === 'editor';
+        return $this->role === UserRole::EDITOR;
     }
 
     /**
