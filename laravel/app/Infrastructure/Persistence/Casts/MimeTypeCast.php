@@ -33,7 +33,7 @@ final readonly class MimeTypeCast implements CastsAttributes
     /**
      * Cast the given Domain MimeType to database string.
      *
-     * @param  MimeType|string|null  $value
+     * @param  mixed  $value  Eloquent передаёт произвольный тип (native mixed)
      * @param  array<string, mixed>  $attributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string

@@ -33,7 +33,7 @@ final readonly class IPAddressCast implements CastsAttributes
     /**
      * Cast the given Domain IPAddress to database string.
      *
-     * @param  IPAddress|string|null  $value
+     * @param  mixed  $value  Eloquent передаёт произвольный тип (native mixed)
      * @param  array<string, mixed>  $attributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string

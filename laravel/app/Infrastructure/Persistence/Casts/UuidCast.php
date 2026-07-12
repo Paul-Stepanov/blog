@@ -33,7 +33,7 @@ final readonly class UuidCast implements CastsAttributes
     /**
      * Cast the given Domain Uuid to database string.
      *
-     * @param  Uuid|string|null  $value
+     * @param  mixed  $value  Eloquent передаёт произвольный тип (native mixed)
      * @param  array<string, mixed>  $attributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string

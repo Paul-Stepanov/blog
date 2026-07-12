@@ -33,7 +33,7 @@ final readonly class SlugCast implements CastsAttributes
     /**
      * Cast the given Domain Slug to database string.
      *
-     * @param  Slug|string|null  $value
+     * @param  mixed  $value  Eloquent передаёт произвольный тип (native mixed)
      * @param  array<string, mixed>  $attributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string

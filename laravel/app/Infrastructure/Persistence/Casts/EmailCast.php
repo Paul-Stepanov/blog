@@ -33,7 +33,7 @@ final readonly class EmailCast implements CastsAttributes
     /**
      * Cast the given Domain Email to database string.
      *
-     * @param  Email|string|null  $value
+     * @param  mixed  $value  Eloquent передаёт произвольный тип (native mixed)
      * @param  array<string, mixed>  $attributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
