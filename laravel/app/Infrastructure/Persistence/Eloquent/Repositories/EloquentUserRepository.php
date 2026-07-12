@@ -12,6 +12,7 @@ use App\Domain\User\Repositories\UserRepositoryInterface;
 use App\Domain\User\ValueObjects\UserRole;
 use App\Infrastructure\Persistence\Eloquent\Mappers\UserMapper;
 use App\Infrastructure\Persistence\Eloquent\Models\UserModel;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Eloquent implementation of User Repository.
@@ -250,7 +251,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
      */
     public function countByRole(): array
     {
-        $results = UserModel::query()
+        $results = DB::table('users')
             ->selectRaw('role, COUNT(*) as count')
             ->groupBy('role')
             ->get();
@@ -262,8 +263,9 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
         ];
 
         foreach ($results as $row) {
-            if (isset($counts[$row->role])) {
-                $counts[$row->role] = $row->count;
+            $role = (string) $row->role;
+            if (isset($counts[$role])) {
+                $counts[$role] = (int) $row->count;
             }
         }
 
