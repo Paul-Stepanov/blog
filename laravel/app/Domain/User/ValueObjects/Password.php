@@ -71,7 +71,7 @@ final class Password extends ValueObject
         }
 
         if (! empty($errors)) {
-            throw new ValidationException($errors, 'Password validation failed');
+            throw new ValidationException(['password' => $errors], 'Password validation failed');
         }
     }
 
