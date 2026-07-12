@@ -53,6 +53,8 @@ final class CategoryModel extends Model
 
     /**
      * Get the articles for the category.
+     *
+     * @return HasMany<ArticleModel, $this>
      */
     public function articles(): HasMany
     {
@@ -93,12 +95,23 @@ final class CategoryModel extends Model
 
     /**
      * Scope for categories with published articles only.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     public function scopeWithPublishedArticles(Builder $query): Builder
     {
-        return $query->whereHas('articles', function ($q) {
-            $q->published();
-        });
+        return $query->whereHas('articles', $this->filterPublished(...));
+    }
+
+    /**
+     * Apply the ArticleModel "published" scope inside a relation subquery.
+     *
+     * @param  Builder<ArticleModel>  $query
+     */
+    private function filterPublished(Builder $query): void
+    {
+        $query->published();
     }
 
     /**

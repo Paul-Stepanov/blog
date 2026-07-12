@@ -147,6 +147,9 @@ final class ArticleModel extends Model
 
     /**
      * Scope for featured articles.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     public function scopeFeatured(Builder $query, int $limit = 3): Builder
     {
