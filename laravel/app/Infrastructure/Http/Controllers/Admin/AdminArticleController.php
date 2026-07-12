@@ -220,14 +220,6 @@ final class AdminArticleController extends Controller
         $command = PublishArticleCommand::fromId($id);
         $article = $this->articleService->publishArticle($command);
 
-        if ($article === null) {
-            return response()->json([
-                'success' => false,
-                'error' => 'entity_not_found',
-                'message' => "Article not found with ID: {$id}",
-            ], 404);
-        }
-
         return response()->json([
             'success' => true,
             'message' => 'Article published successfully.',
@@ -251,14 +243,6 @@ final class AdminArticleController extends Controller
     {
         $command = ArchiveArticleCommand::fromId($id);
         $article = $this->articleService->archiveArticle($command);
-
-        if ($article === null) {
-            return response()->json([
-                'success' => false,
-                'error' => 'entity_not_found',
-                'message' => "Article not found with ID: {$id}",
-            ], 404);
-        }
 
         return response()->json([
             'success' => true,
