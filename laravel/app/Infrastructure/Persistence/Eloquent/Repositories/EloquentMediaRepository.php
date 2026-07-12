@@ -23,7 +23,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     ) {}
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findById(Uuid $id): ?MediaFile
     {
@@ -35,7 +35,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getById(Uuid $id): MediaFile
     {
@@ -49,7 +49,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByPath(string $path): ?MediaFile
     {
@@ -63,7 +63,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findAll(int $page = 1, int $perPage = 30): PaginatedResult
     {
@@ -86,7 +86,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findImages(int $page = 1, int $perPage = 30): PaginatedResult
     {
@@ -110,7 +110,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findDocuments(int $page = 1, int $perPage = 30): PaginatedResult
     {
@@ -135,7 +135,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findVideos(int $page = 1, int $perPage = 30): PaginatedResult
     {
@@ -159,7 +159,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByMimeType(MimeType $mimeType, int $page = 1, int $perPage = 30): PaginatedResult
     {
@@ -183,7 +183,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function search(string $query, int $page = 1, int $perPage = 30): PaginatedResult
     {
@@ -213,7 +213,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getRecent(int $limit = 10): array
     {
@@ -227,7 +227,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getUnused(int $page = 1, int $perPage = 30): PaginatedResult
     {
@@ -252,7 +252,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function save(MediaFile $mediaFile): void
     {
@@ -265,7 +265,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function delete(Uuid $id): void
     {
@@ -275,7 +275,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function count(): int
     {
@@ -283,7 +283,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function countByType(): array
     {
@@ -317,7 +317,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getTotalSize(): int
     {

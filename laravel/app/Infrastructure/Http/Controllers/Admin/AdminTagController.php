@@ -30,6 +30,7 @@ final class AdminTagController extends Controller
      *     path="/api/admin/tags",
      *     summary="Get all tags (admin)",
      *     tags={"Admin Tags"},
+     *
      *     @OA\Response(response=200, description="List of tags")
      * )
      */
@@ -50,7 +51,9 @@ final class AdminTagController extends Controller
      *     path="/api/admin/tags/{id}",
      *     summary="Get tag by ID (admin)",
      *     tags={"Admin Tags"},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string", format="uuid")),
+     *
      *     @OA\Response(response=200, description="Tag details"),
      *     @OA\Response(response=404, description="Tag not found")
      * )
@@ -80,11 +83,14 @@ final class AdminTagController extends Controller
      *     path="/api/admin/tags",
      *     summary="Create tag",
      *     tags={"Admin Tags"},
+     *
      *     @OA\RequestBody(required=true, @OA\JsonContent(
      *         required={"name"},
+     *
      *         @OA\Property(property="name", type="string"),
      *         @OA\Property(property="slug", type="string")
      *     )),
+     *
      *     @OA\Response(response=201, description="Tag created"),
      *     @OA\Response(response=422, description="Validation error")
      * )
@@ -108,10 +114,13 @@ final class AdminTagController extends Controller
      *     path="/api/admin/tags/{id}",
      *     summary="Update tag",
      *     tags={"Admin Tags"},
+     *
      *     @OA\RequestBody(required=true, @OA\JsonContent(
+     *
      *         @OA\Property(property="name", type="string"),
      *         @OA\Property(property="slug", type="string")
      *     )),
+     *
      *     @OA\Response(response=200, description="Tag updated"),
      *     @OA\Response(response=404, description="Tag not found")
      * )
@@ -143,6 +152,7 @@ final class AdminTagController extends Controller
      *     path="/api/admin/tags/{id}",
      *     summary="Delete tag",
      *     tags={"Admin Tags"},
+     *
      *     @OA\Response(response=200, description="Tag deleted"),
      *     @OA\Response(response=404, description="Tag not found")
      * )
@@ -151,7 +161,7 @@ final class AdminTagController extends Controller
     {
         $deleted = $this->tagService->deleteTag($id);
 
-        if (!$deleted) {
+        if (! $deleted) {
             return response()->json([
                 'success' => false,
                 'error' => 'tag_not_found',

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Entities;
 
+use App\Domain\Contact\ValueObjects\Email;
 use App\Domain\Shared\Entity;
 use App\Domain\Shared\Exceptions\ValidationException;
 use App\Domain\Shared\Timestamps;
 use App\Domain\Shared\Uuid;
-use App\Domain\User\ValueObjects\{Password, UserRole};
-use App\Domain\Contact\ValueObjects\Email;
+use App\Domain\User\ValueObjects\Password;
+use App\Domain\User\ValueObjects\UserRole;
 
 /**
  * User Entity - Aggregate Root.
@@ -20,9 +21,13 @@ final class User extends Entity
 {
     // Mutable properties
     private string $name;
+
     private Email $email;
+
     private Password $password;
+
     private UserRole $role;
+
     private Timestamps $timestamps;
 
     public function __construct(
@@ -50,7 +55,7 @@ final class User extends Entity
         string $name,
         Email $email,
         Password $password,
-        UserRole $role = null,
+        ?UserRole $role = null,
     ): self {
         return new self(
             id: $id,
@@ -158,7 +163,7 @@ final class User extends Entity
     {
         return $this->role->canPublish();
     }
-    
+
     public function getName(): string
     {
         return $this->name;

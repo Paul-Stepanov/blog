@@ -18,7 +18,9 @@ use App\Domain\Shared\Uuid;
 final class Tag extends Entity
 {
     private string $name;
+
     private Slug $slug;
+
     private Timestamps $timestamps;
 
     public function __construct(
@@ -86,7 +88,7 @@ final class Tag extends Entity
 
         $this->timestamps = $this->timestamps->touch();
     }
-    
+
     public function getName(): string
     {
         return $this->name;

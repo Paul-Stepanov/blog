@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Contact\DTOs;
 
-use App\Application\Shared\{DTOFormattingTrait, DTOInterface};
+use App\Application\Shared\DTOFormattingTrait;
+use App\Application\Shared\DTOInterface;
 use App\Application\Shared\Exceptions\InvalidEntityTypeException;
 use App\Domain\Contact\Entities\ContactMessage;
 use App\Domain\Shared\Entity;
@@ -19,16 +20,16 @@ final readonly class ContactMessageDTO implements DTOInterface
     use DTOFormattingTrait;
 
     /**
-     * @param string $id UUID string
-     * @param string $name Sender name
-     * @param string $email Sender email
-     * @param string $subject Message subject
-     * @param string $message Message content
-     * @param string $ipAddress Sender IP address
-     * @param string $userAgent Sender user agent
-     * @param bool $isRead Whether message has been read
-     * @param string $createdAt ISO 8601 datetime
-     * @param string $updatedAt ISO 8601 datetime
+     * @param  string  $id  UUID string
+     * @param  string  $name  Sender name
+     * @param  string  $email  Sender email
+     * @param  string  $subject  Message subject
+     * @param  string  $message  Message content
+     * @param  string  $ipAddress  Sender IP address
+     * @param  string  $userAgent  Sender user agent
+     * @param  bool  $isRead  Whether message has been read
+     * @param  string  $createdAt  ISO 8601 datetime
+     * @param  string  $updatedAt  ISO 8601 datetime
      */
     public function __construct(
         public string $id,
@@ -46,11 +47,11 @@ final readonly class ContactMessageDTO implements DTOInterface
     /**
      * Create from Domain Entity.
      *
-     * @param Entity $entity Domain contact message entity
+     * @param  Entity  $entity  Domain contact message entity
      */
     public static function fromEntity(Entity $entity): static
     {
-        if (!$entity instanceof ContactMessage) {
+        if (! $entity instanceof ContactMessage) {
             throw new InvalidEntityTypeException(
                 expectedType: ContactMessage::class,
                 actualType: $entity::class
@@ -99,7 +100,7 @@ final readonly class ContactMessageDTO implements DTOInterface
      */
     public function isUnread(): bool
     {
-        return !$this->isRead;
+        return ! $this->isRead;
     }
 
     /**

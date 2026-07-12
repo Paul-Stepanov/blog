@@ -17,14 +17,14 @@ use App\Infrastructure\Http\Requests\Api\CreateArticleRequest;
 final readonly class CreateArticleCommand
 {
     /**
-     * @param string $title Article title (primitive - simple text)
-     * @param string $content Article content (primitive - validated in Service)
-     * @param Slug|null $slug Optional custom slug (VO - business logic)
-     * @param string|null $excerpt Optional excerpt (primitive - auto-generated from content if not provided)
-     * @param Uuid|null $categoryId Category UUID (VO - type-safe ID)
-     * @param Uuid|null $authorId Author UUID (VO - type-safe ID)
-     * @param Uuid|null $coverImageId Cover image UUID (VO - type-safe ID)
-     * @param array<int, string> $tags Array of tag UUIDs (primitive - validated in Service)
+     * @param  string  $title  Article title (primitive - simple text)
+     * @param  string  $content  Article content (primitive - validated in Service)
+     * @param  Slug|null  $slug  Optional custom slug (VO - business logic)
+     * @param  string|null  $excerpt  Optional excerpt (primitive - auto-generated from content if not provided)
+     * @param  Uuid|null  $categoryId  Category UUID (VO - type-safe ID)
+     * @param  Uuid|null  $authorId  Author UUID (VO - type-safe ID)
+     * @param  Uuid|null  $coverImageId  Cover image UUID (VO - type-safe ID)
+     * @param  array<int, string>  $tags  Array of tag UUIDs (primitive - validated in Service)
      */
     public function __construct(
         public string $title,

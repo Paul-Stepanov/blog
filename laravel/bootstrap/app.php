@@ -1,6 +1,7 @@
 <?php
 
-use App\Domain\Shared\Exceptions\{DomainException, EntityNotFoundException};
+use App\Domain\Shared\Exceptions\DomainException;
+use App\Domain\Shared\Exceptions\EntityNotFoundException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;

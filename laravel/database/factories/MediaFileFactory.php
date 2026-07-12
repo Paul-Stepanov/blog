@@ -8,7 +8,7 @@ use App\Infrastructure\Persistence\Eloquent\Models\MediaFileModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<MediaFileModel>
+ * @extends Factory<MediaFileModel>
  */
 final class MediaFileFactory extends Factory
 {
@@ -21,14 +21,14 @@ final class MediaFileFactory extends Factory
      */
     public function definition(): array
     {
-        $fileName = fake()->word() . '.jpg';
-        $filePath = 'uploads/' . $fileName;
+        $fileName = fake()->word().'.jpg';
+        $filePath = 'uploads/'.$fileName;
 
         return [
             'uuid' => fake()->uuid(),
             'filename' => $fileName,
             'path' => $filePath,
-            'url' => '/storage/' . $filePath,
+            'url' => '/storage/'.$filePath,
             'mime_type' => 'image/jpeg',
             'size_bytes' => fake()->numberBetween(10000, 5000000),
             'width' => fake()->numberBetween(800, 1920),

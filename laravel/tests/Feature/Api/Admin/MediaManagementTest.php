@@ -37,7 +37,7 @@ final class MediaManagementTest extends TestCase
         Storage::fake('public');
     }
 
-    public function testGetMediaFile_WithValidId_ReturnsMedia(): void
+    public function test_get_media_file_with_valid_id_returns_media(): void
     {
         $media = MediaFileModel::factory()->create();
 
@@ -51,7 +51,7 @@ final class MediaManagementTest extends TestCase
             ->assertJsonPath('data.file_name', $media->filename);
     }
 
-    public function testGetMediaFile_WithInvalidId_ReturnsNotFound(): void
+    public function test_get_media_file_with_invalid_id_returns_not_found(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -62,7 +62,7 @@ final class MediaManagementTest extends TestCase
             ->assertJsonPath('error', 'entity_not_found');
     }
 
-    public function testGetMediaFile_WithoutAuthentication_ReturnsUnauthorized(): void
+    public function test_get_media_file_without_authentication_returns_unauthorized(): void
     {
         $media = MediaFileModel::factory()->create();
 
@@ -73,7 +73,7 @@ final class MediaManagementTest extends TestCase
             ->assertJsonPath('error', 'unauthenticated');
     }
 
-    public function testUploadFile_WithValidImage_ReturnsSuccess(): void
+    public function test_upload_file_with_valid_image_returns_success(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -98,14 +98,14 @@ final class MediaManagementTest extends TestCase
                     'height',
                 ],
             ]);
-        
+
         $storedPath = $response->json('data.file_path');
         $relativeOnPublicDisk = preg_replace('#^public/#', '', (string) $storedPath);
 
         Storage::disk('public')->assertExists($relativeOnPublicDisk);
     }
 
-    public function testUploadFile_WithMissingFile_ReturnsValidationError(): void
+    public function test_upload_file_with_missing_file_returns_validation_error(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -121,7 +121,7 @@ final class MediaManagementTest extends TestCase
             ]);
     }
 
-    public function testUploadFile_WithInvalidMimeType_ReturnsValidationError(): void
+    public function test_upload_file_with_invalid_mime_type_returns_validation_error(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -141,7 +141,7 @@ final class MediaManagementTest extends TestCase
             ]);
     }
 
-    public function testUploadFile_WithLargeFile_ReturnsValidationError(): void
+    public function test_upload_file_with_large_file_returns_validation_error(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -157,7 +157,7 @@ final class MediaManagementTest extends TestCase
             ->assertJsonPath('error', 'validation_error');
     }
 
-    public function testUpdateAltText_WithValidData_ReturnsSuccess(): void
+    public function test_update_alt_text_with_valid_data_returns_success(): void
     {
         $media = MediaFileModel::factory()->create();
 
@@ -179,7 +179,7 @@ final class MediaManagementTest extends TestCase
         ]);
     }
 
-    public function testRenameFile_WithValidName_ReturnsSuccess(): void
+    public function test_rename_file_with_valid_name_returns_success(): void
     {
         $media = MediaFileModel::factory()->create([
             'filename' => 'original-name.jpg',
@@ -203,7 +203,7 @@ final class MediaManagementTest extends TestCase
         ]);
     }
 
-    public function testRenameFile_WithInvalidExtension_ReturnsValidationError(): void
+    public function test_rename_file_with_invalid_extension_returns_validation_error(): void
     {
         $media = MediaFileModel::factory()->create();
 
@@ -225,7 +225,7 @@ final class MediaManagementTest extends TestCase
             ]);
     }
 
-    public function testDeleteFile_WithValidId_ReturnsSuccess(): void
+    public function test_delete_file_with_valid_id_returns_success(): void
     {
         $file = UploadedFile::fake()->image('test-image.jpg');
         Storage::disk('public')->putFileAs('uploads', $file, 'test-image.jpg');
@@ -249,7 +249,7 @@ final class MediaManagementTest extends TestCase
         ]);
     }
 
-    public function testDeleteFile_WithInvalidId_ReturnsNotFound(): void
+    public function test_delete_file_with_invalid_id_returns_not_found(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -260,7 +260,7 @@ final class MediaManagementTest extends TestCase
             ->assertJsonPath('error', 'entity_not_found');
     }
 
-    public function testMediaEndpoint_IsRateLimited(): void
+    public function test_media_endpoint_is_rate_limited(): void
     {
         $this->actingAs($this->adminUser);
 

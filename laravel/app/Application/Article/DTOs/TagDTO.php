@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Article\DTOs;
 
-use App\Application\Shared\{DTOFormattingTrait, DTOInterface};
+use App\Application\Shared\DTOFormattingTrait;
+use App\Application\Shared\DTOInterface;
 use App\Application\Shared\Exceptions\InvalidEntityTypeException;
 use App\Domain\Article\Entities\Tag;
 use App\Domain\Shared\Entity;
@@ -20,11 +21,11 @@ final readonly class TagDTO implements DTOInterface
     use DTOFormattingTrait;
 
     /**
-     * @param string $id UUID string
-     * @param string $name Tag name
-     * @param string $slug URL-friendly identifier
-     * @param string $createdAt ISO 8601 datetime
-     * @param string $updatedAt ISO 8601 datetime
+     * @param  string  $id  UUID string
+     * @param  string  $name  Tag name
+     * @param  string  $slug  URL-friendly identifier
+     * @param  string  $createdAt  ISO 8601 datetime
+     * @param  string  $updatedAt  ISO 8601 datetime
      */
     public function __construct(
         public string $id,
@@ -37,11 +38,11 @@ final readonly class TagDTO implements DTOInterface
     /**
      * Create from Domain Entity.
      *
-     * @param Entity $entity Domain tag entity
+     * @param  Entity  $entity  Domain tag entity
      */
     public static function fromEntity(Entity $entity): static
     {
-        if (!$entity instanceof Tag) {
+        if (! $entity instanceof Tag) {
             throw new InvalidEntityTypeException(
                 expectedType: Tag::class,
                 actualType: $entity::class

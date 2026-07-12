@@ -18,11 +18,8 @@ final readonly class UuidCast implements CastsAttributes
     /**
      * Cast the given value from database to Domain Uuid.
      *
-     * @param Model $model
-     * @param string $key
-     * @param string|null $value
-     * @param array<string, mixed> $attributes
-     * @return Uuid|null
+     * @param  string|null  $value
+     * @param  array<string, mixed>  $attributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): ?Uuid
     {
@@ -36,11 +33,8 @@ final readonly class UuidCast implements CastsAttributes
     /**
      * Cast the given Domain Uuid to database string.
      *
-     * @param Model $model
-     * @param string $key
-     * @param Uuid|string|null $value
-     * @param array<string, mixed> $attributes
-     * @return string|null
+     * @param  Uuid|string|null  $value
+     * @param  array<string, mixed>  $attributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
     {

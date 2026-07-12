@@ -7,6 +7,9 @@ namespace App\Infrastructure\Persistence\Eloquent\Models;
 use App\Domain\Article\ValueObjects\ArticleStatus;
 use App\Infrastructure\Persistence\Casts\SlugCast;
 use Database\Factories\ArticleFactory;
+use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,7 +31,7 @@ final class ArticleModel extends Model
     protected $table = 'articles';
 
     /**
-     * @var class-string<\Illuminate\Database\Eloquent\Factories\Factory>
+     * @var class-string<Factory>
      */
     protected static $factory = ArticleFactory::class;
 
@@ -49,7 +52,7 @@ final class ArticleModel extends Model
     ];
 
     /**
-     * @var array<string, class-string<\Illuminate\Contracts\Database\Eloquent\CastsAttributes>|string>
+     * @var array<string, class-string<CastsAttributes>|string>
      */
     protected $casts = [
         'slug' => SlugCast::class,
@@ -99,7 +102,7 @@ final class ArticleModel extends Model
     /**
      * Scope for published articles.
      */
-    public function scopePublished(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', 'published')
             ->whereNotNull('published_at')
@@ -109,7 +112,7 @@ final class ArticleModel extends Model
     /**
      * Scope for draft articles.
      */
-    public function scopeDraft(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeDraft(Builder $query): Builder
     {
         return $query->where('status', 'draft');
     }
@@ -117,7 +120,7 @@ final class ArticleModel extends Model
     /**
      * Scope for archived articles.
      */
-    public function scopeArchived(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeArchived(Builder $query): Builder
     {
         return $query->where('status', 'archived');
     }
@@ -125,7 +128,7 @@ final class ArticleModel extends Model
     /**
      * Scope for searching articles.
      */
-    public function scopeSearch(\Illuminate\Database\Eloquent\Builder $query, string $term): \Illuminate\Database\Eloquent\Builder
+    public function scopeSearch(Builder $query, string $term): Builder
     {
         return $query->where(function ($q) use ($term) {
             $q->where('title', 'LIKE', "%{$term}%")
@@ -137,7 +140,7 @@ final class ArticleModel extends Model
     /**
      * Scope for ordering by published date.
      */
-    public function scopeLatestPublished(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeLatestPublished(Builder $query): Builder
     {
         return $query->orderBy('published_at', 'desc');
     }
@@ -145,7 +148,7 @@ final class ArticleModel extends Model
     /**
      * Scope for featured articles.
      */
-    public function scopeFeatured(\Illuminate\Database\Eloquent\Builder $query, int $limit = 3): \Illuminate\Database\Eloquent\Builder
+    public function scopeFeatured(Builder $query, int $limit = 3): Builder
     {
         return $query->published()
             ->latestPublished()
@@ -155,7 +158,7 @@ final class ArticleModel extends Model
     /**
      * Find by UUID.
      */
-    public function scopeByUuid(\Illuminate\Database\Eloquent\Builder $query, string $uuid): \Illuminate\Database\Eloquent\Builder
+    public function scopeByUuid(Builder $query, string $uuid): Builder
     {
         return $query->where('uuid', $uuid);
     }
@@ -163,7 +166,7 @@ final class ArticleModel extends Model
     /**
      * Find by slug.
      */
-    public function scopeBySlug(\Illuminate\Database\Eloquent\Builder $query, string $slug): \Illuminate\Database\Eloquent\Builder
+    public function scopeBySlug(Builder $query, string $slug): Builder
     {
         return $query->where('slug', $slug);
     }

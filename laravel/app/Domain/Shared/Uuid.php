@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Shared;
 
-use JsonException;
 use Ramsey\Uuid\Uuid as RamseyUuid;
 use Ramsey\Uuid\UuidInterface;
 use RuntimeException;
@@ -27,7 +26,7 @@ final class Uuid extends ValueObject
      */
     public static function fromString(string $value): self
     {
-        if (!RamseyUuid::isValid($value)) {
+        if (! RamseyUuid::isValid($value)) {
             throw new RuntimeException(sprintf('Invalid UUID: "%s"', $value));
         }
 
@@ -85,7 +84,7 @@ final class Uuid extends ValueObject
     /**
      * Unserialize for Laravel Queue support.
      *
-     * @param array{value: string} $data
+     * @param  array{value: string}  $data
      */
     public function __unserialize(array $data): void
     {

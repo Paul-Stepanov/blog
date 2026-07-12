@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\User\DTOs;
 
-use App\Application\Shared\{DTOFormattingTrait, DTOInterface};
+use App\Application\Shared\DTOFormattingTrait;
+use App\Application\Shared\DTOInterface;
 use App\Application\Shared\Exceptions\InvalidEntityTypeException;
 use App\Domain\Shared\Entity;
 use App\Domain\User\Entities\User;
@@ -19,12 +20,12 @@ final readonly class UserDTO implements DTOInterface
     use DTOFormattingTrait;
 
     /**
-     * @param string $id UUID string
-     * @param string $name User display name
-     * @param string $email User email
-     * @param string $role User role (admin, editor, author)
-     * @param string $createdAt ISO 8601 datetime
-     * @param string $updatedAt ISO 8601 datetime
+     * @param  string  $id  UUID string
+     * @param  string  $name  User display name
+     * @param  string  $email  User email
+     * @param  string  $role  User role (admin, editor, author)
+     * @param  string  $createdAt  ISO 8601 datetime
+     * @param  string  $updatedAt  ISO 8601 datetime
      */
     public function __construct(
         public string $id,
@@ -38,11 +39,11 @@ final readonly class UserDTO implements DTOInterface
     /**
      * Create from Domain Entity.
      *
-     * @param Entity $entity Domain user entity
+     * @param  Entity  $entity  Domain user entity
      */
     public static function fromEntity(Entity $entity): static
     {
-        if (!$entity instanceof User) {
+        if (! $entity instanceof User) {
             throw new InvalidEntityTypeException(
                 expectedType: User::class,
                 actualType: $entity::class
@@ -103,11 +104,11 @@ final readonly class UserDTO implements DTOInterface
         $domain = substr($this->email, strpos($this->email, '@') + 1);
 
         if (strlen($local) <= 2) {
-            $obfuscated = $local[0] . '***';
+            $obfuscated = $local[0].'***';
         } else {
-            $obfuscated = $local[0] . str_repeat('*', strlen($local) - 2) . $local[-1];
+            $obfuscated = $local[0].str_repeat('*', strlen($local) - 2).$local[-1];
         }
 
-        return $obfuscated . '@' . $domain;
+        return $obfuscated.'@'.$domain;
     }
 }

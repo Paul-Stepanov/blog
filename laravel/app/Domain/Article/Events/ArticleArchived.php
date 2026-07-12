@@ -16,12 +16,12 @@ use DateTimeImmutable;
 final class ArticleArchived extends DomainEvent
 {
     /**
-     * @param Uuid $articleId Archived article ID
-     * @param Uuid $authorId Author who archived
-     * @param string $title Article title
-     * @param string $slug Article slug
-     * @param string $previousStatus Previous status (DRAFT, PUBLISHED)
-     * @param string|null $reason Optional reason for archiving
+     * @param  Uuid  $articleId  Archived article ID
+     * @param  Uuid  $authorId  Author who archived
+     * @param  string  $title  Article title
+     * @param  string  $slug  Article slug
+     * @param  string  $previousStatus  Previous status (DRAFT, PUBLISHED)
+     * @param  string|null  $reason  Optional reason for archiving
      */
     public function __construct(
         private Uuid $articleId,
@@ -30,7 +30,7 @@ final class ArticleArchived extends DomainEvent
         private string $slug,
         private string $previousStatus,
         private ?string $reason,
-        DateTimeImmutable $occurredAt = new DateTimeImmutable()
+        DateTimeImmutable $occurredAt = new DateTimeImmutable
     ) {
         parent::__construct($occurredAt);
     }
@@ -100,6 +100,7 @@ final class ArticleArchived extends DomainEvent
 
     /**
      * {@inheritdoc}
+     *
      * @throws \DateMalformedStringException
      */
     public static function fromArray(array $data): static

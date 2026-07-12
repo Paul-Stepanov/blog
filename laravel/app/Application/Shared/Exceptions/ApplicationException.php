@@ -16,9 +16,9 @@ use Throwable;
 abstract class ApplicationException extends RuntimeException
 {
     /**
-     * @param string $message Exception message
-     * @param int $code Error code
-     * @param Throwable|null $previous Previous exception for chaining
+     * @param  string  $message  Exception message
+     * @param  int  $code  Error code
+     * @param  Throwable|null  $previous  Previous exception for chaining
      */
     public function __construct(
         string $message = '',

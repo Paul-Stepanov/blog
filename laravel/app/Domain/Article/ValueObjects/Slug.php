@@ -57,7 +57,7 @@ final class Slug extends ValueObject
      */
     protected function validate(mixed $value): void
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             throw new InvalidArgumentException('Slug must be a string');
         }
 
@@ -65,9 +65,9 @@ final class Slug extends ValueObject
             throw new InvalidArgumentException('Slug cannot be empty');
         }
 
-        if (!preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $value)) {
+        if (! preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $value)) {
             throw new InvalidArgumentException(
-                'Slug must contain only lowercase letters, numbers, and hyphens. ' .
+                'Slug must contain only lowercase letters, numbers, and hyphens. '.
                 'Cannot start or end with a hyphen or contain consecutive hyphens.'
             );
         }

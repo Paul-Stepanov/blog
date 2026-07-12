@@ -28,8 +28,10 @@ final class AdminContactMessageController extends Controller
      *     path="/api/admin/messages",
      *     summary="Get all messages (admin)",
      *     tags={"Admin Messages"},
+     *
      *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer")),
      *     @OA\Parameter(name="per_page", in="query", @OA\Schema(type="integer")),
+     *
      *     @OA\Response(response=200, description="List of messages")
      * )
      */
@@ -61,7 +63,9 @@ final class AdminContactMessageController extends Controller
      *     path="/api/admin/messages/{id}",
      *     summary="Get message by ID (admin)",
      *     tags={"Admin Messages"},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string", format="uuid")),
+     *
      *     @OA\Response(response=200, description="Message details"),
      *     @OA\Response(response=404, description="Message not found")
      * )
@@ -91,6 +95,7 @@ final class AdminContactMessageController extends Controller
      *     path="/api/admin/messages/{id}/mark-read",
      *     summary="Mark message as read",
      *     tags={"Admin Messages"},
+     *
      *     @OA\Response(response=200, description="Message marked as read"),
      *     @OA\Response(response=404, description="Message not found")
      * )
@@ -112,6 +117,7 @@ final class AdminContactMessageController extends Controller
      *     path="/api/admin/messages/{id}/mark-unread",
      *     summary="Mark message as unread",
      *     tags={"Admin Messages"},
+     *
      *     @OA\Response(response=200, description="Message marked as unread"),
      *     @OA\Response(response=404, description="Message not found")
      * )
@@ -133,6 +139,7 @@ final class AdminContactMessageController extends Controller
      *     path="/api/admin/messages/{id}",
      *     summary="Delete message",
      *     tags={"Admin Messages"},
+     *
      *     @OA\Response(response=200, description="Message deleted successfully"),
      *     @OA\Response(response=404, description="Message not found")
      * )
@@ -141,7 +148,7 @@ final class AdminContactMessageController extends Controller
     {
         $deleted = $this->contactService->deleteMessage($id);
 
-        if (!$deleted) {
+        if (! $deleted) {
             return response()->json([
                 'success' => false,
                 'error' => 'message_not_found',

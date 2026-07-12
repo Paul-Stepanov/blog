@@ -8,7 +8,7 @@ use App\Infrastructure\Persistence\Eloquent\Models\ContactMessageModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<ContactMessageModel>
+ * @extends Factory<ContactMessageModel>
  */
 final class ContactMessageFactory extends Factory
 {

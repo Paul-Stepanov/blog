@@ -6,7 +6,6 @@ namespace Tests\Feature\Api\Public;
 
 use App\Infrastructure\Persistence\Eloquent\Models\ContactMessageModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 /**
@@ -16,7 +15,7 @@ final class ContactApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testSubmitContactMessage_WithValidData_ReturnsSuccess(): void
+    public function test_submit_contact_message_with_valid_data_returns_success(): void
     {
         $payload = [
             'name' => 'John Doe',
@@ -38,7 +37,7 @@ final class ContactApiTest extends TestCase
         ]);
     }
 
-    public function testSubmitContactMessage_WithMissingName_ReturnsValidationError(): void
+    public function test_submit_contact_message_with_missing_name_returns_validation_error(): void
     {
         $payload = [
             'email' => 'john@example.com',
@@ -61,7 +60,7 @@ final class ContactApiTest extends TestCase
             ]);
     }
 
-    public function testSubmitContactMessage_WithInvalidEmail_ReturnsValidationError(): void
+    public function test_submit_contact_message_with_invalid_email_returns_validation_error(): void
     {
         $payload = [
             'name' => 'John Doe',
@@ -82,7 +81,7 @@ final class ContactApiTest extends TestCase
             ]);
     }
 
-    public function testSubmitContactMessage_WithShortMessage_ReturnsValidationError(): void
+    public function test_submit_contact_message_with_short_message_returns_validation_error(): void
     {
         $payload = [
             'name' => 'John Doe',
@@ -103,7 +102,7 @@ final class ContactApiTest extends TestCase
             ]);
     }
 
-    public function testSubmitContactMessage_WithEmptyPayload_ReturnsValidationError(): void
+    public function test_submit_contact_message_with_empty_payload_returns_validation_error(): void
     {
         $response = $this->postJson('/api/contact', []);
 
@@ -120,7 +119,7 @@ final class ContactApiTest extends TestCase
             ]);
     }
 
-    public function testContactEndpoint_HasStrictRateLimiting(): void
+    public function test_contact_endpoint_has_strict_rate_limiting(): void
     {
         $payload = [
             'name' => 'John Doe',
@@ -138,7 +137,7 @@ final class ContactApiTest extends TestCase
         $response->assertStatus(429);
     }
 
-    public function testSubmitContactMessage_SavesIpAddress(): void
+    public function test_submit_contact_message_saves_ip_address(): void
     {
         $payload = [
             'name' => 'John Doe',

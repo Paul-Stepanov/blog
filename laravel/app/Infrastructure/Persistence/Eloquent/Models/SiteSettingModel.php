@@ -6,6 +6,9 @@ namespace App\Infrastructure\Persistence\Eloquent\Models;
 
 use App\Infrastructure\Persistence\Casts\UuidCast;
 use Database\Factories\SiteSettingFactory;
+use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,7 +27,7 @@ final class SiteSettingModel extends Model
     protected $table = 'site_settings';
 
     /**
-     * @var class-string<\Illuminate\Database\Eloquent\Factories\Factory>
+     * @var class-string<Factory>
      */
     protected static $factory = SiteSettingFactory::class;
 
@@ -39,7 +42,7 @@ final class SiteSettingModel extends Model
     ];
 
     /**
-     * @var array<string, class-string<\Illuminate\Contracts\Database\Eloquent\CastsAttributes>|string>
+     * @var array<string, class-string<CastsAttributes>|string>
      */
     protected $casts = [
         'uuid' => UuidCast::class,
@@ -50,7 +53,7 @@ final class SiteSettingModel extends Model
     /**
      * Scope for settings by key.
      */
-    public function scopeByKey(\Illuminate\Database\Eloquent\Builder $query, string $key): \Illuminate\Database\Eloquent\Builder
+    public function scopeByKey(Builder $query, string $key): Builder
     {
         return $query->where('key', $key);
     }
@@ -58,15 +61,15 @@ final class SiteSettingModel extends Model
     /**
      * Scope for settings by group (prefix before first dot).
      */
-    public function scopeByGroup(\Illuminate\Database\Eloquent\Builder $query, string $group): \Illuminate\Database\Eloquent\Builder
+    public function scopeByGroup(Builder $query, string $group): Builder
     {
-        return $query->where('key', 'LIKE', $group . '.%');
+        return $query->where('key', 'LIKE', $group.'.%');
     }
 
     /**
      * Scope for settings by type.
      */
-    public function scopeByType(\Illuminate\Database\Eloquent\Builder $query, string $type): \Illuminate\Database\Eloquent\Builder
+    public function scopeByType(Builder $query, string $type): Builder
     {
         return $query->where('type', $type);
     }
@@ -74,7 +77,7 @@ final class SiteSettingModel extends Model
     /**
      * Scope for ordering by key.
      */
-    public function scopeOrderedByKey(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeOrderedByKey(Builder $query): Builder
     {
         return $query->orderBy('key', 'asc');
     }
@@ -82,7 +85,7 @@ final class SiteSettingModel extends Model
     /**
      * Find by UUID.
      */
-    public function scopeByUuid(\Illuminate\Database\Eloquent\Builder $query, string $uuid): \Illuminate\Database\Eloquent\Builder
+    public function scopeByUuid(Builder $query, string $uuid): Builder
     {
         return $query->where('uuid', $uuid);
     }
@@ -93,6 +96,7 @@ final class SiteSettingModel extends Model
     public function getGroup(): string
     {
         $parts = explode('.', $this->key);
+
         return $parts[0];
     }
 
@@ -102,6 +106,7 @@ final class SiteSettingModel extends Model
     public function getName(): string
     {
         $parts = explode('.', $this->key);
+
         return end($parts);
     }
 
@@ -110,7 +115,7 @@ final class SiteSettingModel extends Model
      */
     public function belongsToGroup(string $group): bool
     {
-        return str_starts_with($this->key, $group . '.');
+        return str_starts_with($this->key, $group.'.');
     }
 
     /**

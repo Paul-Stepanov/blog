@@ -15,9 +15,9 @@ use App\Infrastructure\Http\Requests\Admin\CategoryRequest;
 final readonly class CreateCategoryCommand
 {
     /**
-     * @param string $name Category name
-     * @param Slug|null $slug Optional custom slug
-     * @param string $description Category description
+     * @param  string  $name  Category name
+     * @param  Slug|null  $slug  Optional custom slug
+     * @param  string  $description  Category description
      */
     public function __construct(
         public string $name,

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Domain\Article\Entities;
 
-use App\Domain\Article\ValueObjects\{ArticleContent, ArticleStatus, Slug};
+use App\Domain\Article\ValueObjects\ArticleContent;
+use App\Domain\Article\ValueObjects\ArticleStatus;
+use App\Domain\Article\ValueObjects\Slug;
+use App\Domain\Shared\DomainEvent;
 use App\Domain\Shared\Entity;
 use App\Domain\Shared\Exceptions\ValidationException;
 use App\Domain\Shared\Timestamps;
 use App\Domain\Shared\Uuid;
-use App\Domain\Shared\DomainEvent;
 use DateTimeImmutable;
 
 /**
@@ -24,14 +26,23 @@ final class Article extends Entity
     private array $events = [];
 
     private readonly ?Uuid $authorId;
+
     private string $title;
+
     private Slug $slug;
+
     private ArticleContent $content;
+
     private string $excerpt;
+
     private ArticleStatus $status;
+
     private ?Uuid $categoryId;
+
     private ?Uuid $coverImageId;
+
     private ?DateTimeImmutable $publishedAt;
+
     private Timestamps $timestamps;
 
     public function __construct(
@@ -127,7 +138,7 @@ final class Article extends Entity
      */
     public function publish(): void
     {
-        if (!$this->status->canBePublished()) {
+        if (! $this->status->canBePublished()) {
             throw ValidationException::forField('status', 'Article cannot be published from current status');
         }
 
@@ -140,7 +151,7 @@ final class Article extends Entity
         }
 
         $this->status = ArticleStatus::PUBLISHED;
-        $this->publishedAt = new DateTimeImmutable();
+        $this->publishedAt = new DateTimeImmutable;
         $this->timestamps = $this->timestamps->touch();
     }
 
@@ -151,7 +162,7 @@ final class Article extends Entity
      */
     public function archive(): void
     {
-        if (!$this->status->canBeArchived()) {
+        if (! $this->status->canBeArchived()) {
             throw ValidationException::forField('status', 'Article cannot be archived from current status');
         }
 
@@ -184,7 +195,7 @@ final class Article extends Entity
         ArticleContent $content,
         ?Slug $newSlug = null,
     ): void {
-        if (!$this->status->isEditable()) {
+        if (! $this->status->isEditable()) {
             throw ValidationException::forField('status', 'Article cannot be edited in current status');
         }
 
@@ -225,6 +236,7 @@ final class Article extends Entity
     {
         $events = $this->events;
         $this->events = [];
+
         return $events;
     }
 

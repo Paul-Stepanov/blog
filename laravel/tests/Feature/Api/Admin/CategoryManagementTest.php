@@ -32,7 +32,7 @@ final class CategoryManagementTest extends TestCase
         ]);
     }
 
-    public function testGetAllCategories_WithAuthentication_ReturnsCategories(): void
+    public function test_get_all_categories_with_authentication_returns_categories(): void
     {
         CategoryModel::factory()->count(3)->create();
 
@@ -56,7 +56,7 @@ final class CategoryManagementTest extends TestCase
             ]);
     }
 
-    public function testGetAllCategories_WithoutAuthentication_ReturnsUnauthorized(): void
+    public function test_get_all_categories_without_authentication_returns_unauthorized(): void
     {
         $response = $this->getJson('/api/admin/categories');
 
@@ -65,7 +65,7 @@ final class CategoryManagementTest extends TestCase
             ->assertJsonPath('error', 'unauthenticated');
     }
 
-    public function testGetCategoryById_WithValidId_ReturnsCategory(): void
+    public function test_get_category_by_id_with_valid_id_returns_category(): void
     {
         $category = CategoryModel::factory()->create();
 
@@ -79,7 +79,7 @@ final class CategoryManagementTest extends TestCase
             ->assertJsonPath('data.name', $category->name);
     }
 
-    public function testGetCategoryById_WithInvalidId_ReturnsNotFound(): void
+    public function test_get_category_by_id_with_invalid_id_returns_not_found(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -90,7 +90,7 @@ final class CategoryManagementTest extends TestCase
             ->assertJsonPath('error', 'entity_not_found');
     }
 
-    public function testCreateCategory_WithValidData_ReturnsCreated(): void
+    public function test_create_category_with_valid_data_returns_created(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -113,7 +113,7 @@ final class CategoryManagementTest extends TestCase
         ]);
     }
 
-    public function testCreateCategory_WithMissingName_ReturnsValidationError(): void
+    public function test_create_category_with_missing_name_returns_validation_error(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -133,7 +133,7 @@ final class CategoryManagementTest extends TestCase
             ]);
     }
 
-    public function testCreateCategory_WithInvalidSlugFormat_ReturnsValidationError(): void
+    public function test_create_category_with_invalid_slug_format_returns_validation_error(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -154,7 +154,7 @@ final class CategoryManagementTest extends TestCase
             ]);
     }
 
-    public function testCreateCategory_WithDuplicateSlug_ReturnsValidationError(): void
+    public function test_create_category_with_duplicate_slug_returns_validation_error(): void
     {
         CategoryModel::factory()->create([
             'slug' => 'test-category',
@@ -179,7 +179,7 @@ final class CategoryManagementTest extends TestCase
             ]);
     }
 
-    public function testUpdateCategory_WithValidData_ReturnsSuccess(): void
+    public function test_update_category_with_valid_data_returns_success(): void
     {
         $category = CategoryModel::factory()->create([
             'name' => 'Original Name',
@@ -204,7 +204,7 @@ final class CategoryManagementTest extends TestCase
         ]);
     }
 
-    public function testUpdateCategory_WithDuplicateSlug_ReturnsValidationError(): void
+    public function test_update_category_with_duplicate_slug_returns_validation_error(): void
     {
         $category1 = CategoryModel::factory()->create(['slug' => 'category-1']);
         $category2 = CategoryModel::factory()->create(['slug' => 'category-2']);
@@ -228,7 +228,7 @@ final class CategoryManagementTest extends TestCase
             ]);
     }
 
-    public function testDeleteCategory_WithValidId_ReturnsSuccess(): void
+    public function test_delete_category_with_valid_id_returns_success(): void
     {
         $category = CategoryModel::factory()->create();
 
@@ -244,7 +244,7 @@ final class CategoryManagementTest extends TestCase
         ]);
     }
 
-    public function testDeleteCategory_WithInvalidId_ReturnsNotFound(): void
+    public function test_delete_category_with_invalid_id_returns_not_found(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -255,7 +255,7 @@ final class CategoryManagementTest extends TestCase
             ->assertJsonPath('error', 'entity_not_found');
     }
 
-    public function testCategoriesEndpoint_IsRateLimited(): void
+    public function test_categories_endpoint_is_rate_limited(): void
     {
         $this->actingAs($this->adminUser);
 

@@ -15,8 +15,8 @@ use App\Infrastructure\Http\Requests\Admin\TagRequest;
 final readonly class CreateTagCommand
 {
     /**
-     * @param string $name Tag name
-     * @param Slug|null $slug Optional custom slug
+     * @param  string  $name  Tag name
+     * @param  Slug|null  $slug  Optional custom slug
      */
     public function __construct(
         public string $name,

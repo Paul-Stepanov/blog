@@ -7,6 +7,9 @@ namespace App\Infrastructure\Persistence\Eloquent\Models;
 use App\Infrastructure\Persistence\Casts\EmailCast;
 use App\Infrastructure\Persistence\Casts\IPAddressCast;
 use Database\Factories\ContactMessageFactory;
+use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,7 +28,7 @@ final class ContactMessageModel extends Model
     protected $table = 'contact_messages';
 
     /**
-     * @var class-string<\Illuminate\Database\Eloquent\Factories\Factory>
+     * @var class-string<Factory>
      */
     protected static $factory = ContactMessageFactory::class;
 
@@ -44,7 +47,7 @@ final class ContactMessageModel extends Model
     ];
 
     /**
-     * @var array<string, class-string<\Illuminate\Contracts\Database\Eloquent\CastsAttributes>|string>
+     * @var array<string, class-string<CastsAttributes>|string>
      */
     protected $casts = [
         'email' => EmailCast::class,
@@ -57,7 +60,7 @@ final class ContactMessageModel extends Model
     /**
      * Scope for unread messages.
      */
-    public function scopeUnread(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeUnread(Builder $query): Builder
     {
         return $query->where('is_read', false);
     }
@@ -65,7 +68,7 @@ final class ContactMessageModel extends Model
     /**
      * Scope for read messages.
      */
-    public function scopeRead(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeRead(Builder $query): Builder
     {
         return $query->where('is_read', true);
     }
@@ -73,7 +76,7 @@ final class ContactMessageModel extends Model
     /**
      * Scope for recent messages.
      */
-    public function scopeRecent(\Illuminate\Database\Eloquent\Builder $query, int $limit = 10): \Illuminate\Database\Eloquent\Builder
+    public function scopeRecent(Builder $query, int $limit = 10): Builder
     {
         return $query->orderBy('created_at', 'desc')->limit($limit);
     }
@@ -81,7 +84,7 @@ final class ContactMessageModel extends Model
     /**
      * Scope for search by name, email, or subject.
      */
-    public function scopeSearch(\Illuminate\Database\Eloquent\Builder $query, string $term): \Illuminate\Database\Eloquent\Builder
+    public function scopeSearch(Builder $query, string $term): Builder
     {
         return $query->where(function ($q) use ($term) {
             $q->where('name', 'LIKE', "%{$term}%")
@@ -94,7 +97,7 @@ final class ContactMessageModel extends Model
     /**
      * Scope for messages from specific email.
      */
-    public function scopeByEmail(\Illuminate\Database\Eloquent\Builder $query, string $email): \Illuminate\Database\Eloquent\Builder
+    public function scopeByEmail(Builder $query, string $email): Builder
     {
         return $query->where('email', $email);
     }
@@ -102,7 +105,7 @@ final class ContactMessageModel extends Model
     /**
      * Scope for messages from specific IP.
      */
-    public function scopeByIpAddress(\Illuminate\Database\Eloquent\Builder $query, string $ipAddress): \Illuminate\Database\Eloquent\Builder
+    public function scopeByIpAddress(Builder $query, string $ipAddress): Builder
     {
         return $query->where('ip_address', $ipAddress);
     }
@@ -111,17 +114,17 @@ final class ContactMessageModel extends Model
      * Scope for messages within date range.
      */
     public function scopeDateRange(
-        \Illuminate\Database\Eloquent\Builder $query,
+        Builder $query,
         \DateTimeInterface $from,
         \DateTimeInterface $to
-    ): \Illuminate\Database\Eloquent\Builder {
+    ): Builder {
         return $query->whereBetween('created_at', [$from, $to]);
     }
 
     /**
      * Find by UUID.
      */
-    public function scopeByUuid(\Illuminate\Database\Eloquent\Builder $query, string $uuid): \Illuminate\Database\Eloquent\Builder
+    public function scopeByUuid(Builder $query, string $uuid): Builder
     {
         return $query->where('uuid', $uuid);
     }
@@ -131,7 +134,7 @@ final class ContactMessageModel extends Model
      */
     public function markAsRead(): void
     {
-        if (!$this->is_read) {
+        if (! $this->is_read) {
             $this->is_read = true;
             $this->save();
         }
@@ -157,7 +160,7 @@ final class ContactMessageModel extends Model
             return $this->message;
         }
 
-        return substr($this->message, 0, $length) . '...';
+        return substr($this->message, 0, $length).'...';
     }
 
     /**
@@ -165,7 +168,7 @@ final class ContactMessageModel extends Model
      */
     public function isUnread(): bool
     {
-        return !$this->is_read;
+        return ! $this->is_read;
     }
 
     /**

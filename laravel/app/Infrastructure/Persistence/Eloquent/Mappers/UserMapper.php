@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\Mappers;
 
-use App\Domain\Contact\ValueObjects\Email;
 use App\Domain\User\Entities\User;
-use App\Domain\User\ValueObjects\{Password, UserRole};
+use App\Domain\User\ValueObjects\Password;
+use App\Domain\User\ValueObjects\UserRole;
 use App\Infrastructure\Persistence\Eloquent\Models\UserModel;
 
 /**
@@ -52,13 +52,13 @@ final class UserMapper
     /**
      * Convert collection of models to domain entities.
      *
-     * @param UserModel[] $models
+     * @param  UserModel[]  $models
      * @return User[]
      */
     public function toDomainCollection(array $models): array
     {
         return array_map(
-            fn(UserModel $model): User => $this->toDomain($model),
+            fn (UserModel $model): User => $this->toDomain($model),
             $models
         );
     }

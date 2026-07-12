@@ -9,7 +9,7 @@ use App\Infrastructure\Persistence\Eloquent\Models\ArticleModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<ArticleModel>
+ * @extends Factory<ArticleModel>
  */
 final class ArticleFactory extends Factory
 {

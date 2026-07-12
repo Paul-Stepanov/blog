@@ -48,13 +48,13 @@ final class CategoryMapper
     /**
      * Convert collection of models to domain entities.
      *
-     * @param CategoryModel[] $models
+     * @param  CategoryModel[]  $models
      * @return Category[]
      */
     public function toDomainCollection(array $models): array
     {
         return array_map(
-            fn(CategoryModel $model): Category => $this->toDomain($model),
+            fn (CategoryModel $model): Category => $this->toDomain($model),
             $models
         );
     }

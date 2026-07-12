@@ -22,7 +22,7 @@ final readonly class EloquentCategoryRepository implements CategoryRepositoryInt
     ) {}
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findById(Uuid $id): ?Category
     {
@@ -34,7 +34,7 @@ final readonly class EloquentCategoryRepository implements CategoryRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getById(Uuid $id): Category
     {
@@ -48,7 +48,7 @@ final readonly class EloquentCategoryRepository implements CategoryRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findBySlug(string $slug): ?Category
     {
@@ -60,7 +60,7 @@ final readonly class EloquentCategoryRepository implements CategoryRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getBySlug(string $slug): Category
     {
@@ -74,7 +74,7 @@ final readonly class EloquentCategoryRepository implements CategoryRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findAll(): array
     {
@@ -87,12 +87,12 @@ final readonly class EloquentCategoryRepository implements CategoryRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findAllWithArticleCount(): array
     {
         $models = CategoryModel::query()
-            ->withCount(['articles' => fn($q) => $q->where('status', 'published')])
+            ->withCount(['articles' => fn ($q) => $q->where('status', 'published')])
             ->orderBy('name', 'asc')
             ->get();
 
@@ -108,12 +108,12 @@ final readonly class EloquentCategoryRepository implements CategoryRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getWithPublishedArticles(): array
     {
         $models = CategoryModel::query()
-            ->whereHas('articles', fn($q) => $q->where('status', 'published'))
+            ->whereHas('articles', fn ($q) => $q->where('status', 'published'))
             ->orderBy('name', 'asc')
             ->get()
             ->all();
@@ -122,7 +122,7 @@ final readonly class EloquentCategoryRepository implements CategoryRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function save(Category $category): void
     {
@@ -135,7 +135,7 @@ final readonly class EloquentCategoryRepository implements CategoryRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function delete(Uuid $id): void
     {
@@ -145,7 +145,7 @@ final readonly class EloquentCategoryRepository implements CategoryRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function slugExists(string $slug, ?Uuid $excludeId = null): bool
     {
@@ -159,7 +159,7 @@ final readonly class EloquentCategoryRepository implements CategoryRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function hasArticles(Uuid $id): bool
     {
@@ -169,7 +169,7 @@ final readonly class EloquentCategoryRepository implements CategoryRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function count(): int
     {

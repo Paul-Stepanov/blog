@@ -14,16 +14,17 @@ use Traversable;
  * Used for transferring paginated data between layers.
  *
  * @template T
+ *
  * @implements IteratorAggregate<T>
  */
 final readonly class PaginatedResult implements IteratorAggregate, JsonSerializable
 {
     /**
-     * @param array<T> $items Items on current page
-     * @param int $total Total number of items across all pages
-     * @param int $page Current page number (1-based)
-     * @param int $perPage Items per page
-     * @param int $lastPage Last page number
+     * @param  array<T>  $items  Items on current page
+     * @param  int  $total  Total number of items across all pages
+     * @param  int  $page  Current page number (1-based)
+     * @param  int  $perPage  Items per page
+     * @param  int  $lastPage  Last page number
      */
     public function __construct(
         public readonly array $items,
@@ -37,8 +38,9 @@ final readonly class PaginatedResult implements IteratorAggregate, JsonSerializa
      * Create from Laravel paginator.
      *
      * @template TItem
-     * @param iterable<TItem> $laravelPaginator
-     * @param callable(TItem): T $mapper
+     *
+     * @param  iterable<TItem>  $laravelPaginator
+     * @param  callable(TItem): T  $mapper
      * @return self<T>
      */
     public static function fromLaravel(iterable $laravelPaginator, callable $mapper): self
@@ -76,10 +78,10 @@ final readonly class PaginatedResult implements IteratorAggregate, JsonSerializa
     /**
      * Create a new paginated result with automatic lastPage calculation.
      *
-     * @param array<T> $items Items on current page
-     * @param int $total Total number of items across all pages
-     * @param int $page Current page number (1-based)
-     * @param int $perPage Items per page
+     * @param  array<T>  $items  Items on current page
+     * @param  int  $total  Total number of items across all pages
+     * @param  int  $page  Current page number (1-based)
+     * @param  int  $perPage  Items per page
      * @return self<T>
      */
     public static function create(
@@ -120,7 +122,7 @@ final readonly class PaginatedResult implements IteratorAggregate, JsonSerializa
      */
     public function isNotEmpty(): bool
     {
-        return !$this->isEmpty();
+        return ! $this->isEmpty();
     }
 
     /**
@@ -137,7 +139,8 @@ final readonly class PaginatedResult implements IteratorAggregate, JsonSerializa
      * Map items to a new type.
      *
      * @template TNew
-     * @param callable(T): TNew $callback
+     *
+     * @param  callable(T): TNew  $callback
      * @return self<TNew>
      */
     public function map(callable $callback): self

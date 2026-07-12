@@ -13,14 +13,14 @@ use DateTimeImmutable;
  *
  * Dispatched when an article is published.
  */
-final  class ArticlePublished extends DomainEvent
+final class ArticlePublished extends DomainEvent
 {
     /**
-     * @param Uuid $articleId Published article ID
-     * @param Uuid $authorId Author who published
-     * @param string $title Article title
-     * @param string $slug Article slug
-     * @param string|null $previousStatus Previous status (DRAFT, ARCHIVED)
+     * @param  Uuid  $articleId  Published article ID
+     * @param  Uuid  $authorId  Author who published
+     * @param  string  $title  Article title
+     * @param  string  $slug  Article slug
+     * @param  string|null  $previousStatus  Previous status (DRAFT, ARCHIVED)
      */
     public function __construct(
         private Uuid $articleId,
@@ -28,7 +28,7 @@ final  class ArticlePublished extends DomainEvent
         private string $title,
         private string $slug,
         private ?string $previousStatus,
-        DateTimeImmutable $occurredAt = new DateTimeImmutable()
+        DateTimeImmutable $occurredAt = new DateTimeImmutable
     ) {
         parent::__construct($occurredAt);
     }
@@ -89,6 +89,7 @@ final  class ArticlePublished extends DomainEvent
 
     /**
      * {@inheritdoc}
+     *
      * @throws \DateMalformedStringException
      */
     public static function fromArray(array $data): self

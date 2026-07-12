@@ -58,19 +58,19 @@ final class Password extends ValueObject
             $errors[] = 'Password cannot exceed 72 characters (bcrypt limit)';
         }
 
-        if (!preg_match('/[a-z]/', $password)) {
+        if (! preg_match('/[a-z]/', $password)) {
             $errors[] = 'Password must contain at least one lowercase letter';
         }
 
-        if (!preg_match('/[A-Z]/', $password)) {
+        if (! preg_match('/[A-Z]/', $password)) {
             $errors[] = 'Password must contain at least one uppercase letter';
         }
 
-        if (!preg_match('/[0-9]/', $password)) {
+        if (! preg_match('/[0-9]/', $password)) {
             $errors[] = 'Password must contain at least one number';
         }
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             throw new ValidationException($errors, 'Password validation failed');
         }
     }

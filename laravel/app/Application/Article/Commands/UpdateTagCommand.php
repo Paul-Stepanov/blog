@@ -15,9 +15,9 @@ use App\Infrastructure\Http\Requests\Admin\TagRequest;
 final readonly class UpdateTagCommand
 {
     /**
-     * @param string $tagId Tag ID (primitive for parsing)
-     * @param string|null $name New name
-     * @param string|null $slug New slug (primitive - converted to Slug in Service)
+     * @param  string  $tagId  Tag ID (primitive for parsing)
+     * @param  string|null  $name  New name
+     * @param  string|null  $slug  New slug (primitive - converted to Slug in Service)
      */
     public function __construct(
         public string $tagId,

@@ -15,10 +15,10 @@ use App\Infrastructure\Http\Requests\Admin\CategoryRequest;
 final readonly class UpdateCategoryCommand
 {
     /**
-     * @param string $categoryId Category ID (primitive for parsing)
-     * @param string|null $name New name
-     * @param string|null $slug New slug (primitive - converted to Slug in Service)
-     * @param string|null $description New description
+     * @param  string  $categoryId  Category ID (primitive for parsing)
+     * @param  string|null  $name  New name
+     * @param  string|null  $slug  New slug (primitive - converted to Slug in Service)
+     * @param  string|null  $description  New description
      */
     public function __construct(
         public string $categoryId,

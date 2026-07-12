@@ -104,7 +104,7 @@ final class MimeType extends ValueObject
      */
     protected function validate(mixed $value): void
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             throw ValidationException::forField('mime_type', 'MIME type must be a string');
         }
 
@@ -112,7 +112,7 @@ final class MimeType extends ValueObject
             throw ValidationException::forField('mime_type', 'MIME type cannot be empty');
         }
 
-        if (!preg_match('/^[a-z0-9]+\/[a-z0-9\-\+\.]+$/i', $value)) {
+        if (! preg_match('/^[a-z0-9]+\/[a-z0-9\-\+\.]+$/i', $value)) {
             throw ValidationException::forField('mime_type', sprintf('Invalid MIME type format: "%s"', $value));
         }
     }
@@ -194,7 +194,7 @@ final class MimeType extends ValueObject
      */
     public function ensureAllowed(): void
     {
-        if (!$this->isAllowed()) {
+        if (! $this->isAllowed()) {
             throw ValidationException::forField(
                 'mime_type',
                 sprintf('MIME type "%s" is not allowed. Allowed types: %s', $this->value, implode(', ', self::ALLOWED_TYPES))

@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Eloquent\Mappers;
 
 use App\Domain\Article\ValueObjects\Slug;
-use App\Domain\Contact\ValueObjects\{Email, IPAddress};
-use App\Domain\Media\ValueObjects\{FilePath, MimeType};
+use App\Domain\Contact\ValueObjects\Email;
+use App\Domain\Contact\ValueObjects\IPAddress;
+use App\Domain\Media\ValueObjects\FilePath;
+use App\Domain\Media\ValueObjects\MimeType;
 use App\Domain\Settings\ValueObjects\SettingKey;
-use App\Domain\Shared\{Timestamps, Uuid};
+use App\Domain\Shared\Timestamps;
+use App\Domain\Shared\Uuid;
 use DateTimeImmutable;
 use Illuminate\Database\Eloquent\Model;
 

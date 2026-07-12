@@ -23,7 +23,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     ) {}
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findById(Uuid $id): ?User
     {
@@ -35,7 +35,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getById(Uuid $id): User
     {
@@ -49,7 +49,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByEmail(string $email): ?User
     {
@@ -63,7 +63,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getByEmailOrFail(string $email): User
     {
@@ -79,7 +79,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByEmailForAuth(string $email): ?User
     {
@@ -93,7 +93,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findAll(int $page = 1, int $perPage = 20): PaginatedResult
     {
@@ -116,7 +116,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByRole(UserRole $role, int $page = 1, int $perPage = 20): PaginatedResult
     {
@@ -140,7 +140,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function search(string $query, int $page = 1, int $perPage = 20): PaginatedResult
     {
@@ -173,7 +173,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getAdmins(): array
     {
@@ -187,7 +187,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getEditors(): array
     {
@@ -201,7 +201,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function save(User $user): void
     {
@@ -214,7 +214,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function delete(Uuid $id): void
     {
@@ -224,7 +224,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function emailExists(string $email, ?Uuid $excludeId = null): bool
     {
@@ -238,7 +238,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function count(): int
     {
@@ -246,7 +246,7 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function countByRole(): array
     {

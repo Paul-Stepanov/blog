@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Article\DTOs;
 
-use App\Application\Shared\{DTOFormattingTrait, DTOInterface};
+use App\Application\Shared\DTOFormattingTrait;
+use App\Application\Shared\DTOInterface;
 use App\Application\Shared\Exceptions\InvalidEntityTypeException;
 use App\Domain\Article\Entities\Category;
 use App\Domain\Shared\Entity;
@@ -20,12 +21,12 @@ final readonly class CategoryDTO implements DTOInterface
     use DTOFormattingTrait;
 
     /**
-     * @param string $id UUID string
-     * @param string $name Category name
-     * @param string $slug URL-friendly identifier
-     * @param string $description Category description
-     * @param string $createdAt ISO 8601 datetime
-     * @param string $updatedAt ISO 8601 datetime
+     * @param  string  $id  UUID string
+     * @param  string  $name  Category name
+     * @param  string  $slug  URL-friendly identifier
+     * @param  string  $description  Category description
+     * @param  string  $createdAt  ISO 8601 datetime
+     * @param  string  $updatedAt  ISO 8601 datetime
      */
     public function __construct(
         public string $id,
@@ -39,11 +40,11 @@ final readonly class CategoryDTO implements DTOInterface
     /**
      * Create from Domain Entity.
      *
-     * @param Entity $entity Domain category entity
+     * @param  Entity  $entity  Domain category entity
      */
     public static function fromEntity(Entity $entity): static
     {
-        if (!$entity instanceof Category) {
+        if (! $entity instanceof Category) {
             throw new InvalidEntityTypeException(
                 expectedType: Category::class,
                 actualType: $entity::class

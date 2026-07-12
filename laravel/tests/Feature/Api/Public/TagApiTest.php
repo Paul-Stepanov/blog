@@ -27,7 +27,7 @@ final class TagApiTest extends TestCase
         ]);
     }
 
-    public function testGetAllTags_ReturnsSuccessfulResponse(): void
+    public function test_get_all_tags_returns_successful_response(): void
     {
         $response = $this->getJson('/api/tags');
 
@@ -44,7 +44,7 @@ final class TagApiTest extends TestCase
             ]);
     }
 
-    public function testGetAllTags_ReturnsTags(): void
+    public function test_get_all_tags_returns_tags(): void
     {
         TagModel::factory()->count(3)->create();
 
@@ -55,7 +55,7 @@ final class TagApiTest extends TestCase
             ->assertJsonCount(4, 'data'); // 3 created + 1 from setUp
     }
 
-    public function testGetPopularTags_ReturnsSuccessfulResponse(): void
+    public function test_get_popular_tags_returns_successful_response(): void
     {
         $response = $this->getJson('/api/tags/popular');
 
@@ -73,7 +73,7 @@ final class TagApiTest extends TestCase
             ]);
     }
 
-    public function testGetTagBySlug_WithValidSlug_ReturnsTag(): void
+    public function test_get_tag_by_slug_with_valid_slug_returns_tag(): void
     {
         $response = $this->getJson("/api/tags/{$this->tag->slug}");
 
@@ -83,7 +83,7 @@ final class TagApiTest extends TestCase
             ->assertJsonPath('data.name', 'Test Tag');
     }
 
-    public function testGetTagBySlug_WithInvalidSlug_ReturnsNotFound(): void
+    public function test_get_tag_by_slug_with_invalid_slug_returns_not_found(): void
     {
         $response = $this->getJson('/api/tags/non-existent-tag');
 
@@ -92,14 +92,14 @@ final class TagApiTest extends TestCase
             ->assertJsonPath('error', 'tag_not_found');
     }
 
-    public function testGetTagBySlug_WithInvalidSlugFormat_ReturnsNotFound(): void
+    public function test_get_tag_by_slug_with_invalid_slug_format_returns_not_found(): void
     {
         $response = $this->getJson('/api/tags/Invalid_Slug_With_Underscores');
 
         $response->assertStatus(404);
     }
 
-    public function testTagsEndpoint_IsRateLimited(): void
+    public function test_tags_endpoint_is_rate_limited(): void
     {
         for ($i = 0; $i < 61; $i++) {
             $response = $this->getJson('/api/tags');

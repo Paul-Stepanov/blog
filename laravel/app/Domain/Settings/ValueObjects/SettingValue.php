@@ -15,12 +15,17 @@ use App\Domain\Shared\ValueObject;
 final class SettingValue extends ValueObject
 {
     private readonly mixed $value;
+
     private readonly string $type;
 
     private const TYPE_STRING = 'string';
+
     private const TYPE_INTEGER = 'integer';
+
     private const TYPE_FLOAT = 'float';
+
     private const TYPE_BOOLEAN = 'boolean';
+
     private const TYPE_JSON = 'json';
 
     private function __construct(mixed $value, string $type)
@@ -35,6 +40,7 @@ final class SettingValue extends ValueObject
     public static function fromMixed(mixed $value): self
     {
         $type = self::inferType($value);
+
         return new self($value, $type);
     }
 
@@ -164,7 +170,7 @@ final class SettingValue extends ValueObject
             $decoded = json_decode($value, true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
-                throw ValidationException::forField('value', 'Invalid JSON: ' . json_last_error_msg());
+                throw ValidationException::forField('value', 'Invalid JSON: '.json_last_error_msg());
             }
 
             return $decoded;
@@ -197,7 +203,7 @@ final class SettingValue extends ValueObject
         try {
             return json_encode($this->value, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
         } catch (\JsonException $e) {
-            throw ValidationException::forField('value', 'Failed to encode JSON: ' . $e->getMessage());
+            throw ValidationException::forField('value', 'Failed to encode JSON: '.$e->getMessage());
         }
     }
 

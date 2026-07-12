@@ -8,7 +8,8 @@ use App\Application\Settings\DTOs\SettingsDTO;
 use App\Application\Settings\Exceptions\SettingNotFoundException;
 use App\Domain\Settings\Entities\SiteSetting;
 use App\Domain\Settings\Repositories\SettingsRepositoryInterface;
-use App\Domain\Settings\ValueObjects\{SettingKey, SettingValue};
+use App\Domain\Settings\ValueObjects\SettingKey;
+use App\Domain\Settings\ValueObjects\SettingValue;
 use App\Domain\Shared\Exceptions\ValidationException;
 use App\Domain\Shared\Uuid;
 
@@ -26,7 +27,8 @@ final readonly class SettingsService
     /**
      * Get setting by key.
      *
-     * @param string $keyString Setting key (e.g., 'site.title')
+     * @param  string  $keyString  Setting key (e.g., 'site.title')
+     *
      * @throws SettingNotFoundException If setting not found
      * @throws ValidationException If key format is invalid
      */
@@ -45,22 +47,25 @@ final readonly class SettingsService
     /**
      * Get setting value by key with default.
      *
-     * @param string $keyString Setting key
-     * @param mixed $default Default value if not found
+     * @param  string  $keyString  Setting key
+     * @param  mixed  $default  Default value if not found
      * @return mixed Setting value or default
+     *
      * @throws ValidationException If key format is invalid
      */
     public function getValue(string $keyString, mixed $default = null): mixed
     {
         $key = SettingKey::fromString($keyString);
+
         return $this->settingsRepository->getValue($key, $default);
     }
 
     /**
      * Set (create or update) a setting.
      *
-     * @param string $keyString Setting key
-     * @param mixed $value Setting value
+     * @param  string  $keyString  Setting key
+     * @param  mixed  $value  Setting value
+     *
      * @throws ValidationException If key or value is invalid
      */
     public function setSetting(string $keyString, mixed $value): SettingsDTO
@@ -91,8 +96,9 @@ final readonly class SettingsService
     /**
      * Set multiple settings at once.
      *
-     * @param array<string, mixed> $settings Key-value pairs
+     * @param  array<string, mixed>  $settings  Key-value pairs
      * @return array<SettingsDTO> Updated settings
+     *
      * @throws ValidationException If any key or value is invalid
      */
     public function setMany(array $settings): array
@@ -136,7 +142,7 @@ final readonly class SettingsService
         $settings = $this->settingsRepository->findAll();
 
         return array_map(
-            static fn(SiteSetting $setting) => SettingsDTO::fromEntity($setting),
+            static fn (SiteSetting $setting) => SettingsDTO::fromEntity($setting),
             $settings
         );
     }
@@ -144,7 +150,7 @@ final readonly class SettingsService
     /**
      * Get settings by group.
      *
-     * @param string $group Group name (e.g., 'site', 'seo', 'social')
+     * @param  string  $group  Group name (e.g., 'site', 'seo', 'social')
      * @return array<SettingsDTO>
      */
     public function getSettingsByGroup(string $group): array
@@ -152,7 +158,7 @@ final readonly class SettingsService
         $settings = $this->settingsRepository->findByGroup($group);
 
         return array_map(
-            static fn(SiteSetting $setting) => SettingsDTO::fromEntity($setting),
+            static fn (SiteSetting $setting) => SettingsDTO::fromEntity($setting),
             $settings
         );
     }
@@ -170,7 +176,7 @@ final readonly class SettingsService
     /**
      * Get settings by group as key-value pairs.
      *
-     * @param string $group Group name
+     * @param  string  $group  Group name
      * @return array<string, mixed>
      */
     public function getGroupAsKeyValue(string $group): array
@@ -181,7 +187,8 @@ final readonly class SettingsService
     /**
      * Delete a setting by key.
      *
-     * @param string $keyString Setting key
+     * @param  string  $keyString  Setting key
+     *
      * @throws ValidationException If key format is invalid
      */
     public function deleteSetting(string $keyString): void
@@ -193,7 +200,7 @@ final readonly class SettingsService
     /**
      * Delete all settings in a group.
      *
-     * @param string $group Group name
+     * @param  string  $group  Group name
      */
     public function deleteGroup(string $group): void
     {
@@ -203,12 +210,14 @@ final readonly class SettingsService
     /**
      * Check if a setting exists.
      *
-     * @param string $keyString Setting key
+     * @param  string  $keyString  Setting key
+     *
      * @throws ValidationException If key format is invalid
      */
     public function exists(string $keyString): bool
     {
         $key = SettingKey::fromString($keyString);
+
         return $this->settingsRepository->exists($key);
     }
 }

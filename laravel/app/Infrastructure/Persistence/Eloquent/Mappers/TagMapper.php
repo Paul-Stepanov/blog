@@ -46,13 +46,13 @@ final class TagMapper
     /**
      * Convert collection of models to domain entities.
      *
-     * @param TagModel[] $models
+     * @param  TagModel[]  $models
      * @return Tag[]
      */
     public function toDomainCollection(array $models): array
     {
         return array_map(
-            fn(TagModel $model): Tag => $this->toDomain($model),
+            fn (TagModel $model): Tag => $this->toDomain($model),
             $models
         );
     }

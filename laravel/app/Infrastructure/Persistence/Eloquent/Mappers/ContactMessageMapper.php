@@ -56,13 +56,13 @@ final class ContactMessageMapper
     /**
      * Convert collection of models to domain entities.
      *
-     * @param ContactMessageModel[] $models
+     * @param  ContactMessageModel[]  $models
      * @return ContactMessage[]
      */
     public function toDomainCollection(array $models): array
     {
         return array_map(
-            fn(ContactMessageModel $model): ContactMessage => $this->toDomain($model),
+            fn (ContactMessageModel $model): ContactMessage => $this->toDomain($model),
             $models
         );
     }

@@ -12,8 +12,8 @@ namespace App\Domain\Shared\Exceptions;
 final class ValidationException extends DomainException
 {
     /**
-     * @param array<string, string[]> $errors Field => [error messages]
-     * @param string $message General error message
+     * @param  array<string, string[]>  $errors  Field => [error messages]
+     * @param  string  $message  General error message
      */
     public function __construct(
         private readonly array $errors = [],
@@ -33,7 +33,7 @@ final class ValidationException extends DomainException
     /**
      * Create from multiple errors.
      *
-     * @param array<string, string|string[]> $errors
+     * @param  array<string, string|string[]>  $errors
      */
     public static function fromArray(array $errors): self
     {

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\Media\Entities;
 
-use App\Domain\Media\ValueObjects\{FilePath, ImageDimensions, MimeType};
+use App\Domain\Media\ValueObjects\FilePath;
+use App\Domain\Media\ValueObjects\ImageDimensions;
+use App\Domain\Media\ValueObjects\MimeType;
 use App\Domain\Shared\Entity;
 use App\Domain\Shared\Exceptions\ValidationException;
 use App\Domain\Shared\Timestamps;
@@ -18,11 +20,17 @@ use App\Domain\Shared\Uuid;
 final class MediaFile extends Entity
 {
     private string $filename;
+
     private string $altText;
+
     private Timestamps $timestamps;
+
     private readonly FilePath $path;
+
     private readonly MimeType $mimeType;
+
     private readonly int $sizeBytes;
+
     private readonly ?ImageDimensions $dimensions;
 
     public function __construct(
@@ -157,7 +165,7 @@ final class MediaFile extends Entity
             $bytes /= 1024;
         }
 
-        return round($bytes, 2) . ' ' . $units[$i];
+        return round($bytes, 2).' '.$units[$i];
     }
 
     /**
@@ -165,7 +173,7 @@ final class MediaFile extends Entity
      */
     public function getPublicUrl(): string
     {
-        return '/storage/' . $this->path->getValue();
+        return '/storage/'.$this->path->getValue();
     }
 
     // Getters

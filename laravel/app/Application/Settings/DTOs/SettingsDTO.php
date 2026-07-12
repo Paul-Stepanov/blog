@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Application\Settings\DTOs;
 
-use App\Application\Shared\{DTOFormattingTrait, DTOInterface};
+use App\Application\Shared\DTOFormattingTrait;
+use App\Application\Shared\DTOInterface;
 use App\Application\Shared\Exceptions\InvalidEntityTypeException;
 use App\Domain\Settings\Entities\SiteSetting;
 use App\Domain\Shared\Entity;
+use App\Domain\Shared\Exceptions\ValidationException;
 
 /**
  * Settings Data Transfer Object.
@@ -19,14 +21,14 @@ final readonly class SettingsDTO implements DTOInterface
     use DTOFormattingTrait;
 
     /**
-     * @param string $id UUID string
-     * @param string $key Setting key (e.g., 'site.title')
-     * @param string $group Setting group (e.g., 'site')
-     * @param mixed $value Typed value
-     * @param string $valueType Value type (string, integer, float, boolean, json)
-     * @param string $valueString String representation for storage
-     * @param string $createdAt ISO 8601 datetime
-     * @param string $updatedAt ISO 8601 datetime
+     * @param  string  $id  UUID string
+     * @param  string  $key  Setting key (e.g., 'site.title')
+     * @param  string  $group  Setting group (e.g., 'site')
+     * @param  mixed  $value  Typed value
+     * @param  string  $valueType  Value type (string, integer, float, boolean, json)
+     * @param  string  $valueString  String representation for storage
+     * @param  string  $createdAt  ISO 8601 datetime
+     * @param  string  $updatedAt  ISO 8601 datetime
      */
     public function __construct(
         public string $id,
@@ -42,12 +44,13 @@ final readonly class SettingsDTO implements DTOInterface
     /**
      * Create from Domain Entity.
      *
-     * @param Entity $entity Domain setting entity
-     * @throws \App\Domain\Shared\Exceptions\ValidationException If JSON encoding fails
+     * @param  Entity  $entity  Domain setting entity
+     *
+     * @throws ValidationException If JSON encoding fails
      */
     public static function fromEntity(Entity $entity): static
     {
-        if (!$entity instanceof SiteSetting) {
+        if (! $entity instanceof SiteSetting) {
             throw new InvalidEntityTypeException(
                 expectedType: SiteSetting::class,
                 actualType: $entity::class

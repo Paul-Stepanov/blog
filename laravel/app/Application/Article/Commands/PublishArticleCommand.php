@@ -15,7 +15,7 @@ use App\Domain\Shared\Uuid;
 final readonly class PublishArticleCommand
 {
     /**
-     * @param Uuid $articleId Article UUID to publish (VO - type-safe ID)
+     * @param  Uuid  $articleId  Article UUID to publish (VO - type-safe ID)
      */
     public function __construct(
         public Uuid $articleId,

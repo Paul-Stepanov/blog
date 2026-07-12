@@ -15,7 +15,7 @@ use App\Domain\Shared\Uuid;
 final readonly class ArchiveArticleCommand
 {
     /**
-     * @param Uuid $articleId Article UUID to archive (VO - type-safe ID)
+     * @param  Uuid  $articleId  Article UUID to archive (VO - type-safe ID)
      */
     public function __construct(
         public Uuid $articleId,

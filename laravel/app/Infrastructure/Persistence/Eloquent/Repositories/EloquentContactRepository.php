@@ -22,7 +22,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
     ) {}
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findById(Uuid $id): ?ContactMessage
     {
@@ -34,7 +34,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getById(Uuid $id): ContactMessage
     {
@@ -48,7 +48,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findAll(int $page = 1, int $perPage = 20): PaginatedResult
     {
@@ -71,7 +71,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findUnread(int $page = 1, int $perPage = 20): PaginatedResult
     {
@@ -95,7 +95,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findRead(int $page = 1, int $perPage = 20): PaginatedResult
     {
@@ -119,7 +119,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function search(string $query, int $page = 1, int $perPage = 20): PaginatedResult
     {
@@ -154,7 +154,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getRecent(int $limit = 10): array
     {
@@ -168,7 +168,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByEmail(string $email): array
     {
@@ -182,7 +182,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByIpAddress(string $ipAddress): array
     {
@@ -196,7 +196,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function save(ContactMessage $message): void
     {
@@ -209,7 +209,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function delete(Uuid $id): void
     {
@@ -219,7 +219,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function count(): int
     {
@@ -227,7 +227,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function countUnread(): int
     {
@@ -237,7 +237,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function countByDate(\DateTimeInterface $from, \DateTimeInterface $to): array
     {

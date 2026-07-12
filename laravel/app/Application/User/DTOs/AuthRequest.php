@@ -16,8 +16,8 @@ use App\Domain\Shared\Exceptions\ValidationException;
 final readonly class AuthRequest
 {
     /**
-     * @param Email $email User email (VO - validation)
-     * @param string $password Plain text password (validated in Service)
+     * @param  Email  $email  User email (VO - validation)
+     * @param  string  $password  Plain text password (validated in Service)
      */
     public function __construct(
         public Email $email,
@@ -28,7 +28,6 @@ final readonly class AuthRequest
      * Create from primitive values.
      *
      * @throws ValidationException
-     * 
      */
     public static function fromPrimitives(string $email, string $password): self
     {

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Article\Services;
 
-use App\Application\Article\Commands\{CreateTagCommand, UpdateTagCommand};
-use App\Application\Article\DTOs\{TagDTO, TagListDTO};
+use App\Application\Article\Commands\CreateTagCommand;
+use App\Application\Article\Commands\UpdateTagCommand;
+use App\Application\Article\DTOs\TagDTO;
+use App\Application\Article\DTOs\TagListDTO;
 use App\Domain\Article\Entities\Tag;
 use App\Domain\Article\Repositories\TagRepositoryInterface;
 use App\Domain\Article\ValueObjects\Slug;
@@ -33,7 +35,7 @@ final readonly class TagService
         $tagsWithCount = $this->tagRepository->getWithArticleCount();
 
         return array_map(
-            fn(array $data) => TagListDTO::fromArrayData($data),
+            fn (array $data) => TagListDTO::fromArrayData($data),
             $tagsWithCount
         );
     }
@@ -83,7 +85,7 @@ final readonly class TagService
         }
 
         return array_map(
-            fn(Tag $tag) => new TagListDTO(
+            fn (Tag $tag) => new TagListDTO(
                 id: $tag->getId()->getValue(),
                 name: $tag->getName(),
                 slug: $tag->getSlug()->getValue(),

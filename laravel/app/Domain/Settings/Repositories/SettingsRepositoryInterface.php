@@ -71,7 +71,7 @@ interface SettingsRepositoryInterface
     /**
      * Save multiple settings at once.
      *
-     * @param array<SiteSetting> $settings
+     * @param  array<SiteSetting>  $settings
      */
     public function saveMany(array $settings): void;
 

@@ -16,10 +16,10 @@ use App\Infrastructure\Http\Requests\Admin\UserRequest;
 final readonly class CreateUserCommand
 {
     /**
-     * @param string $name User name
-     * @param Email $email User email
-     * @param string $password Hashed password
-     * @param UserRole $role User role
+     * @param  string  $name  User name
+     * @param  Email  $email  User email
+     * @param  string  $password  Hashed password
+     * @param  UserRole  $role  User role
      */
     public function __construct(
         public string $name,

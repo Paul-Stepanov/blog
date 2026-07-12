@@ -40,7 +40,7 @@ interface TagRepositoryInterface
     /**
      * Find multiple tags by their IDs.
      *
-     * @param Uuid[] $ids
+     * @param  Uuid[]  $ids
      * @return array<Tag>
      */
     public function findByIds(array $ids): array;
@@ -48,7 +48,7 @@ interface TagRepositoryInterface
     /**
      * Find multiple tags by their slugs.
      *
-     * @param string[] $slugs
+     * @param  string[]  $slugs
      * @return array<Tag>
      */
     public function findBySlugs(array $slugs): array;

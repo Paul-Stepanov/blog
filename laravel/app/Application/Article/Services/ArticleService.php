@@ -4,13 +4,21 @@ declare(strict_types=1);
 
 namespace App\Application\Article\Services;
 
-use App\Application\Article\Commands\{ArchiveArticleCommand, CreateArticleCommand, PublishArticleCommand, UpdateArticleCommand};
-use App\Application\Article\DTOs\{ArticleDTO, ArticleListDTO};
+use App\Application\Article\Commands\ArchiveArticleCommand;
+use App\Application\Article\Commands\CreateArticleCommand;
+use App\Application\Article\Commands\PublishArticleCommand;
+use App\Application\Article\Commands\UpdateArticleCommand;
+use App\Application\Article\DTOs\ArticleDTO;
+use App\Application\Article\DTOs\ArticleListDTO;
 use App\Application\Article\Exceptions\ArticleNotFoundException;
-use App\Application\Article\Queries\{GetArticleBySlugQuery, GetPublishedArticlesQuery};
+use App\Application\Article\Queries\GetArticleBySlugQuery;
+use App\Application\Article\Queries\GetPublishedArticlesQuery;
 use App\Domain\Article\Entities\Article;
 use App\Domain\Article\Repositories\ArticleRepositoryInterface;
-use App\Domain\Article\ValueObjects\{ArticleContent, ArticleFilters, ArticleStatus, Slug};
+use App\Domain\Article\ValueObjects\ArticleContent;
+use App\Domain\Article\ValueObjects\ArticleFilters;
+use App\Domain\Article\ValueObjects\ArticleStatus;
+use App\Domain\Article\ValueObjects\Slug;
 use App\Domain\Shared\PaginatedResult;
 use App\Domain\Shared\Uuid;
 
@@ -51,8 +59,8 @@ final readonly class ArticleService
         $this->articleRepository->save($article);
 
         // Sync tags if provided
-        if (!empty($command->tags)) {
-            $tagIds = array_map(fn(string $id) => Uuid::fromString($id), $command->tags);
+        if (! empty($command->tags)) {
+            $tagIds = array_map(fn (string $id) => Uuid::fromString($id), $command->tags);
             $this->articleRepository->syncTags($article->getId(), $tagIds);
         }
 
@@ -75,7 +83,7 @@ final readonly class ArticleService
         );
 
         return $result->map(
-            fn(Article $article) => ArticleListDTO::fromEntity($article)
+            fn (Article $article) => ArticleListDTO::fromEntity($article)
         );
     }
 
@@ -162,7 +170,7 @@ final readonly class ArticleService
             return null;
         }
 
-        $uuids = array_map(fn(string $tagId) => Uuid::fromString($tagId), $tagIds);
+        $uuids = array_map(fn (string $tagId) => Uuid::fromString($tagId), $tagIds);
         $this->articleRepository->syncTags($article->getId(), $uuids);
 
         return ArticleDTO::fromEntity($article);
@@ -216,7 +224,7 @@ final readonly class ArticleService
         }
 
         // For public API, only return published articles
-        if (!$article->getStatus()->isPublic()) {
+        if (! $article->getStatus()->isPublic()) {
             throw ArticleNotFoundException::bySlug($query->slug->getValue());
         }
 
@@ -245,7 +253,7 @@ final readonly class ArticleService
         );
 
         return $result->map(
-            fn(Article $article) => ArticleListDTO::fromEntity($article)
+            fn (Article $article) => ArticleListDTO::fromEntity($article)
         );
     }
 
@@ -274,7 +282,7 @@ final readonly class ArticleService
         );
 
         return $result->map(
-            fn(Article $article) => ArticleListDTO::fromEntity($article)
+            fn (Article $article) => ArticleListDTO::fromEntity($article)
         );
     }
 

@@ -17,12 +17,12 @@ use App\Infrastructure\Http\Requests\Api\UpdateArticleRequest;
 final readonly class UpdateArticleCommand
 {
     /**
-     * @param string $articleId Article ID (primitive for parsing)
-     * @param string|null $title New title
-     * @param string|null $content New content
-     * @param string|null $slug New slug (primitive - converted to Slug in Service)
-     * @param Uuid|null $categoryId New category ID
-     * @param Uuid|null $coverImageId New cover image ID
+     * @param  string  $articleId  Article ID (primitive for parsing)
+     * @param  string|null  $title  New title
+     * @param  string|null  $content  New content
+     * @param  string|null  $slug  New slug (primitive - converted to Slug in Service)
+     * @param  Uuid|null  $categoryId  New category ID
+     * @param  Uuid|null  $coverImageId  New cover image ID
      */
     public function __construct(
         public string $articleId,

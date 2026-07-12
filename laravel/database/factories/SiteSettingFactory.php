@@ -8,7 +8,7 @@ use App\Infrastructure\Persistence\Eloquent\Models\SiteSettingModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<SiteSettingModel>
+ * @extends Factory<SiteSettingModel>
  */
 final class SiteSettingFactory extends Factory
 {
@@ -21,7 +21,7 @@ final class SiteSettingFactory extends Factory
      */
     public function definition(): array
     {
-        $key = fake()->slug(2) . '.' . fake()->slug();
+        $key = fake()->slug(2).'.'.fake()->slug();
 
         return [
             'uuid' => fake()->uuid(),

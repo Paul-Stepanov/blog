@@ -13,7 +13,7 @@ namespace App\Domain\Shared;
 abstract class Entity
 {
     /**
-     * @param Uuid $id Unique identifier of the entity
+     * @param  Uuid  $id  Unique identifier of the entity
      */
     public function __construct(
         protected readonly Uuid $id

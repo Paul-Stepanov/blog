@@ -31,7 +31,7 @@ final class AuthTest extends TestCase
         ]);
     }
 
-    public function testLogin_WithValidCredentials_ReturnsSuccess(): void
+    public function test_login_with_valid_credentials_returns_success(): void
     {
         $payload = [
             'email' => 'admin@example.com',
@@ -58,7 +58,7 @@ final class AuthTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    public function testLogin_WithInvalidEmail_ReturnsUnauthorized(): void
+    public function test_login_with_invalid_email_returns_unauthorized(): void
     {
         $payload = [
             'email' => 'wrong@example.com',
@@ -73,7 +73,7 @@ final class AuthTest extends TestCase
             ->assertJsonPath('message', 'Invalid credentials.');
     }
 
-    public function testLogin_WithInvalidPassword_ReturnsUnauthorized(): void
+    public function test_login_with_invalid_password_returns_unauthorized(): void
     {
         $payload = [
             'email' => 'admin@example.com',
@@ -87,7 +87,7 @@ final class AuthTest extends TestCase
             ->assertJsonPath('error', 'invalid_credentials');
     }
 
-    public function testLogin_WithMissingEmail_ReturnsValidationError(): void
+    public function test_login_with_missing_email_returns_validation_error(): void
     {
         $payload = [
             'password' => 'password123',
@@ -105,7 +105,7 @@ final class AuthTest extends TestCase
             ]);
     }
 
-    public function testLogin_WithMissingPassword_ReturnsValidationError(): void
+    public function test_login_with_missing_password_returns_validation_error(): void
     {
         $payload = [
             'email' => 'admin@example.com',
@@ -123,7 +123,7 @@ final class AuthTest extends TestCase
             ]);
     }
 
-    public function testLogin_WithInvalidEmailFormat_ReturnsValidationError(): void
+    public function test_login_with_invalid_email_format_returns_validation_error(): void
     {
         $payload = [
             'email' => 'not-an-email',
@@ -142,7 +142,7 @@ final class AuthTest extends TestCase
             ]);
     }
 
-    public function testLogin_HasStrictRateLimiting(): void
+    public function test_login_has_strict_rate_limiting(): void
     {
         $payload = [
             'email' => 'admin@example.com',
@@ -158,7 +158,7 @@ final class AuthTest extends TestCase
         $response->assertStatus(429);
     }
 
-    public function testLogout_WithAuthenticatedUser_ReturnsSuccess(): void
+    public function test_logout_with_authenticated_user_returns_success(): void
     {
         $this->actingAs($this->adminUser, 'web');
 
@@ -167,11 +167,11 @@ final class AuthTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
             ->assertJsonPath('message', 'Logged out successfully.');
-        
+
         $this->assertGuest('web');
     }
 
-    public function testLogout_WithoutAuthentication_ReturnsUnauthorized(): void
+    public function test_logout_without_authentication_returns_unauthorized(): void
     {
         $response = $this->postJson('/api/admin/auth/logout');
 
@@ -180,7 +180,7 @@ final class AuthTest extends TestCase
             ->assertJsonPath('error', 'unauthenticated');
     }
 
-    public function testGetCurrentUser_WithAuthenticatedUser_ReturnsUser(): void
+    public function test_get_current_user_with_authenticated_user_returns_user(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -201,7 +201,7 @@ final class AuthTest extends TestCase
             ]);
     }
 
-    public function testGetCurrentUser_WithoutAuthentication_ReturnsUnauthorized(): void
+    public function test_get_current_user_without_authentication_returns_unauthorized(): void
     {
         $response = $this->getJson('/api/admin/auth/user');
 
@@ -210,7 +210,7 @@ final class AuthTest extends TestCase
             ->assertJsonPath('error', 'unauthenticated');
     }
 
-    public function testLogin_RegeneratesSession(): void
+    public function test_login_regenerates_session(): void
     {
         $payload = [
             'email' => 'admin@example.com',

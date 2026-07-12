@@ -94,10 +94,10 @@ final class SettingsRequest extends FormRequest
             if ($key) {
                 try {
                     $settingKey = SettingKey::fromString($key);
-                    if (!$settingKey->isKnown()) {
+                    if (! $settingKey->isKnown()) {
                         $allKeys = SettingKey::getAllGrouped();
                         $flatKeys = array_merge(...array_values($allKeys));
-                        $validator->errors()->add('key', 'Неизвестный ключ настройки. Допустимые ключи: ' . implode(', ', array_keys($flatKeys)));
+                        $validator->errors()->add('key', 'Неизвестный ключ настройки. Допустимые ключи: '.implode(', ', array_keys($flatKeys)));
                     }
                 } catch (\Exception) {
                     $validator->errors()->add('key', 'Некорректный формат ключа настройки.');

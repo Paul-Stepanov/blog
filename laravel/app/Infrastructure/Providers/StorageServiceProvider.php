@@ -46,7 +46,7 @@ final class StorageServiceProvider extends ServiceProvider
 
         // Publish configuration
         $this->publishes([
-            __DIR__ . '/../../config/image.php' => config_path('image.php'),
+            __DIR__.'/../../config/image.php' => config_path('image.php'),
         ], 'config');
     }
 
@@ -65,7 +65,7 @@ final class StorageServiceProvider extends ServiceProvider
         ];
 
         foreach ($directories as $directory) {
-            if (!is_dir($directory) && !mkdir($directory, 0755, true) && !is_dir($directory)) {
+            if (! is_dir($directory) && ! mkdir($directory, 0755, true) && ! is_dir($directory)) {
                 throw new \RuntimeException(
                     sprintf('Directory "%s" was not created', $directory)
                 );

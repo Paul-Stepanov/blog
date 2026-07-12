@@ -45,7 +45,7 @@ final class SettingsApiTest extends TestCase
         ]);
     }
 
-    public function testGetPublicSettings_ReturnsSuccessfulResponse(): void
+    public function test_get_public_settings_returns_successful_response(): void
     {
         $response = $this->getJson('/api/settings');
 
@@ -56,7 +56,7 @@ final class SettingsApiTest extends TestCase
             ]);
     }
 
-    public function testGetPublicSettings_OnlyReturnsPublicGroups(): void
+    public function test_get_public_settings_only_returns_public_groups(): void
     {
         $response = $this->getJson('/api/settings');
 
@@ -69,7 +69,7 @@ final class SettingsApiTest extends TestCase
         $this->assertArrayNotHasKey('admin.email', $data);
     }
 
-    public function testGetSettingByKey_WithValidKey_ReturnsSetting(): void
+    public function test_get_setting_by_key_with_valid_key_returns_setting(): void
     {
         $response = $this->getJson('/api/settings/site.title');
 
@@ -79,7 +79,7 @@ final class SettingsApiTest extends TestCase
             ->assertJsonPath('data.value', 'My Blog');
     }
 
-    public function testGetSettingByKey_WithPrivateGroup_ReturnsNotFound(): void
+    public function test_get_setting_by_key_with_private_group_returns_not_found(): void
     {
         $response = $this->getJson('/api/settings/admin.email');
 
@@ -88,7 +88,7 @@ final class SettingsApiTest extends TestCase
             ->assertJsonPath('error', 'setting_not_public');
     }
 
-    public function testGetSettingByKey_WithInvalidKey_ReturnsNotFound(): void
+    public function test_get_setting_by_key_with_invalid_key_returns_not_found(): void
     {
         $response = $this->getJson('/api/settings/nonexistent.key');
 
@@ -97,14 +97,14 @@ final class SettingsApiTest extends TestCase
             ->assertJsonPath('error', 'setting_not_public');
     }
 
-    public function testGetSettingByKey_WithInvalidKeyFormat_ReturnsNotFound(): void
+    public function test_get_setting_by_key_with_invalid_key_format_returns_not_found(): void
     {
         $response = $this->getJson('/api/settings/invalid-key-format');
 
         $response->assertStatus(404);
     }
 
-    public function testSettingsEndpoint_IsRateLimited(): void
+    public function test_settings_endpoint_is_rate_limited(): void
     {
         for ($i = 0; $i < 61; $i++) {
             $response = $this->getJson('/api/settings');

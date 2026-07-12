@@ -78,7 +78,7 @@ final readonly class ContactService
     public function getAllMessages(int $page = 1, int $perPage = 20): PaginatedResult
     {
         return $this->contactRepository->findAll($page, $perPage)
-            ->map(fn(ContactMessage $message) => ContactMessageDTO::fromEntity($message));
+            ->map(fn (ContactMessage $message) => ContactMessageDTO::fromEntity($message));
     }
 
     /**

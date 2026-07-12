@@ -18,11 +18,8 @@ final readonly class IPAddressCast implements CastsAttributes
     /**
      * Cast the given value from database to Domain IPAddress.
      *
-     * @param Model $model
-     * @param string $key
-     * @param string|null $value
-     * @param array<string, mixed> $attributes
-     * @return IPAddress|null
+     * @param  string|null  $value
+     * @param  array<string, mixed>  $attributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): ?IPAddress
     {
@@ -36,11 +33,8 @@ final readonly class IPAddressCast implements CastsAttributes
     /**
      * Cast the given Domain IPAddress to database string.
      *
-     * @param Model $model
-     * @param string $key
-     * @param IPAddress|string|null $value
-     * @param array<string, mixed> $attributes
-     * @return string|null
+     * @param  IPAddress|string|null  $value
+     * @param  array<string, mixed>  $attributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
     {

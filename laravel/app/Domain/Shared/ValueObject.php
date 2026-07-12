@@ -18,7 +18,7 @@ abstract class ValueObject implements JsonSerializable
     /**
      * Validates a property value if a validate method is defined.
      *
-     * @param mixed $value Value to validate
+     * @param  mixed  $value  Value to validate
      */
     final protected function validateProperty(mixed $value): void
     {

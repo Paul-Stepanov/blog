@@ -24,7 +24,7 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     ) {}
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findById(Uuid $id): ?Tag
     {
@@ -36,7 +36,7 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getById(Uuid $id): Tag
     {
@@ -50,7 +50,7 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findBySlug(string $slug): ?Tag
     {
@@ -64,12 +64,12 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByIds(array $ids): array
     {
         $uuids = array_map(
-            static fn(Uuid $id): string => $id->getValue(),
+            static fn (Uuid $id): string => $id->getValue(),
             $ids
         );
 
@@ -82,7 +82,7 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findBySlugs(array $slugs): array
     {
@@ -95,7 +95,7 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findAll(): array
     {
@@ -108,7 +108,7 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findAllOrderedByName(): array
     {
@@ -121,7 +121,7 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getWithArticleCount(): array
     {
@@ -142,7 +142,7 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getPopular(int $limit = 10): array
     {
@@ -158,7 +158,7 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getForArticle(Uuid $articleId): array
     {
@@ -174,7 +174,7 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * Note: This method is intentionally NOT implemented here.
      * Tag does not own the article_tag relationship.
@@ -184,13 +184,13 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     public function syncForArticle(Uuid $articleId, array $tagIds): void
     {
         throw new \LogicException(
-            'TagRepository::syncForArticle() is deprecated. ' .
+            'TagRepository::syncForArticle() is deprecated. '.
             'Article owns the relationship. Use ArticleRepository::syncTags() instead.'
         );
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function save(Tag $tag): void
     {
@@ -203,7 +203,7 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function delete(Uuid $id): void
     {
@@ -213,7 +213,7 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function slugExists(string $slug, ?Uuid $excludeId = null): bool
     {
@@ -227,7 +227,7 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function count(): int
     {

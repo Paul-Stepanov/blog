@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Infrastructure\Http\Controllers\Api;
 
 use App\Application\Article\Exceptions\ArticleNotFoundException;
-use App\Application\Article\Queries\{GetArticleBySlugQuery, GetPublishedArticlesQuery};
+use App\Application\Article\Queries\GetArticleBySlugQuery;
+use App\Application\Article\Queries\GetPublishedArticlesQuery;
 use App\Application\Article\Services\ArticleService;
 use App\Domain\Article\ValueObjects\Slug;
 use App\Http\Controllers\Controller;
-use App\Infrastructure\Http\Resources\{ArticleListResource, PaginatedResource};
-use Illuminate\Http\{JsonResponse, Request};
+use App\Infrastructure\Http\Resources\ArticleListResource;
+use App\Infrastructure\Http\Resources\PaginatedResource;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * Public Article API Controller.

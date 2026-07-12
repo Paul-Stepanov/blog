@@ -73,7 +73,7 @@ trait DTOFormattingTrait
             $i++;
         }
 
-        return round($bytes, 2) . ' ' . $units[$i];
+        return round($bytes, 2).' '.$units[$i];
     }
 
     /**
@@ -85,7 +85,7 @@ trait DTOFormattingTrait
             return $text;
         }
 
-        return substr($text, 0, $length) . '...';
+        return substr($text, 0, $length).'...';
     }
 
     /**

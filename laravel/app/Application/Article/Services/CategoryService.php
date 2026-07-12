@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Article\Services;
 
-use App\Application\Article\Commands\{CreateCategoryCommand, UpdateCategoryCommand};
-use App\Application\Article\DTOs\{CategoryDTO, CategoryListDTO};
+use App\Application\Article\Commands\CreateCategoryCommand;
+use App\Application\Article\Commands\UpdateCategoryCommand;
+use App\Application\Article\DTOs\CategoryDTO;
+use App\Application\Article\DTOs\CategoryListDTO;
 use App\Domain\Article\Entities\Category;
 use App\Domain\Article\Repositories\CategoryRepositoryInterface;
 use App\Domain\Article\ValueObjects\Slug;
@@ -33,7 +35,7 @@ final readonly class CategoryService
         $categoriesWithCount = $this->categoryRepository->findAllWithArticleCount();
 
         return array_map(
-            fn(array $data) => CategoryListDTO::fromArrayData($data),
+            fn (array $data) => CategoryListDTO::fromArrayData($data),
             $categoriesWithCount
         );
     }

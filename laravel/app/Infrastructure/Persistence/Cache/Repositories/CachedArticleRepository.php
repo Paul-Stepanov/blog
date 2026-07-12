@@ -20,7 +20,9 @@ use Illuminate\Contracts\Cache\Repository as CacheRepository;
 final readonly class CachedArticleRepository implements ArticleRepositoryInterface
 {
     private const TTL_READ = 3600; // 1 hour
+
     private const TTL_LIST = 1800; // 30 minutes
+
     private const TTL_COUNT = 300; // 5 minutes
 
     public function __construct(
@@ -29,7 +31,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
     ) {}
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByFilters(
         ArticleFilters $filters,
@@ -42,51 +44,52 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
             'perPage' => $perPage,
         ]);
 
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn() => $this->repository->findByFilters($filters, $page, $perPage));
+        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findByFilters($filters, $page, $perPage));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findById(Uuid $id): ?Article
     {
         $cacheKey = $this->buildEntityCacheKey($id);
 
-        return $this->cache->remember($cacheKey, self::TTL_READ, fn() => $this->repository->findById($id));
+        return $this->cache->remember($cacheKey, self::TTL_READ, fn () => $this->repository->findById($id));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getById(Uuid $id): Article
     {
         $cacheKey = $this->buildEntityCacheKey($id);
 
-        return $this->cache->remember($cacheKey, self::TTL_READ, fn() => $this->repository->getById($id));
+        return $this->cache->remember($cacheKey, self::TTL_READ, fn () => $this->repository->getById($id));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findBySlug(string $slug): ?Article
     {
         $cacheKey = $this->buildSlugCacheKey($slug);
 
-        return $this->cache->remember($cacheKey, self::TTL_READ, fn() => $this->repository->findBySlug($slug));
+        return $this->cache->remember($cacheKey, self::TTL_READ, fn () => $this->repository->findBySlug($slug));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getBySlug(string $slug): Article
     {
         $cacheKey = $this->buildSlugCacheKey($slug);
 
-        return $this->cache->remember($cacheKey, self::TTL_READ, fn() => $this->repository->getBySlug($slug));
+        return $this->cache->remember($cacheKey, self::TTL_READ, fn () => $this->repository->getBySlug($slug));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @SuppressWarnings(PHPMD.DeprecatedMethod)
      */
     public function findPublished(int $page = 1, int $perPage = 12): PaginatedResult
@@ -96,11 +99,11 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
             'perPage' => $perPage,
         ]);
 
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn() => $this->repository->findPublished($page, $perPage));
+        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findPublished($page, $perPage));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByCategory(string $categorySlug, int $page = 1, int $perPage = 12): PaginatedResult
     {
@@ -110,11 +113,11 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
             'perPage' => $perPage,
         ]);
 
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn() => $this->repository->findByCategory($categorySlug, $page, $perPage));
+        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findByCategory($categorySlug, $page, $perPage));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByTag(string $tagSlug, int $page = 1, int $perPage = 12): PaginatedResult
     {
@@ -124,11 +127,11 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
             'perPage' => $perPage,
         ]);
 
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn() => $this->repository->findByTag($tagSlug, $page, $perPage));
+        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findByTag($tagSlug, $page, $perPage));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByAuthor(Uuid $authorId, int $page = 1, int $perPage = 12): PaginatedResult
     {
@@ -138,11 +141,11 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
             'perPage' => $perPage,
         ]);
 
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn() => $this->repository->findByAuthor($authorId, $page, $perPage));
+        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findByAuthor($authorId, $page, $perPage));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function search(string $query, int $page = 1, int $perPage = 12): PaginatedResult
     {
@@ -151,27 +154,27 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getLatest(int $limit = 5): array
     {
         $cacheKey = $this->buildListCacheKey('latest', ['limit' => $limit]);
 
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn() => $this->repository->getLatest($limit));
+        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->getLatest($limit));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getFeatured(int $limit = 3): array
     {
         $cacheKey = $this->buildListCacheKey('featured', ['limit' => $limit]);
 
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn() => $this->repository->getFeatured($limit));
+        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->getFeatured($limit));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findAll(int $page = 1, int $perPage = 20): PaginatedResult
     {
@@ -181,11 +184,11 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
             'perPage' => $perPage,
         ]);
 
-        return $this->cache->remember($cacheKey, self::TTL_COUNT, fn() => $this->repository->findAll($page, $perPage));
+        return $this->cache->remember($cacheKey, self::TTL_COUNT, fn () => $this->repository->findAll($page, $perPage));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByStatus(string $status, int $page = 1, int $perPage = 20): PaginatedResult
     {
@@ -195,11 +198,11 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
             'perPage' => $perPage,
         ]);
 
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn() => $this->repository->findByStatus($status, $page, $perPage));
+        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findByStatus($status, $page, $perPage));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function save(Article $article): void
     {
@@ -208,7 +211,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function delete(Uuid $id): void
     {
@@ -224,7 +227,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function slugExists(string $slug, ?Uuid $excludeId = null): bool
     {
@@ -233,17 +236,17 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function countByStatus(): array
     {
         $cacheKey = 'articles:count:by_status';
 
-        return $this->cache->remember($cacheKey, self::TTL_COUNT, fn() => $this->repository->countByStatus());
+        return $this->cache->remember($cacheKey, self::TTL_COUNT, fn () => $this->repository->countByStatus());
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function syncTags(Uuid $articleId, array $tagIds): void
     {
@@ -277,7 +280,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
      */
     private function buildListCacheKey(string $type, array $params = []): string
     {
-        $paramsString = empty($params) ? '' : ':' . md5(serialize($params));
+        $paramsString = empty($params) ? '' : ':'.md5(serialize($params));
 
         return "articles:list:{$type}{$paramsString}";
     }

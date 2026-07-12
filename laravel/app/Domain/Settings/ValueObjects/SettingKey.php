@@ -65,7 +65,7 @@ final class SettingKey extends ValueObject
      */
     protected function validate(mixed $value): void
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             throw ValidationException::forField('key', 'Setting key must be a string');
         }
 
@@ -78,7 +78,7 @@ final class SettingKey extends ValueObject
         }
 
         // Format: group.subgroup.name (lowercase, dots, underscores)
-        if (!preg_match('/^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$/', $value)) {
+        if (! preg_match('/^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$/', $value)) {
             throw ValidationException::forField(
                 'key',
                 'Setting key must be in format: group.name or group.subgroup.name (lowercase letters, numbers, underscores, dots)'
@@ -92,6 +92,7 @@ final class SettingKey extends ValueObject
     public function getGroup(): string
     {
         $parts = explode('.', $this->value);
+
         return $parts[0];
     }
 
@@ -101,6 +102,7 @@ final class SettingKey extends ValueObject
     public function getName(): string
     {
         $parts = explode('.', $this->value);
+
         return end($parts);
     }
 
@@ -125,7 +127,7 @@ final class SettingKey extends ValueObject
      */
     public function belongsToGroup(string $group): bool
     {
-        return str_starts_with($this->value, $group . '.');
+        return str_starts_with($this->value, $group.'.');
     }
 
     /**

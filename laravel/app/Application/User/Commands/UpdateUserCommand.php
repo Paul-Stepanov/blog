@@ -17,11 +17,11 @@ use App\Infrastructure\Http\Requests\Admin\UserRequest;
 final readonly class UpdateUserCommand
 {
     /**
-     * @param string $userId User ID (primitive for parsing)
-     * @param string|null $name New name
-     * @param Email|null $email New email
-     * @param string|null $password New hashed password
-     * @param UserRole|null $role New role
+     * @param  string  $userId  User ID (primitive for parsing)
+     * @param  string|null  $name  New name
+     * @param  Email|null  $email  New email
+     * @param  string|null  $password  New hashed password
+     * @param  UserRole|null  $role  New role
      */
     public function __construct(
         public string $userId,

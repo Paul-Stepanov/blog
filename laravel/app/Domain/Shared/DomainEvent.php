@@ -21,7 +21,7 @@ abstract class DomainEvent
 
     public function __construct(?DateTimeImmutable $occurredAt = null)
     {
-        $this->occurredAt = $occurredAt ?? new DateTimeImmutable();
+        $this->occurredAt = $occurredAt ?? new DateTimeImmutable;
     }
 
     /**
@@ -50,7 +50,7 @@ abstract class DomainEvent
     /**
      * Reconstruct event from array data.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     abstract public static function fromArray(array $data): static;
 

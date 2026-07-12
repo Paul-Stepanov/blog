@@ -39,7 +39,7 @@ final class IPAddress extends ValueObject
      */
     protected function validate(mixed $value): void
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             throw ValidationException::forField('ip_address', 'IP address must be a string');
         }
 
@@ -47,7 +47,7 @@ final class IPAddress extends ValueObject
             throw ValidationException::forField('ip_address', 'IP address cannot be empty');
         }
 
-        if (!filter_var($value, FILTER_VALIDATE_IP)) {
+        if (! filter_var($value, FILTER_VALIDATE_IP)) {
             throw ValidationException::forField('ip_address', sprintf('Invalid IP address: "%s"', $value));
         }
     }
@@ -73,7 +73,7 @@ final class IPAddress extends ValueObject
      */
     public function isPrivate(): bool
     {
-        return !$this->isPublic();
+        return ! $this->isPublic();
     }
 
     /**
@@ -104,6 +104,7 @@ final class IPAddress extends ValueObject
         if ($this->isIPv4()) {
             $parts = explode('.', $this->value);
             $parts[3] = '0';
+
             return implode('.', $parts);
         }
 
@@ -112,6 +113,7 @@ final class IPAddress extends ValueObject
         for ($i = 4, $iMax = count($parts); $i < $iMax; $i++) {
             $parts[$i] = '0';
         }
+
         return implode(':', $parts);
     }
 

@@ -22,7 +22,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     ) {}
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findById(Uuid $id): ?SiteSetting
     {
@@ -34,7 +34,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getById(Uuid $id): SiteSetting
     {
@@ -48,7 +48,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByKey(SettingKey $key): ?SiteSetting
     {
@@ -62,7 +62,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getByKey(SettingKey $key): SiteSetting
     {
@@ -78,7 +78,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getValue(SettingKey $key, mixed $default = null): mixed
     {
@@ -90,7 +90,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findAll(): array
     {
@@ -103,7 +103,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByGroup(string $group): array
     {
@@ -117,7 +117,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getAllAsKeyValue(): array
     {
@@ -135,7 +135,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getGroupAsKeyValue(string $group): array
     {
@@ -154,7 +154,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function exists(SettingKey $key): bool
     {
@@ -164,7 +164,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function save(SiteSetting $setting): void
     {
@@ -177,7 +177,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function saveMany(array $settings): void
     {
@@ -187,7 +187,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function delete(Uuid $id): void
     {
@@ -197,7 +197,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function deleteByKey(SettingKey $key): void
     {
@@ -207,7 +207,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function deleteByGroup(string $group): void
     {
@@ -217,7 +217,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function count(): int
     {
@@ -225,7 +225,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function countByGroup(string $group): int
     {

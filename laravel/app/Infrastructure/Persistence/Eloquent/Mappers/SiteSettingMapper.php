@@ -48,13 +48,13 @@ final class SiteSettingMapper
     /**
      * Convert collection of models to domain entities.
      *
-     * @param SiteSettingModel[] $models
+     * @param  SiteSettingModel[]  $models
      * @return SiteSetting[]
      */
     public function toDomainCollection(array $models): array
     {
         return array_map(
-            fn(SiteSettingModel $model): SiteSetting => $this->toDomain($model),
+            fn (SiteSettingModel $model): SiteSetting => $this->toDomain($model),
             $models
         );
     }

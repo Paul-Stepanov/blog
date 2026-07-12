@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Contact\Entities;
 
-use App\Domain\Contact\ValueObjects\{Email, IPAddress};
+use App\Domain\Contact\ValueObjects\Email;
+use App\Domain\Contact\ValueObjects\IPAddress;
 use App\Domain\Shared\Entity;
 use App\Domain\Shared\Exceptions\ValidationException;
 use App\Domain\Shared\Timestamps;
@@ -19,14 +20,20 @@ final class ContactMessage extends Entity
 {
     // Mutable properties
     private bool $isRead;
+
     private Timestamps $timestamps;
 
     // Immutable properties (readonly)
     private readonly string $name;
+
     private readonly Email $email;
+
     private readonly string $subject;
+
     private readonly string $message;
+
     private readonly IPAddress $ipAddress;
+
     private readonly string $userAgent;
 
     public function __construct(
@@ -132,7 +139,7 @@ final class ContactMessage extends Entity
      */
     public function markAsUnread(): void
     {
-        if (!$this->isRead) {
+        if (! $this->isRead) {
             return;
         }
 
@@ -145,7 +152,7 @@ final class ContactMessage extends Entity
      */
     public function isUnread(): bool
     {
-        return !$this->isRead;
+        return ! $this->isRead;
     }
 
     /**
@@ -157,7 +164,7 @@ final class ContactMessage extends Entity
             return $this->message;
         }
 
-        return substr($this->message, 0, $length) . '...';
+        return substr($this->message, 0, $length).'...';
     }
 
     // Getters

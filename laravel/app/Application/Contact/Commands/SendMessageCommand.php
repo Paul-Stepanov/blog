@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Contact\Commands;
 
-use App\Domain\Contact\ValueObjects\{Email, IPAddress};
+use App\Domain\Contact\ValueObjects\Email;
+use App\Domain\Contact\ValueObjects\IPAddress;
 
 /**
  * Command to send a contact message.
@@ -15,12 +16,12 @@ use App\Domain\Contact\ValueObjects\{Email, IPAddress};
 final readonly class SendMessageCommand
 {
     /**
-     * @param string $name Sender name (primitive - simple text)
-     * @param Email $email Sender email (VO - validation)
-     * @param string $subject Message subject (primitive - simple text)
-     * @param string $message Message content (primitive - validated in Service)
-     * @param IPAddress $ipAddress Sender IP (VO - business logic)
-     * @param string $userAgent Sender user agent (primitive - metadata)
+     * @param  string  $name  Sender name (primitive - simple text)
+     * @param  Email  $email  Sender email (VO - validation)
+     * @param  string  $subject  Message subject (primitive - simple text)
+     * @param  string  $message  Message content (primitive - validated in Service)
+     * @param  IPAddress  $ipAddress  Sender IP (VO - business logic)
+     * @param  string  $userAgent  Sender user agent (primitive - metadata)
      */
     public function __construct(
         public string $name,

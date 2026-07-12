@@ -17,6 +17,7 @@ final class ArticleApiTest extends TestCase
     use RefreshDatabase;
 
     private ArticleModel $publishedArticle;
+
     private ArticleModel $draftArticle;
 
     protected function setUp(): void
@@ -40,7 +41,7 @@ final class ArticleApiTest extends TestCase
         ]);
     }
 
-    public function testGetPublishedArticles_ReturnsSuccessfulResponse(): void
+    public function test_get_published_articles_returns_successful_response(): void
     {
         $response = $this->getJson('/api/articles');
 
@@ -72,7 +73,7 @@ final class ArticleApiTest extends TestCase
             ]);
     }
 
-    public function testGetPublishedArticles_OnlyReturnsPublishedArticles(): void
+    public function test_get_published_articles_only_returns_published_articles(): void
     {
         $response = $this->getJson('/api/articles');
 
@@ -85,7 +86,7 @@ final class ArticleApiTest extends TestCase
         $this->assertNotContains('draft-article', $slugs);
     }
 
-    public function testGetArticleBySlug_WithValidSlug_ReturnsArticle(): void
+    public function test_get_article_by_slug_with_valid_slug_returns_article(): void
     {
         $response = $this->getJson("/api/articles/{$this->publishedArticle->slug}");
 
@@ -95,7 +96,7 @@ final class ArticleApiTest extends TestCase
             ->assertJsonPath('data.title', 'Published Article');
     }
 
-    public function testGetArticleBySlug_WithDraftArticle_ReturnsNotFound(): void
+    public function test_get_article_by_slug_with_draft_article_returns_not_found(): void
     {
         $response = $this->getJson("/api/articles/{$this->draftArticle->slug}");
 
@@ -104,7 +105,7 @@ final class ArticleApiTest extends TestCase
             ->assertJsonPath('error', 'article_not_found');
     }
 
-    public function testGetArticleBySlug_WithInvalidSlug_ReturnsNotFound(): void
+    public function test_get_article_by_slug_with_invalid_slug_returns_not_found(): void
     {
         $response = $this->getJson('/api/articles/non-existent-article');
 
@@ -113,14 +114,14 @@ final class ArticleApiTest extends TestCase
             ->assertJsonPath('error', 'article_not_found');
     }
 
-    public function testGetArticleBySlug_WithInvalidSlugFormat_ReturnsNotFound(): void
+    public function test_get_article_by_slug_with_invalid_slug_format_returns_not_found(): void
     {
         $response = $this->getJson('/api/articles/Invalid_Slug_With_Underscores');
 
         $response->assertStatus(404);
     }
 
-    public function testArticlesEndpoint_IsRateLimited(): void
+    public function test_articles_endpoint_is_rate_limited(): void
     {
         // Make more than 60 requests (should be limited to 60 per minute)
         for ($i = 0; $i < 61; $i++) {

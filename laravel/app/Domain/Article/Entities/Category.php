@@ -18,8 +18,11 @@ use App\Domain\Shared\Uuid;
 final class Category extends Entity
 {
     private string $name;
+
     private Slug $slug;
+
     private string $description;
+
     private Timestamps $timestamps;
 
     public function __construct(
@@ -102,7 +105,7 @@ final class Category extends Entity
         $this->description = $description;
         $this->timestamps = $this->timestamps->touch();
     }
-    
+
     public function getName(): string
     {
         return $this->name;

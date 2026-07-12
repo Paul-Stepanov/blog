@@ -38,7 +38,7 @@ final class ImageDimensions extends ValueObject
      */
     public static function fromArray(array $dimensions): self
     {
-        if (!isset($dimensions[0], $dimensions[1])) {
+        if (! isset($dimensions[0], $dimensions[1])) {
             throw ValidationException::forField('dimensions', 'Dimensions array must contain [width, height]');
         }
 
@@ -52,7 +52,7 @@ final class ImageDimensions extends ValueObject
      */
     public static function fromImageSize(array|false $imageSize): self
     {
-        if ($imageSize === false || !isset($imageSize[0], $imageSize[1])) {
+        if ($imageSize === false || ! isset($imageSize[0], $imageSize[1])) {
             throw ValidationException::forField('dimensions', 'Could not determine image dimensions');
         }
 
@@ -66,7 +66,7 @@ final class ImageDimensions extends ValueObject
      */
     protected function validate(mixed $value): void
     {
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             throw ValidationException::forField('dimensions', 'Dimensions must be an array');
         }
 
@@ -153,8 +153,8 @@ final class ImageDimensions extends ValueObject
     /**
      * Check if dimensions match a specific aspect ratio.
      *
-     * @param float $ratio Target ratio (e.g., 16/9, 4/3)
-     * @param float $tolerance Tolerance for comparison (default 0.01)
+     * @param  float  $ratio  Target ratio (e.g., 16/9, 4/3)
+     * @param  float  $tolerance  Tolerance for comparison (default 0.01)
      */
     public function hasAspectRatio(float $ratio, float $tolerance = 0.01): bool
     {

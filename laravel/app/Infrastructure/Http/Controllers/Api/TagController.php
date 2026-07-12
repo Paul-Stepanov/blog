@@ -27,6 +27,7 @@ final class TagController extends Controller
      *     path="/api/tags",
      *     summary="Get all tags",
      *     tags={"Tags"},
+     *
      *     @OA\Response(response=200, description="List of tags")
      * )
      */
@@ -47,7 +48,9 @@ final class TagController extends Controller
      *     path="/api/tags/popular",
      *     summary="Get popular tags",
      *     tags={"Tags"},
+     *
      *     @OA\Parameter(name="limit", in="query", @OA\Schema(type="integer", minimum=1, maximum=50)),
+     *
      *     @OA\Response(response=200, description="List of popular tags")
      * )
      */
@@ -69,7 +72,9 @@ final class TagController extends Controller
      *     path="/api/tags/{slug}",
      *     summary="Get tag by slug",
      *     tags={"Tags"},
+     *
      *     @OA\Parameter(name="slug", in="path", required=true, @OA\Schema(type="string")),
+     *
      *     @OA\Response(response=200, description="Tag details"),
      *     @OA\Response(response=404, description="Tag not found")
      * )

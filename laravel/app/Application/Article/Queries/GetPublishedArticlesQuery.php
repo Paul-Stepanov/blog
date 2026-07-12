@@ -13,10 +13,10 @@ namespace App\Application\Article\Queries;
 final readonly class GetPublishedArticlesQuery
 {
     /**
-     * @param int $page Page number (1-based)
-     * @param int $perPage Items per page
-     * @param string|null $categoryId Filter by category UUID (primitive - optional filter)
-     * @param string|null $searchTerm Search in title/content (primitive - optional filter)
+     * @param  int  $page  Page number (1-based)
+     * @param  int  $perPage  Items per page
+     * @param  string|null  $categoryId  Filter by category UUID (primitive - optional filter)
+     * @param  string|null  $searchTerm  Search in title/content (primitive - optional filter)
      */
     public function __construct(
         public int $page = 1,

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Media\DTOs;
 
-use App\Application\Shared\{DTOFormattingTrait, DTOInterface};
+use App\Application\Shared\DTOFormattingTrait;
+use App\Application\Shared\DTOInterface;
 use App\Application\Shared\Exceptions\InvalidEntityTypeException;
 use App\Domain\Media\Entities\MediaFile;
 use App\Domain\Shared\Entity;
@@ -19,19 +20,19 @@ final readonly class MediaFileDTO implements DTOInterface
     use DTOFormattingTrait;
 
     /**
-     * @param string $id UUID string
-     * @param string $filename Original filename
-     * @param string $path Storage path
-     * @param string $publicUrl Public URL
-     * @param string $mimeType MIME type
-     * @param int $sizeBytes File size in bytes
-     * @param string $sizeHuman Human-readable size
-     * @param int|null $width Image width (null for non-images)
-     * @param int|null $height Image height (null for non-images)
-     * @param string $altText Alt text for accessibility
-     * @param bool $isImage Whether file is an image
-     * @param string $createdAt ISO 8601 datetime
-     * @param string $updatedAt ISO 8601 datetime
+     * @param  string  $id  UUID string
+     * @param  string  $filename  Original filename
+     * @param  string  $path  Storage path
+     * @param  string  $publicUrl  Public URL
+     * @param  string  $mimeType  MIME type
+     * @param  int  $sizeBytes  File size in bytes
+     * @param  string  $sizeHuman  Human-readable size
+     * @param  int|null  $width  Image width (null for non-images)
+     * @param  int|null  $height  Image height (null for non-images)
+     * @param  string  $altText  Alt text for accessibility
+     * @param  bool  $isImage  Whether file is an image
+     * @param  string  $createdAt  ISO 8601 datetime
+     * @param  string  $updatedAt  ISO 8601 datetime
      */
     public function __construct(
         public string $id,
@@ -52,11 +53,11 @@ final readonly class MediaFileDTO implements DTOInterface
     /**
      * Create from Domain Entity.
      *
-     * @param Entity $entity Domain media file entity
+     * @param  Entity  $entity  Domain media file entity
      */
     public static function fromEntity(Entity $entity): static
     {
-        if (!$entity instanceof MediaFile) {
+        if (! $entity instanceof MediaFile) {
             throw new InvalidEntityTypeException(
                 expectedType: MediaFile::class,
                 actualType: $entity::class
@@ -120,7 +121,7 @@ final readonly class MediaFileDTO implements DTOInterface
      */
     public function isDocument(): bool
     {
-        return !$this->isImage && !$this->isVideo();
+        return ! $this->isImage && ! $this->isVideo();
     }
 
     /**

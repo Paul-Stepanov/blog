@@ -39,7 +39,7 @@ final class Email extends ValueObject
      */
     protected function validate(mixed $value): void
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             throw ValidationException::forField('email', 'Email must be a string');
         }
 
@@ -51,7 +51,7 @@ final class Email extends ValueObject
             throw ValidationException::forField('email', 'Email cannot exceed 254 characters');
         }
 
-        if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
             throw ValidationException::forField('email', sprintf('Invalid email format: "%s"', $value));
         }
     }
@@ -89,12 +89,12 @@ final class Email extends ValueObject
         $domain = $this->getDomain();
 
         if (strlen($local) <= 2) {
-            $obfuscated = $local[0] . '***';
+            $obfuscated = $local[0].'***';
         } else {
-            $obfuscated = $local[0] . str_repeat('*', strlen($local) - 2) . $local[-1];
+            $obfuscated = $local[0].str_repeat('*', strlen($local) - 2).$local[-1];
         }
 
-        return $obfuscated . '@' . $domain;
+        return $obfuscated.'@'.$domain;
     }
 
     /**

@@ -8,7 +8,6 @@ use App\Domain\Media\Services\ImageProcessorInterface;
 use App\Domain\Media\ValueObjects\FilePath;
 use App\Domain\Media\ValueObjects\ImageDimensions;
 use Intervention\Image\ImageManager;
-use Intervention\Image\Interfaces\ImageInterface;
 
 /**
  * Intervention Image Processor.
@@ -27,7 +26,7 @@ final readonly class InterventionImageProcessor implements ImageProcessorInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function resize(
         FilePath $sourcePath,
@@ -46,7 +45,7 @@ final readonly class InterventionImageProcessor implements ImageProcessorInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function resizeExact(
         FilePath $sourcePath,
@@ -65,7 +64,7 @@ final readonly class InterventionImageProcessor implements ImageProcessorInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function crop(
         FilePath $sourcePath,
@@ -84,7 +83,7 @@ final readonly class InterventionImageProcessor implements ImageProcessorInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function convertToWebP(
         FilePath $sourcePath,
@@ -101,7 +100,7 @@ final readonly class InterventionImageProcessor implements ImageProcessorInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function convertToAVIF(
         FilePath $sourcePath,
@@ -118,7 +117,7 @@ final readonly class InterventionImageProcessor implements ImageProcessorInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getDimensions(FilePath $path): ?ImageDimensions
     {
@@ -135,7 +134,7 @@ final readonly class InterventionImageProcessor implements ImageProcessorInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function optimize(FilePath $path, int $quality = 85): bool
     {
@@ -149,7 +148,7 @@ final readonly class InterventionImageProcessor implements ImageProcessorInterfa
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function isProcessableImage(FilePath $path): bool
     {

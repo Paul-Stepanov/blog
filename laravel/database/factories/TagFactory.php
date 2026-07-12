@@ -8,7 +8,7 @@ use App\Infrastructure\Persistence\Eloquent\Models\TagModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<TagModel>
+ * @extends Factory<TagModel>
  */
 final class TagFactory extends Factory
 {
@@ -22,7 +22,7 @@ final class TagFactory extends Factory
     public function definition(): array
     {
         $name = fake()->unique()->word();
-        $slug = strtolower($name) . '-' . fake()->unique()->randomNumber(4);
+        $slug = strtolower($name).'-'.fake()->unique()->randomNumber(4);
 
         return [
             'uuid' => fake()->uuid(),

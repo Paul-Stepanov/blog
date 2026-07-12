@@ -6,6 +6,9 @@ namespace App\Infrastructure\Persistence\Eloquent\Models;
 
 use App\Infrastructure\Persistence\Casts\SlugCast;
 use Database\Factories\TagFactory;
+use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -25,7 +28,7 @@ final class TagModel extends Model
     protected $table = 'tags';
 
     /**
-     * @var class-string<\Illuminate\Database\Eloquent\Factories\Factory>
+     * @var class-string<Factory>
      */
     protected static $factory = TagFactory::class;
 
@@ -39,7 +42,7 @@ final class TagModel extends Model
     ];
 
     /**
-     * @var array<string, class-string<\Illuminate\Contracts\Database\Eloquent\CastsAttributes>|string>
+     * @var array<string, class-string<CastsAttributes>|string>
      */
     protected $casts = [
         'slug' => SlugCast::class,
@@ -63,7 +66,7 @@ final class TagModel extends Model
     /**
      * Scope for ordering by name.
      */
-    public function scopeOrderedByName(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeOrderedByName(Builder $query): Builder
     {
         return $query->orderBy('name', 'asc');
     }
@@ -71,7 +74,7 @@ final class TagModel extends Model
     /**
      * Scope for popular tags (by article count).
      */
-    public function scopePopular(\Illuminate\Database\Eloquent\Builder $query, int $limit = 10): \Illuminate\Database\Eloquent\Builder
+    public function scopePopular(Builder $query, int $limit = 10): Builder
     {
         return $query->withCount('articles')
             ->orderBy('articles_count', 'desc')
@@ -81,7 +84,7 @@ final class TagModel extends Model
     /**
      * Find by UUID.
      */
-    public function scopeByUuid(\Illuminate\Database\Eloquent\Builder $query, string $uuid): \Illuminate\Database\Eloquent\Builder
+    public function scopeByUuid(Builder $query, string $uuid): Builder
     {
         return $query->where('uuid', $uuid);
     }
@@ -89,7 +92,7 @@ final class TagModel extends Model
     /**
      * Find by slug.
      */
-    public function scopeBySlug(\Illuminate\Database\Eloquent\Builder $query, string $slug): \Illuminate\Database\Eloquent\Builder
+    public function scopeBySlug(Builder $query, string $slug): Builder
     {
         return $query->where('slug', $slug);
     }

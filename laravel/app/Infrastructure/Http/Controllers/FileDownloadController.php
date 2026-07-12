@@ -25,14 +25,13 @@ final readonly class FileDownloadController
     /**
      * Download a private file via signed URL.
      *
-     * @param Request $request The HTTP request
-     * @param string $path Base64-encoded file path
-     * @return Response|StreamedResponse
+     * @param  Request  $request  The HTTP request
+     * @param  string  $path  Base64-encoded file path
      */
     public function download(Request $request, string $path): Response|StreamedResponse
     {
         // Validate signature
-        if (!$request->hasValidSignature()) {
+        if (! $request->hasValidSignature()) {
             abort(403, 'Invalid or expired download link');
         }
 
@@ -44,13 +43,13 @@ final readonly class FileDownloadController
 
         // Create FilePath value object (validates path)
         try {
-            $filePath = FilePath::fromString('private/' . $decodedPath);
+            $filePath = FilePath::fromString('private/'.$decodedPath);
         } catch (\InvalidArgumentException $e) {
             abort(400, 'Invalid file path');
         }
 
         // Check file exists
-        if (!$this->storage->exists($filePath)) {
+        if (! $this->storage->exists($filePath)) {
             abort(404, 'File not found');
         }
 
@@ -61,11 +60,11 @@ final readonly class FileDownloadController
         // Use X-Accel-Redirect for efficient file serving
         // Nginx handles the actual file transfer
         return response()->streamDownload(
-            fn() => null, // Empty callback - Nginx handles the file
+            fn () => null, // Empty callback - Nginx handles the file
             $filename,
             [
                 'Content-Type' => $mimeType->getValue(),
-                'X-Accel-Redirect' => '/private-files/' . $decodedPath,
+                'X-Accel-Redirect' => '/private-files/'.$decodedPath,
                 'Cache-Control' => 'private, max-age=3600',
             ]
         );
@@ -76,14 +75,13 @@ final readonly class FileDownloadController
      *
      * Use this when X-Accel-Redirect is not available.
      *
-     * @param Request $request The HTTP request
-     * @param string $path Base64-encoded file path
-     * @return StreamedResponse
+     * @param  Request  $request  The HTTP request
+     * @param  string  $path  Base64-encoded file path
      */
     public function stream(Request $request, string $path): StreamedResponse
     {
         // Validate signature
-        if (!$request->hasValidSignature()) {
+        if (! $request->hasValidSignature()) {
             abort(403, 'Invalid or expired download link');
         }
 
@@ -95,13 +93,13 @@ final readonly class FileDownloadController
 
         // Create FilePath value object
         try {
-            $filePath = FilePath::fromString('private/' . $decodedPath);
+            $filePath = FilePath::fromString('private/'.$decodedPath);
         } catch (\InvalidArgumentException) {
             abort(400, 'Invalid file path');
         }
 
         // Check file exists
-        if (!$this->storage->exists($filePath)) {
+        if (! $this->storage->exists($filePath)) {
             abort(404, 'File not found');
         }
 
@@ -115,7 +113,7 @@ final readonly class FileDownloadController
             200,
             [
                 'Content-Type' => $mimeType->getValue(),
-                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                'Content-Disposition' => 'attachment; filename="'.$filename.'"',
                 'Cache-Control' => 'private, max-age=3600',
             ]
         );

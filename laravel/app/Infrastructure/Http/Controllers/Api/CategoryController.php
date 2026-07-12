@@ -29,6 +29,7 @@ final class CategoryController extends Controller
      *     path="/api/categories",
      *     summary="Get categories with published articles",
      *     tags={"Categories"},
+     *
      *     @OA\Response(response=200, description="List of categories")
      * )
      */
@@ -49,7 +50,9 @@ final class CategoryController extends Controller
      *     path="/api/categories/{slug}",
      *     summary="Get category by slug",
      *     tags={"Categories"},
+     *
      *     @OA\Parameter(name="slug", in="path", required=true, @OA\Schema(type="string")),
+     *
      *     @OA\Response(response=200, description="Category details"),
      *     @OA\Response(response=404, description="Category not found")
      * )

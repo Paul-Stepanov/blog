@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Article\DTOs;
 
-use App\Application\Shared\{DTOFormattingTrait, DTOInterface};
+use App\Application\Shared\DTOFormattingTrait;
+use App\Application\Shared\DTOInterface;
 use App\Application\Shared\Exceptions\InvalidEntityTypeException;
 use App\Domain\Article\Entities\Tag;
 use App\Domain\Shared\Entity;
@@ -20,10 +21,10 @@ final readonly class TagListDTO implements DTOInterface
     use DTOFormattingTrait;
 
     /**
-     * @param string $id UUID string
-     * @param string $name Tag name
-     * @param string $slug URL-friendly identifier
-     * @param int $articleCount Number of articles with this tag
+     * @param  string  $id  UUID string
+     * @param  string  $name  Tag name
+     * @param  string  $slug  URL-friendly identifier
+     * @param  int  $articleCount  Number of articles with this tag
      */
     public function __construct(
         public string $id,
@@ -35,11 +36,11 @@ final readonly class TagListDTO implements DTOInterface
     /**
      * Create from Domain Entity.
      *
-     * @param Entity $entity Domain tag entity
+     * @param  Entity  $entity  Domain tag entity
      */
     public static function fromEntity(Entity $entity): static
     {
-        if (!$entity instanceof Tag) {
+        if (! $entity instanceof Tag) {
             throw new InvalidEntityTypeException(
                 expectedType: Tag::class,
                 actualType: $entity::class
@@ -56,7 +57,7 @@ final readonly class TagListDTO implements DTOInterface
     /**
      * Create from array data (for tag with article count).
      *
-     * @param array{tag: Tag, count: int} $data
+     * @param  array{tag: Tag, count: int}  $data
      */
     public static function fromArrayData(array $data): static
     {

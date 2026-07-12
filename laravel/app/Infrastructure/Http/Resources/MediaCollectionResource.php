@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Http\Resources;
 
 use App\Application\Media\DTOs\MediaFileDTO;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -16,7 +17,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 final class MediaCollectionResource extends JsonResource
 {
     /**
-     * @param LengthAwarePaginator<MediaFileDTO>|array<MediaFileDTO> $resource
+     * @param  LengthAwarePaginator<MediaFileDTO>|array<MediaFileDTO>  $resource
      */
     public function __construct($resource)
     {
@@ -26,7 +27,7 @@ final class MediaCollectionResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  Request  $request
      * @return array<string, mixed>
      */
     public function toArray($request): array

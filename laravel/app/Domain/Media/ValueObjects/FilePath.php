@@ -47,9 +47,10 @@ final class FilePath extends ValueObject
     /**
      * Generate a unique file path for upload.
      *
-     * @param string $directory Base directory
-     * @param string $filename Original filename
-     * @param string|null $extension Override extension (optional)
+     * @param  string  $directory  Base directory
+     * @param  string  $filename  Original filename
+     * @param  string|null  $extension  Override extension (optional)
+     *
      * @throws ValidationException If random bytes generation fails
      */
     public static function generateForUpload(
@@ -75,7 +76,7 @@ final class FilePath extends ValueObject
         $name = preg_replace('/[^a-zA-Z0-9_-]/', '', $name);
         $name = substr($name, 0, 50);
 
-        $fullFilename = $name . '_' . $hash . '.' . $ext;
+        $fullFilename = $name.'_'.$hash.'.'.$ext;
 
         return self::fromParts($directory, $timestamp, $fullFilename);
     }
@@ -87,7 +88,7 @@ final class FilePath extends ValueObject
      */
     protected function validate(mixed $value): void
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             throw ValidationException::forField('path', 'File path must be a string');
         }
 

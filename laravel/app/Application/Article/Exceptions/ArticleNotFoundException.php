@@ -12,7 +12,7 @@ use App\Application\Shared\Exceptions\ApplicationException;
 final class ArticleNotFoundException extends ApplicationException
 {
     /**
-     * @param string $identifier Article ID or slug that was not found
+     * @param  string  $identifier  Article ID or slug that was not found
      */
     public static function byId(string $identifier): self
     {
@@ -20,7 +20,7 @@ final class ArticleNotFoundException extends ApplicationException
     }
 
     /**
-     * @param string $slug Article slug that was not found
+     * @param  string  $slug  Article slug that was not found
      */
     public static function bySlug(string $slug): self
     {

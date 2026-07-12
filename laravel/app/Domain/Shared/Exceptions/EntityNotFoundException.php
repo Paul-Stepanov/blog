@@ -15,9 +15,9 @@ use App\Domain\Shared\Uuid;
 final class EntityNotFoundException extends DomainException
 {
     /**
-     * @param string $entityType The type of entity (Article, Tag, User, etc.)
-     * @param string $identifier The identifier used for lookup
-     * @param string $identifierType The type of identifier (id, slug, email)
+     * @param  string  $entityType  The type of entity (Article, Tag, User, etc.)
+     * @param  string  $identifier  The identifier used for lookup
+     * @param  string  $identifierType  The type of identifier (id, slug, email)
      */
     private function __construct(
         private readonly string $entityType,
@@ -32,7 +32,7 @@ final class EntityNotFoundException extends DomainException
     /**
      * Create exception for entity lookup by UUID.
      *
-     * @param string $entityType The type of entity (e.g., 'Article', 'Tag', 'User')
+     * @param  string  $entityType  The type of entity (e.g., 'Article', 'Tag', 'User')
      */
     public static function forEntity(string $entityType, Uuid $id): self
     {

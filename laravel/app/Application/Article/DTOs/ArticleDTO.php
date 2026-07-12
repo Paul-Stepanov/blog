@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Article\DTOs;
 
-use App\Application\Shared\{DTOFormattingTrait, DTOInterface};
+use App\Application\Shared\DTOFormattingTrait;
+use App\Application\Shared\DTOInterface;
 use App\Application\Shared\Exceptions\InvalidEntityTypeException;
 use App\Domain\Article\Entities\Article;
 use App\Domain\Shared\Entity;
@@ -20,20 +21,20 @@ final readonly class ArticleDTO implements DTOInterface
     use DTOFormattingTrait;
 
     /**
-     * @param string $id UUID string
-     * @param string $title Article title
-     * @param string $slug URL-friendly identifier
-     * @param string $content HTML content
-     * @param string $excerpt Short preview text
-     * @param string $status draft|published|archived
-     * @param string|null $categoryId Category UUID or null
-     * @param string|null $authorId Author UUID or null
-     * @param string|null $coverImageId Cover image UUID or null
-     * @param string|null $publishedAt ISO 8601 datetime or null
-     * @param string $createdAt ISO 8601 datetime
-     * @param string $updatedAt ISO 8601 datetime
-     * @param int $wordCount Content word count
-     * @param int $readingTime Estimated reading time in minutes
+     * @param  string  $id  UUID string
+     * @param  string  $title  Article title
+     * @param  string  $slug  URL-friendly identifier
+     * @param  string  $content  HTML content
+     * @param  string  $excerpt  Short preview text
+     * @param  string  $status  draft|published|archived
+     * @param  string|null  $categoryId  Category UUID or null
+     * @param  string|null  $authorId  Author UUID or null
+     * @param  string|null  $coverImageId  Cover image UUID or null
+     * @param  string|null  $publishedAt  ISO 8601 datetime or null
+     * @param  string  $createdAt  ISO 8601 datetime
+     * @param  string  $updatedAt  ISO 8601 datetime
+     * @param  int  $wordCount  Content word count
+     * @param  int  $readingTime  Estimated reading time in minutes
      */
     public function __construct(
         public string $id,
@@ -55,11 +56,11 @@ final readonly class ArticleDTO implements DTOInterface
     /**
      * Create from Domain Entity.
      *
-     * @param Entity $entity Domain article entity
+     * @param  Entity  $entity  Domain article entity
      */
     public static function fromEntity(Entity $entity): static
     {
-        if (!$entity instanceof Article) {
+        if (! $entity instanceof Article) {
             throw new InvalidEntityTypeException(
                 expectedType: Article::class,
                 actualType: $entity::class

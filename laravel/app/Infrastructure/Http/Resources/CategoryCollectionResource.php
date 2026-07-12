@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Http\Resources;
 
 use App\Domain\Article\Entities\Category;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -15,7 +16,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class CategoryCollectionResource extends JsonResource
 {
     /**
-     * @param array<Category> $categories
+     * @param  array<Category>  $categories
      */
     public function __construct(private readonly array $categories)
     {
@@ -25,13 +26,13 @@ final class CategoryCollectionResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  Request  $request
      * @return array<int, array<string, mixed>>
      */
     public function toArray($request): array
     {
         return array_map(
-            static fn(Category $category) => [
+            static fn (Category $category) => [
                 'id' => $category->getId()->getValue(),
                 'name' => $category->getName(),
                 'slug' => $category->getSlug()->getValue(),

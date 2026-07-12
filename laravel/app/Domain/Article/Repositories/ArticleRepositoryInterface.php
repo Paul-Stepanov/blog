@@ -69,6 +69,7 @@ interface ArticleRepositoryInterface
      * Find all published articles with pagination.
      *
      * @deprecated Use findByFilters(ArticleFilters::published(), ...)
+     *
      * @return PaginatedResult<Article>
      */
     public function findPublished(int $page = 1, int $perPage = 12): PaginatedResult;
@@ -155,8 +156,9 @@ interface ArticleRepositoryInterface
      * Article owns the relationship with tags (article_tag pivot table).
      * This method manages the many-to-many relationship.
      *
-     * @param Uuid $articleId Article UUID
-     * @param array<Uuid> $tagIds Array of tag UUIDs to sync
+     * @param  Uuid  $articleId  Article UUID
+     * @param  array<Uuid>  $tagIds  Array of tag UUIDs to sync
+     *
      * @throws EntityNotFoundException If article not found
      */
     public function syncTags(Uuid $articleId, array $tagIds): void;

@@ -12,7 +12,7 @@ use App\Application\Shared\Exceptions\ApplicationException;
 final class SettingNotFoundException extends ApplicationException
 {
     /**
-     * @param string $key Setting key that was not found
+     * @param  string  $key  Setting key that was not found
      */
     public static function byKey(string $key): self
     {
@@ -20,7 +20,7 @@ final class SettingNotFoundException extends ApplicationException
     }
 
     /**
-     * @param string $id Setting ID that was not found
+     * @param  string  $id  Setting ID that was not found
      */
     public static function byId(string $id): self
     {

@@ -49,8 +49,8 @@ final class ProcessImageJob implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param Uuid $mediaFileId The UUID of the MediaFile entity
-     * @param array<string> $sizes Thumbnail sizes to generate (thumb, small, medium, large)
+     * @param  Uuid  $mediaFileId  The UUID of the MediaFile entity
+     * @param  array<string>  $sizes  Thumbnail sizes to generate (thumb, small, medium, large)
      */
     public function __construct(
         public readonly Uuid $mediaFileId,
@@ -77,7 +77,7 @@ final class ProcessImageJob implements ShouldQueue
         $originalPath = $mediaFile->getPath();
 
         // Check if file is a processable image
-        if (!$imageProcessor->isProcessableImage($originalPath)) {
+        if (! $imageProcessor->isProcessableImage($originalPath)) {
             Log::info('ProcessImageJob: File is not a processable image', [
                 'media_file_id' => $this->mediaFileId->getValue(),
                 'path' => $originalPath->getValue(),
@@ -94,7 +94,7 @@ final class ProcessImageJob implements ShouldQueue
         try {
             // Create thumbnails
             foreach ($this->sizes as $sizeName) {
-                if (!isset($thumbnailConfigs[$sizeName])) {
+                if (! isset($thumbnailConfigs[$sizeName])) {
                     continue;
                 }
 
@@ -181,7 +181,7 @@ final class ProcessImageJob implements ShouldQueue
     public function tags(): array
     {
         return [
-            'media:' . $this->mediaFileId->getValue(),
+            'media:'.$this->mediaFileId->getValue(),
             'image_processing',
         ];
     }

@@ -18,10 +18,8 @@ final readonly class FilePathCast implements CastsAttributes
     /**
      * Cast the given value from database to Domain FilePath.
      *
-     * @param Model $model
-     * @param string $key
-     * @param string|null $value
-     * @param array<string, mixed> $attributes
+     * @param  string|null  $value
+     * @param  array<string, mixed>  $attributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): ?FilePath
     {
@@ -35,10 +33,8 @@ final readonly class FilePathCast implements CastsAttributes
     /**
      * Cast the given Domain FilePath to database string.
      *
-     * @param Model $model
-     * @param string $key
-     * @param FilePath|string|null $value
-     * @param array<string, mixed> $attributes
+     * @param  FilePath|string|null  $value
+     * @param  array<string, mixed>  $attributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
     {

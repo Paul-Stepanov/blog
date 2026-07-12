@@ -18,10 +18,8 @@ final readonly class SettingKeyCast implements CastsAttributes
     /**
      * Cast the given value from database to Domain SettingKey.
      *
-     * @param Model $model
-     * @param string $key
-     * @param string|null $value
-     * @param array<string, mixed> $attributes
+     * @param  string|null  $value
+     * @param  array<string, mixed>  $attributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): ?SettingKey
     {
@@ -35,10 +33,8 @@ final readonly class SettingKeyCast implements CastsAttributes
     /**
      * Cast the given Domain SettingKey to database string.
      *
-     * @param Model $model
-     * @param string $key
-     * @param SettingKey|string|null $value
-     * @param array<string, mixed> $attributes
+     * @param  SettingKey|string|null  $value
+     * @param  array<string, mixed>  $attributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
     {

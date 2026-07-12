@@ -31,8 +31,10 @@ final class AdminUserController extends Controller
      *     path="/api/admin/users",
      *     summary="Get all users (admin)",
      *     tags={"Admin Users"},
+     *
      *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer")),
      *     @OA\Parameter(name="per_page", in="query", @OA\Schema(type="integer")),
+     *
      *     @OA\Response(response=200, description="List of users")
      * )
      */
@@ -64,7 +66,9 @@ final class AdminUserController extends Controller
      *     path="/api/admin/users/{id}",
      *     summary="Get user by ID (admin)",
      *     tags={"Admin Users"},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string", format="uuid")),
+     *
      *     @OA\Response(response=200, description="User details"),
      *     @OA\Response(response=404, description="User not found")
      * )
@@ -94,13 +98,16 @@ final class AdminUserController extends Controller
      *     path="/api/admin/users",
      *     summary="Create user",
      *     tags={"Admin Users"},
+     *
      *     @OA\RequestBody(required=true, @OA\JsonContent(
      *         required={"name", "email", "password"},
+     *
      *         @OA\Property(property="name", type="string"),
      *         @OA\Property(property="email", type="string", format="email"),
      *         @OA\Property(property="password", type="string"),
      *         @OA\Property(property="role", type="string", enum={"admin","editor","author"})
      *     )),
+     *
      *     @OA\Response(response=201, description="User created"),
      *     @OA\Response(response=422, description="Validation error")
      * )
@@ -124,12 +131,15 @@ final class AdminUserController extends Controller
      *     path="/api/admin/users/{id}",
      *     summary="Update user",
      *     tags={"Admin Users"},
+     *
      *     @OA\RequestBody(required=true, @OA\JsonContent(
+     *
      *         @OA\Property(property="name", type="string"),
      *         @OA\Property(property="email", type="string", format="email"),
      *         @OA\Property(property="password", type="string"),
      *         @OA\Property(property="role", type="string", enum={"admin","editor","author"})
      *     )),
+     *
      *     @OA\Response(response=200, description="User updated"),
      *     @OA\Response(response=404, description="User not found")
      * )
@@ -161,6 +171,7 @@ final class AdminUserController extends Controller
      *     path="/api/admin/users/{id}",
      *     summary="Delete user",
      *     tags={"Admin Users"},
+     *
      *     @OA\Response(response=200, description="User deleted"),
      *     @OA\Response(response=404, description="User not found")
      * )
@@ -169,7 +180,7 @@ final class AdminUserController extends Controller
     {
         $deleted = $this->userService->deleteUser($id);
 
-        if (!$deleted) {
+        if (! $deleted) {
             return response()->json([
                 'success' => false,
                 'error' => 'user_not_found',

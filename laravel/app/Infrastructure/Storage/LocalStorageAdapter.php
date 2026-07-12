@@ -20,12 +20,15 @@ use RuntimeException;
 final readonly class LocalStorageAdapter implements FileStorageInterface
 {
     private const PUBLIC_DISK = 'public';
+
     private const PRIVATE_DISK = 'private';
+
     private const PUBLIC_PATH_PREFIX = 'public/';
+
     private const PRIVATE_PATH_PREFIX = 'private/';
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function store(string $content, FilePath $path, MimeType $mimeType): bool
     {
@@ -36,7 +39,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function storeFromTemp(string $tempPath, FilePath $targetPath): bool
     {
@@ -55,7 +58,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function get(FilePath $path): string
     {
@@ -72,7 +75,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function exists(FilePath $path): bool
     {
@@ -83,7 +86,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function delete(FilePath $path): bool
     {
@@ -94,7 +97,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function move(FilePath $from, FilePath $to): bool
     {
@@ -106,7 +109,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
             $content = $this->get($from);
             $stored = Storage::disk($toDisk)->put($this->stripPrefix($to->getValue()), $content);
 
-            if (!$stored) {
+            if (! $stored) {
                 return false;
             }
 
@@ -120,7 +123,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function copy(FilePath $from, FilePath $to): bool
     {
@@ -140,7 +143,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function size(FilePath $path): int
     {
@@ -151,7 +154,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function lastModified(FilePath $path): \DateTimeInterface
     {
@@ -160,16 +163,16 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
 
         $timestamp = Storage::disk($disk)->lastModified($relativePath);
 
-        return (new \DateTimeImmutable())->setTimestamp($timestamp);
+        return (new \DateTimeImmutable)->setTimestamp($timestamp);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getUrl(FilePath $path): string
     {
         // Only works for public files
-        if (!$this->isPublic($path)) {
+        if (! $this->isPublic($path)) {
             throw new RuntimeException('Cannot get public URL for private file. Use getTemporaryUrl() instead.');
         }
 
@@ -179,7 +182,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getTemporaryUrl(FilePath $path, int $expirationMinutes = 60): string
     {
@@ -199,7 +202,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function isPublic(FilePath $path): bool
     {
@@ -207,7 +210,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function setVisibility(FilePath $path, bool $public): bool
     {
@@ -221,14 +224,14 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
         // Build new path with correct prefix
         $relativePath = $this->stripPrefix($path->getValue());
         $newPrefix = $public ? self::PUBLIC_PATH_PREFIX : self::PRIVATE_PATH_PREFIX;
-        $newPath = FilePath::fromString($newPrefix . $relativePath);
+        $newPath = FilePath::fromString($newPrefix.$relativePath);
 
         // Visibility change requires move between disks
         return $this->move($path, $newPath);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getMimeType(FilePath $path): MimeType
     {
@@ -241,7 +244,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function generateUniquePath(string $originalName, MimeType $mimeType): FilePath
     {
@@ -252,7 +255,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getTotalUsage(): int
     {
@@ -263,7 +266,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getAvailableSpace(): int
     {
@@ -302,7 +305,7 @@ final readonly class LocalStorageAdapter implements FileStorageInterface
      */
     private function getDirectorySize(string $directory): int
     {
-        if (!is_dir($directory)) {
+        if (! is_dir($directory)) {
             return 0;
         }
 

@@ -30,7 +30,7 @@ final class CategoryApiTest extends TestCase
         ]);
     }
 
-    public function testGetCategories_ReturnsSuccessfulResponse(): void
+    public function test_get_categories_returns_successful_response(): void
     {
         $response = $this->getJson('/api/categories');
 
@@ -48,15 +48,15 @@ final class CategoryApiTest extends TestCase
             ]);
     }
 
-    public function testGetCategories_ReturnsCategories(): void
+    public function test_get_categories_returns_categories(): void
     {
         // Create categories with published articles
         $categories = CategoryModel::factory()->count(3)->create();
 
         foreach ($categories as $category) {
             ArticleModel::factory()->create([
-                'title' => 'Article for ' . $category->name,
-                'slug' => 'article-for-' . $category->slug,
+                'title' => 'Article for '.$category->name,
+                'slug' => 'article-for-'.$category->slug,
                 'status' => ArticleStatus::PUBLISHED,
                 'published_at' => now(),
                 'category_uuid' => $category->uuid,
@@ -70,7 +70,7 @@ final class CategoryApiTest extends TestCase
             ->assertJsonCount(3, 'data');
     }
 
-    public function testGetCategoryBySlug_WithValidSlug_ReturnsCategory(): void
+    public function test_get_category_by_slug_with_valid_slug_returns_category(): void
     {
         $response = $this->getJson("/api/categories/{$this->category->slug}");
 
@@ -80,7 +80,7 @@ final class CategoryApiTest extends TestCase
             ->assertJsonPath('data.name', 'Test Category');
     }
 
-    public function testGetCategoryBySlug_WithInvalidSlug_ReturnsNotFound(): void
+    public function test_get_category_by_slug_with_invalid_slug_returns_not_found(): void
     {
         $response = $this->getJson('/api/categories/non-existent-category');
 
@@ -89,14 +89,14 @@ final class CategoryApiTest extends TestCase
             ->assertJsonPath('error', 'category_not_found');
     }
 
-    public function testGetCategoryBySlug_WithInvalidSlugFormat_ReturnsNotFound(): void
+    public function test_get_category_by_slug_with_invalid_slug_format_returns_not_found(): void
     {
         $response = $this->getJson('/api/categories/Invalid_Slug_With_Underscores');
 
         $response->assertStatus(404);
     }
 
-    public function testCategoriesEndpoint_IsRateLimited(): void
+    public function test_categories_endpoint_is_rate_limited(): void
     {
         for ($i = 0; $i < 61; $i++) {
             $response = $this->getJson('/api/categories');

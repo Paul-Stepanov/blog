@@ -34,7 +34,7 @@ final class ArticleManagementTest extends TestCase
         ]);
     }
 
-    public function testGetAllArticles_WithAuthentication_ReturnsArticles(): void
+    public function test_get_all_articles_with_authentication_returns_articles(): void
     {
         ArticleModel::factory()->count(3)->create();
 
@@ -61,7 +61,7 @@ final class ArticleManagementTest extends TestCase
             ]);
     }
 
-    public function testGetAllArticles_WithoutAuthentication_ReturnsUnauthorized(): void
+    public function test_get_all_articles_without_authentication_returns_unauthorized(): void
     {
         $response = $this->getJson('/api/admin/articles');
 
@@ -70,7 +70,7 @@ final class ArticleManagementTest extends TestCase
             ->assertJsonPath('error', 'unauthenticated');
     }
 
-    public function testGetArticleById_WithValidId_ReturnsArticle(): void
+    public function test_get_article_by_id_with_valid_id_returns_article(): void
     {
         $article = ArticleModel::factory()->create();
 
@@ -84,7 +84,7 @@ final class ArticleManagementTest extends TestCase
             ->assertJsonPath('data.title', $article->title);
     }
 
-    public function testGetArticleById_WithInvalidId_ReturnsNotFound(): void
+    public function test_get_article_by_id_with_invalid_id_returns_not_found(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -95,7 +95,7 @@ final class ArticleManagementTest extends TestCase
             ->assertJsonPath('error', 'entity_not_found');
     }
 
-    public function testCreateArticle_WithValidData_ReturnsCreated(): void
+    public function test_create_article_with_valid_data_returns_created(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -119,7 +119,7 @@ final class ArticleManagementTest extends TestCase
         ]);
     }
 
-    public function testCreateArticle_WithMissingTitle_ReturnsValidationError(): void
+    public function test_create_article_with_missing_title_returns_validation_error(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -139,7 +139,7 @@ final class ArticleManagementTest extends TestCase
             ]);
     }
 
-    public function testCreateArticle_WithInvalidSlugFormat_ReturnsValidationError(): void
+    public function test_create_article_with_invalid_slug_format_returns_validation_error(): void
     {
         $this->actingAs($this->adminUser);
 
@@ -161,7 +161,7 @@ final class ArticleManagementTest extends TestCase
             ]);
     }
 
-    public function testUpdateArticle_WithValidData_ReturnsSuccess(): void
+    public function test_update_article_with_valid_data_returns_success(): void
     {
         $article = ArticleModel::factory()->create([
             'title' => 'Original Title',
@@ -186,7 +186,7 @@ final class ArticleManagementTest extends TestCase
         ]);
     }
 
-    public function testDeleteArticle_WithValidId_ReturnsSuccess(): void
+    public function test_delete_article_with_valid_id_returns_success(): void
     {
         $article = ArticleModel::factory()->create();
 
@@ -202,7 +202,7 @@ final class ArticleManagementTest extends TestCase
         ]);
     }
 
-    public function testPublishArticle_WithDraftStatus_ReturnsSuccess(): void
+    public function test_publish_article_with_draft_status_returns_success(): void
     {
         $article = ArticleModel::factory()->create([
             'status' => ArticleStatus::DRAFT,
@@ -222,7 +222,7 @@ final class ArticleManagementTest extends TestCase
         ]);
     }
 
-    public function testArchiveArticle_WithPublishedStatus_ReturnsSuccess(): void
+    public function test_archive_article_with_published_status_returns_success(): void
     {
         $article = ArticleModel::factory()->create([
             'status' => ArticleStatus::PUBLISHED,
@@ -242,7 +242,7 @@ final class ArticleManagementTest extends TestCase
         ]);
     }
 
-    public function testSyncArticleTags_WithValidTags_ReturnsSuccess(): void
+    public function test_sync_article_tags_with_valid_tags_returns_success(): void
     {
         $article = ArticleModel::factory()->create();
         $tags = TagModel::factory()->count(3)->create();
@@ -259,7 +259,7 @@ final class ArticleManagementTest extends TestCase
             ->assertJsonPath('success', true);
     }
 
-    public function testSyncArticleTags_WithMissingTags_ReturnsValidationError(): void
+    public function test_sync_article_tags_with_missing_tags_returns_validation_error(): void
     {
         $article = ArticleModel::factory()->create();
 

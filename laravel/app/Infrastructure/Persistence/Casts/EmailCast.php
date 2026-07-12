@@ -18,11 +18,8 @@ final readonly class EmailCast implements CastsAttributes
     /**
      * Cast the given value from database to Domain Email.
      *
-     * @param Model $model
-     * @param string $key
-     * @param string|null $value
-     * @param array<string, mixed> $attributes
-     * @return Email|null
+     * @param  string|null  $value
+     * @param  array<string, mixed>  $attributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): ?Email
     {
@@ -36,11 +33,8 @@ final readonly class EmailCast implements CastsAttributes
     /**
      * Cast the given Domain Email to database string.
      *
-     * @param Model $model
-     * @param string $key
-     * @param Email|string|null $value
-     * @param array<string, mixed> $attributes
-     * @return string|null
+     * @param  Email|string|null  $value
+     * @param  array<string, mixed>  $attributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
     {

@@ -17,12 +17,12 @@ use DateTimeImmutable;
 final class ContactMessageReceived extends DomainEvent
 {
     /**
-     * @param Uuid $messageId Contact message ID
-     * @param string $name Sender name
-     * @param Email $email Sender email
-     * @param string $subject Message subject
-     * @param string $ipAddress Sender IP address
-     * @param string|null $userAgent Optional user agent
+     * @param  Uuid  $messageId  Contact message ID
+     * @param  string  $name  Sender name
+     * @param  Email  $email  Sender email
+     * @param  string  $subject  Message subject
+     * @param  string  $ipAddress  Sender IP address
+     * @param  string|null  $userAgent  Optional user agent
      */
     public function __construct(
         private Uuid $messageId,
@@ -31,7 +31,7 @@ final class ContactMessageReceived extends DomainEvent
         private string $subject,
         private string $ipAddress,
         private ?string $userAgent,
-        DateTimeImmutable $occurredAt = new DateTimeImmutable()
+        DateTimeImmutable $occurredAt = new DateTimeImmutable
     ) {
         parent::__construct($occurredAt);
     }
@@ -101,6 +101,7 @@ final class ContactMessageReceived extends DomainEvent
 
     /**
      * {@inheritdoc}
+     *
      * @throws \DateMalformedStringException
      */
     public static function fromArray(array $data): self

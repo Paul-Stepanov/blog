@@ -47,7 +47,7 @@ final class ArticleContent extends ValueObject
      */
     protected function validate(mixed $value): void
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             throw ValidationException::forField('content', 'Content must be a string');
         }
 
@@ -69,7 +69,7 @@ final class ArticleContent extends ValueObject
      */
     public function isNotEmpty(): bool
     {
-        return !$this->isEmpty();
+        return ! $this->isEmpty();
     }
 
     /**
@@ -116,7 +116,7 @@ final class ArticleContent extends ValueObject
             return $text;
         }
 
-        return substr($text, 0, $length) . '...';
+        return substr($text, 0, $length).'...';
     }
 
     /**

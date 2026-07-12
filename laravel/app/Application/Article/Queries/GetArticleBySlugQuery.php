@@ -15,7 +15,7 @@ use App\Domain\Article\ValueObjects\Slug;
 final readonly class GetArticleBySlugQuery
 {
     /**
-     * @param Slug $slug Article slug to search for (VO - type-safe)
+     * @param  Slug  $slug  Article slug to search for (VO - type-safe)
      */
     public function __construct(
         public Slug $slug,

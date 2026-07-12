@@ -12,7 +12,7 @@ use App\Application\Shared\Exceptions\ApplicationException;
 final class MediaFileNotFoundException extends ApplicationException
 {
     /**
-     * @param string $identifier File ID that was not found
+     * @param  string  $identifier  File ID that was not found
      */
     public static function byId(string $identifier): self
     {
@@ -20,7 +20,7 @@ final class MediaFileNotFoundException extends ApplicationException
     }
 
     /**
-     * @param string $path File path that was not found
+     * @param  string  $path  File path that was not found
      */
     public static function byPath(string $path): self
     {

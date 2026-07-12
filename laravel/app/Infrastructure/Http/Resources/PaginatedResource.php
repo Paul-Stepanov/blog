@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Http\Resources;
 
 use App\Domain\Shared\PaginatedResult;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -17,8 +18,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class PaginatedResource extends JsonResource
 {
     /**
-     * @param PaginatedResult<T> $paginatedResult
-     * @param class-string<JsonResource> $itemResourceClass
+     * @param  PaginatedResult<T>  $paginatedResult
+     * @param  class-string<JsonResource>  $itemResourceClass
      */
     public function __construct(
         private readonly PaginatedResult $paginatedResult,
@@ -30,13 +31,13 @@ final class PaginatedResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  Request  $request
      * @return array<string, mixed>
      */
     public function toArray($request): array
     {
         $items = array_map(
-            fn($item) => new $this->itemResourceClass($item)->toArray($request),
+            fn ($item) => new $this->itemResourceClass($item)->toArray($request),
             $this->paginatedResult->items
         );
 

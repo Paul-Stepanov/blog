@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Application\User\Services;
 
-use App\Application\User\Commands\{CreateUserCommand, UpdateUserCommand};
+use App\Application\User\Commands\CreateUserCommand;
+use App\Application\User\Commands\UpdateUserCommand;
 use App\Application\User\DTOs\UserDTO;
-use App\Domain\User\Entities\User;
-use App\Domain\User\Repositories\UserRepositoryInterface;
-use App\Domain\User\ValueObjects\{Password, UserRole};
 use App\Domain\Shared\PaginatedResult;
 use App\Domain\Shared\Uuid;
+use App\Domain\User\Entities\User;
+use App\Domain\User\Repositories\UserRepositoryInterface;
+use App\Domain\User\ValueObjects\Password;
+use App\Domain\User\ValueObjects\UserRole;
 
 /**
  * User Application Service.
@@ -32,7 +34,7 @@ final readonly class UserService
     public function getAllUsers(int $page = 1, int $perPage = 20): PaginatedResult
     {
         return $this->userRepository->findAll($page, $perPage)
-            ->map(fn(User $user) => UserDTO::fromEntity($user));
+            ->map(fn (User $user) => UserDTO::fromEntity($user));
     }
 
     /**
@@ -57,7 +59,7 @@ final readonly class UserService
     public function getUsersByRole(UserRole $role, int $page = 1, int $perPage = 20): PaginatedResult
     {
         return $this->userRepository->findByRole($role, $page, $perPage)
-            ->map(fn(User $user) => UserDTO::fromEntity($user));
+            ->map(fn (User $user) => UserDTO::fromEntity($user));
     }
 
     /**
@@ -68,7 +70,7 @@ final readonly class UserService
     public function searchUsers(string $query, int $page = 1, int $perPage = 20): PaginatedResult
     {
         return $this->userRepository->search($query, $page, $perPage)
-            ->map(fn(User $user) => UserDTO::fromEntity($user));
+            ->map(fn (User $user) => UserDTO::fromEntity($user));
     }
 
     /**

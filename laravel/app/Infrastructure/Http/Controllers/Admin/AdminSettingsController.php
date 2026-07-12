@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Http\Controllers\Admin;
 
+use App\Application\Settings\Exceptions\SettingNotFoundException;
 use App\Application\Settings\Services\SettingsService;
 use App\Http\Controllers\Controller;
 use App\Infrastructure\Http\Requests\Admin\SettingsRequest;
 use App\Infrastructure\Http\Resources\SettingsResource;
-use Illuminate\Http\{JsonResponse, Request};
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * Admin Settings Management Controller.
@@ -28,6 +30,7 @@ final class AdminSettingsController extends Controller
      *     path="/api/admin/settings",
      *     summary="Get all settings (admin)",
      *     tags={"Admin Settings"},
+     *
      *     @OA\Response(response=200, description="List of all settings")
      * )
      */
@@ -48,7 +51,9 @@ final class AdminSettingsController extends Controller
      *     path="/api/admin/settings/group/{group}",
      *     summary="Get settings by group (admin)",
      *     tags={"Admin Settings"},
+     *
      *     @OA\Parameter(name="group", in="path", required=true, @OA\Schema(type="string")),
+     *
      *     @OA\Response(response=200, description="Settings for the specified group")
      * )
      */
@@ -69,7 +74,9 @@ final class AdminSettingsController extends Controller
      *     path="/api/admin/settings/{key}",
      *     summary="Get setting by key (admin)",
      *     tags={"Admin Settings"},
+     *
      *     @OA\Parameter(name="key", in="path", required=true, @OA\Schema(type="string")),
+     *
      *     @OA\Response(response=200, description="Setting details"),
      *     @OA\Response(response=404, description="Setting not found")
      * )
@@ -83,7 +90,7 @@ final class AdminSettingsController extends Controller
                 'success' => true,
                 'data' => new SettingsResource($setting),
             ]);
-        } catch (\App\Application\Settings\Exceptions\SettingNotFoundException $e) {
+        } catch (SettingNotFoundException $e) {
             return response()->json([
                 'success' => false,
                 'error' => 'setting_not_found',
@@ -99,10 +106,13 @@ final class AdminSettingsController extends Controller
      *     path="/api/admin/settings/{key}",
      *     summary="Set setting value",
      *     tags={"Admin Settings"},
+     *
      *     @OA\RequestBody(required=true, @OA\JsonContent(
      *         required={"value"},
+     *
      *         @OA\Property(property="value", type="string")
      *     )),
+     *
      *     @OA\Response(response=200, description="Setting updated successfully")
      * )
      */
@@ -121,7 +131,7 @@ final class AdminSettingsController extends Controller
                 'message' => 'Setting updated successfully.',
                 'data' => new SettingsResource($setting),
             ]);
-        } catch (\App\Application\Settings\Exceptions\SettingNotFoundException $e) {
+        } catch (SettingNotFoundException $e) {
             return response()->json([
                 'success' => false,
                 'error' => 'setting_not_found',
@@ -137,8 +147,10 @@ final class AdminSettingsController extends Controller
      *     path="/api/admin/settings/batch",
      *     summary="Set multiple settings",
      *     tags={"Admin Settings"},
+     *
      *     @OA\RequestBody(required=true, @OA\JsonContent(
      *         required={"settings"},
+     *
      *         @OA\Property(
      *             property="settings",
      *             type="object",
@@ -146,6 +158,7 @@ final class AdminSettingsController extends Controller
      *             example={"site_name": "My Blog", "posts_per_page": "10"}
      *         )
      *     )),
+     *
      *     @OA\Response(response=200, description="Settings updated successfully")
      * )
      */
@@ -169,6 +182,7 @@ final class AdminSettingsController extends Controller
      *     path="/api/admin/settings/{key}",
      *     summary="Delete setting",
      *     tags={"Admin Settings"},
+     *
      *     @OA\Response(response=200, description="Setting deleted successfully")
      * )
      */
@@ -189,6 +203,7 @@ final class AdminSettingsController extends Controller
      *     path="/api/admin/settings/group/{group}",
      *     summary="Delete settings group",
      *     tags={"Admin Settings"},
+     *
      *     @OA\Response(response=200, description="Settings group deleted successfully")
      * )
      */

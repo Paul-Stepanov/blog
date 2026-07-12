@@ -25,7 +25,7 @@ final class Timestamps extends ValueObject
      */
     public static function now(): self
     {
-        $now = new DateTimeImmutable();
+        $now = new DateTimeImmutable;
 
         return new self($now, $now);
     }
@@ -48,7 +48,7 @@ final class Timestamps extends ValueObject
     {
         return new self(
             $this->createdAt,
-            new DateTimeImmutable()
+            new DateTimeImmutable
         );
     }
 
@@ -89,6 +89,7 @@ final class Timestamps extends ValueObject
 
     /**
      * @return array<string, string>
+     *
      * @throws JsonException
      */
     public function jsonSerialize(): array

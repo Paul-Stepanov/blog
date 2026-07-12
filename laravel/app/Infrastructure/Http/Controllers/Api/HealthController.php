@@ -20,7 +20,7 @@ final class HealthController
             'redis' => $this->checkRedis(),
         ];
 
-        $healthy = !in_array(false, $checks, true);
+        $healthy = ! in_array(false, $checks, true);
 
         return response()->json([
             'status' => $healthy ? 'ok' : 'error',

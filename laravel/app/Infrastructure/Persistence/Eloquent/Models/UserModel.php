@@ -7,9 +7,12 @@ namespace App\Infrastructure\Persistence\Eloquent\Models;
 use App\Domain\User\ValueObjects\UserRole;
 use App\Infrastructure\Persistence\Casts\EmailCast;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
@@ -22,9 +25,10 @@ final class UserModel extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
-     * @var class-string<\Illuminate\Database\Eloquent\Factories\Factory>
+     * @var class-string<Factory>
      */
     protected static $factory = UserFactory::class;
+
     /**
      * @var string
      */
@@ -43,7 +47,7 @@ final class UserModel extends Authenticatable
     ];
 
     /**
-     * @var array<string, class-string<\Illuminate\Contracts\Database\Eloquent\CastsAttributes>|string>
+     * @var array<string, class-string<CastsAttributes>|string>
      */
     protected $casts = [
         'email' => EmailCast::class,
@@ -71,7 +75,7 @@ final class UserModel extends Authenticatable
     /**
      * Scope for admin users.
      */
-    public function scopeAdmins(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeAdmins(Builder $query): Builder
     {
         return $query->where('role', 'admin');
     }
@@ -79,7 +83,7 @@ final class UserModel extends Authenticatable
     /**
      * Scope for editor users.
      */
-    public function scopeEditors(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeEditors(Builder $query): Builder
     {
         return $query->where('role', 'editor');
     }
@@ -87,7 +91,7 @@ final class UserModel extends Authenticatable
     /**
      * Scope for author users.
      */
-    public function scopeAuthors(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeAuthors(Builder $query): Builder
     {
         return $query->where('role', 'author');
     }
@@ -95,7 +99,7 @@ final class UserModel extends Authenticatable
     /**
      * Scope for users with a specific role.
      */
-    public function scopeWithRole(\Illuminate\Database\Eloquent\Builder $query, string $role): \Illuminate\Database\Eloquent\Builder
+    public function scopeWithRole(Builder $query, string $role): Builder
     {
         return $query->where('role', $role);
     }
@@ -103,7 +107,7 @@ final class UserModel extends Authenticatable
     /**
      * Find by UUID.
      */
-    public function scopeByUuid(\Illuminate\Database\Eloquent\Builder $query, string $uuid): \Illuminate\Database\Eloquent\Builder
+    public function scopeByUuid(Builder $query, string $uuid): Builder
     {
         return $query->where('uuid', $uuid);
     }
@@ -111,7 +115,7 @@ final class UserModel extends Authenticatable
     /**
      * Find by email.
      */
-    public function scopeByEmail(\Illuminate\Database\Eloquent\Builder $query, string $email): \Illuminate\Database\Eloquent\Builder
+    public function scopeByEmail(Builder $query, string $email): Builder
     {
         return $query->where('email', $email);
     }
@@ -119,7 +123,7 @@ final class UserModel extends Authenticatable
     /**
      * Search by name or email.
      */
-    public function scopeSearch(\Illuminate\Database\Eloquent\Builder $query, string $term): \Illuminate\Database\Eloquent\Builder
+    public function scopeSearch(Builder $query, string $term): Builder
     {
         return $query->where(function ($q) use ($term) {
             $q->where('name', 'LIKE', "%{$term}%")

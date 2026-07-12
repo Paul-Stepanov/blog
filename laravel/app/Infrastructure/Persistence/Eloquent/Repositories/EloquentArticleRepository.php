@@ -13,6 +13,7 @@ use App\Domain\Shared\Uuid;
 use App\Infrastructure\Persistence\Eloquent\Mappers\ArticleMapper;
 use App\Infrastructure\Persistence\Eloquent\Models\ArticleModel;
 use App\Infrastructure\Persistence\Eloquent\Models\TagModel;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Eloquent implementation of Article Repository.
@@ -24,7 +25,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     ) {}
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByFilters(
         ArticleFilters $filters,
@@ -52,7 +53,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findById(Uuid $id): ?Article
     {
@@ -64,7 +65,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getById(Uuid $id): Article
     {
@@ -78,7 +79,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findBySlug(string $slug): ?Article
     {
@@ -90,7 +91,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getBySlug(string $slug): Article
     {
@@ -104,7 +105,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findPublished(int $page = 1, int $perPage = 12): PaginatedResult
     {
@@ -116,7 +117,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByCategory(string $categorySlug, int $page = 1, int $perPage = 12): PaginatedResult
     {
@@ -124,7 +125,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
             ->with(['category', 'tags'])
             ->where('status', 'published')
             ->whereNotNull('published_at')
-            ->whereHas('category', fn($q) => $q->where('slug', $categorySlug))
+            ->whereHas('category', fn ($q) => $q->where('slug', $categorySlug))
             ->orderBy('published_at', 'desc');
 
         $total = $query->count();
@@ -143,7 +144,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByTag(string $tagSlug, int $page = 1, int $perPage = 12): PaginatedResult
     {
@@ -151,7 +152,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
             ->with(['category', 'tags'])
             ->where('status', 'published')
             ->whereNotNull('published_at')
-            ->whereHas('tags', fn($q) => $q->where('slug', $tagSlug))
+            ->whereHas('tags', fn ($q) => $q->where('slug', $tagSlug))
             ->orderBy('published_at', 'desc');
 
         $total = $query->count();
@@ -170,7 +171,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByAuthor(Uuid $authorId, int $page = 1, int $perPage = 12): PaginatedResult
     {
@@ -195,7 +196,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function search(string $query, int $page = 1, int $perPage = 12): PaginatedResult
     {
@@ -207,7 +208,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getLatest(int $limit = 5): array
     {
@@ -224,7 +225,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getFeatured(int $limit = 3): array
     {
@@ -233,7 +234,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findAll(int $page = 1, int $perPage = 20): PaginatedResult
     {
@@ -245,7 +246,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function findByStatus(string $status, int $page = 1, int $perPage = 20): PaginatedResult
     {
@@ -257,7 +258,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function save(Article $article): void
     {
@@ -270,7 +271,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function delete(Uuid $id): void
     {
@@ -280,7 +281,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function slugExists(string $slug, ?Uuid $excludeId = null): bool
     {
@@ -294,7 +295,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function countByStatus(): array
     {
@@ -317,7 +318,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function syncTags(Uuid $articleId, array $tagIds): void
     {
@@ -332,7 +333,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
 
         // 2. Convert tag UUIDs to internal IDs
         $tagUuidValues = array_map(
-            static fn(Uuid $id): string => $id->getValue(),
+            static fn (Uuid $id): string => $id->getValue(),
             $tagIds
         );
 
@@ -349,7 +350,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
      * Apply filters to query.
      */
     private function applyFilters(
-        \Illuminate\Database\Eloquent\Builder $query,
+        Builder $query,
         ArticleFilters $filters
     ): void {
         if ($filters->hasStatus()) {
@@ -374,7 +375,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
         }
 
         if ($filters->hasTag()) {
-            $query->whereHas('tags', fn($q) => $q->where('tags.uuid', $filters->tagId->getValue()));
+            $query->whereHas('tags', fn ($q) => $q->where('tags.uuid', $filters->tagId->getValue()));
         }
     }
 
@@ -382,7 +383,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
      * Apply ordering to query.
      */
     private function applyOrdering(
-        \Illuminate\Database\Eloquent\Builder $query,
+        Builder $query,
         ArticleFilters $filters
     ): void {
         if ($filters->hasStatus() && $filters->status->isPublic()) {

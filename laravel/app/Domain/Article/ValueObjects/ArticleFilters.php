@@ -17,11 +17,11 @@ final readonly class ArticleFilters
     /**
      * Create article filters with all possible criteria.
      *
-     * @param string|null $searchTerm Search query for title/content
-     * @param Uuid|null $categoryId Filter by category UUID
-     * @param Uuid|null $authorId Filter by author UUID
-     * @param Uuid|null $tagId Filter by tag UUID
-     * @param ArticleStatus|null $status Filter by article status
+     * @param  string|null  $searchTerm  Search query for title/content
+     * @param  Uuid|null  $categoryId  Filter by category UUID
+     * @param  Uuid|null  $authorId  Filter by author UUID
+     * @param  Uuid|null  $tagId  Filter by tag UUID
+     * @param  ArticleStatus|null  $status  Filter by article status
      */
     private function __construct(
         public ?string $searchTerm = null,
@@ -70,7 +70,7 @@ final readonly class ArticleFilters
      */
     public static function empty(): self
     {
-        return new self();
+        return new self;
     }
 
     /**
@@ -190,7 +190,7 @@ final readonly class ArticleFilters
      */
     public function getSearchTermSafe(): ?string
     {
-        if (!$this->hasSearch()) {
+        if (! $this->hasSearch()) {
             return null;
         }
 

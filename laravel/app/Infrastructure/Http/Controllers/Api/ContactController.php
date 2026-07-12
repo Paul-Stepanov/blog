@@ -6,7 +6,8 @@ namespace App\Infrastructure\Http\Controllers\Api;
 
 use App\Application\Contact\Commands\SendMessageCommand;
 use App\Application\Contact\Services\ContactService;
-use App\Domain\Contact\ValueObjects\{Email, IPAddress};
+use App\Domain\Contact\ValueObjects\Email;
+use App\Domain\Contact\ValueObjects\IPAddress;
 use App\Http\Controllers\Controller;
 use App\Infrastructure\Http\Requests\Api\ContactRequest;
 use Illuminate\Http\JsonResponse;
@@ -30,13 +31,16 @@ final class ContactController extends Controller
      *     path="/api/contact",
      *     summary="Submit contact message",
      *     tags={"Contact"},
+     *
      *     @OA\RequestBody(required=true, @OA\JsonContent(
      *         required={"name", "email", "subject", "message"},
+     *
      *         @OA\Property(property="name", type="string", maxLength=100),
      *         @OA\Property(property="email", type="string", format="email", maxLength=254),
      *         @OA\Property(property="subject", type="string", maxLength=200),
      *         @OA\Property(property="message", type="string", minLength=10, maxLength=5000)
      *     )),
+     *
      *     @OA\Response(response=201, description="Message sent successfully"),
      *     @OA\Response(response=422, description="Validation error"),
      *     @OA\Response(response=429, description="Too many requests")

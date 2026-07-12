@@ -18,9 +18,9 @@ interface FileStorageInterface
     /**
      * Store a file from uploaded content.
      *
-     * @param string $content Binary file content
-     * @param FilePath $path Target path
-     * @param MimeType $mimeType MIME type of the file
+     * @param  string  $content  Binary file content
+     * @param  FilePath  $path  Target path
+     * @param  MimeType  $mimeType  MIME type of the file
      * @return bool Success status
      */
     public function store(string $content, FilePath $path, MimeType $mimeType): bool;
@@ -28,8 +28,8 @@ interface FileStorageInterface
     /**
      * Store a file from a temporary upload path.
      *
-     * @param string $tempPath Path to temporary uploaded file
-     * @param FilePath $targetPath Target storage path
+     * @param  string  $tempPath  Path to temporary uploaded file
+     * @param  FilePath  $targetPath  Target storage path
      * @return bool Success status
      */
     public function storeFromTemp(string $tempPath, FilePath $targetPath): bool;
@@ -38,6 +38,7 @@ interface FileStorageInterface
      * Retrieve file content.
      *
      * @return string Binary file content
+     *
      * @throws \RuntimeException If file cannot be read
      */
     public function get(FilePath $path): string;
@@ -82,7 +83,7 @@ interface FileStorageInterface
     /**
      * Get temporary URL for private files.
      *
-     * @param int $expirationMinutes URL expiration time in minutes
+     * @param  int  $expirationMinutes  URL expiration time in minutes
      * @return string Temporary signed URL
      */
     public function getTemporaryUrl(FilePath $path, int $expirationMinutes = 60): string;
@@ -105,8 +106,8 @@ interface FileStorageInterface
     /**
      * Generate a unique filename for upload.
      *
-     * @param string $originalName Original filename
-     * @param MimeType $mimeType MIME type
+     * @param  string  $originalName  Original filename
+     * @param  MimeType  $mimeType  MIME type
      * @return FilePath Generated unique path
      */
     public function generateUniquePath(string $originalName, MimeType $mimeType): FilePath;

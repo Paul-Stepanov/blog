@@ -15,9 +15,9 @@ use RuntimeException;
 abstract class DomainException extends RuntimeException
 {
     /**
-     * @param string $message Error message
-     * @param int $code Error code
-     * @param \Throwable|null $previous Previous exception
+     * @param  string  $message  Error message
+     * @param  int  $code  Error code
+     * @param  \Throwable|null  $previous  Previous exception
      */
     public function __construct(
         string $message = '',

@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Eloquent\Mappers;
 
 use App\Domain\Article\Entities\Article;
-use App\Domain\Article\ValueObjects\{ArticleContent, ArticleStatus};
+use App\Domain\Article\ValueObjects\ArticleContent;
+use App\Domain\Article\ValueObjects\ArticleStatus;
 use App\Infrastructure\Persistence\Eloquent\Models\ArticleModel;
 
 /**
@@ -59,13 +60,13 @@ final class ArticleMapper
     /**
      * Convert collection of models to domain entities.
      *
-     * @param ArticleModel[] $models
+     * @param  ArticleModel[]  $models
      * @return Article[]
      */
     public function toDomainCollection(array $models): array
     {
         return array_map(
-            fn(ArticleModel $model): Article => $this->toDomain($model),
+            fn (ArticleModel $model): Article => $this->toDomain($model),
             $models
         );
     }

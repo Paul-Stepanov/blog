@@ -12,8 +12,8 @@ namespace App\Application\Shared\Exceptions;
 final class InvalidEntityTypeException extends ApplicationException
 {
     /**
-     * @param string $expectedType Expected entity class name
-     * @param string $actualType Actual entity class name
+     * @param  string  $expectedType  Expected entity class name
+     * @param  string  $actualType  Actual entity class name
      */
     public function __construct(
         private readonly string $expectedType,

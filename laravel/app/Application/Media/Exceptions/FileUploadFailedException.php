@@ -12,8 +12,8 @@ use App\Application\Shared\Exceptions\ApplicationException;
 final class FileUploadFailedException extends ApplicationException
 {
     /**
-     * @param string $filename File that failed to upload
-     * @param string $reason Failure reason
+     * @param  string  $filename  File that failed to upload
+     * @param  string  $reason  Failure reason
      */
     public static function storageFailed(string $filename, string $reason = ''): self
     {
@@ -26,8 +26,8 @@ final class FileUploadFailedException extends ApplicationException
     }
 
     /**
-     * @param string $filename File with invalid type
-     * @param string $mimeType Invalid MIME type
+     * @param  string  $filename  File with invalid type
+     * @param  string  $mimeType  Invalid MIME type
      */
     public static function invalidType(string $filename, string $mimeType): self
     {
@@ -35,9 +35,9 @@ final class FileUploadFailedException extends ApplicationException
     }
 
     /**
-     * @param string $filename File that is too large
-     * @param int $sizeBytes Actual file size
-     * @param int $maxBytes Maximum allowed size
+     * @param  string  $filename  File that is too large
+     * @param  int  $sizeBytes  Actual file size
+     * @param  int  $maxBytes  Maximum allowed size
      */
     public static function tooLarge(string $filename, int $sizeBytes, int $maxBytes): self
     {

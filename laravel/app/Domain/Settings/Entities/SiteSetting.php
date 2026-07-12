@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Settings\Entities;
 
-use App\Domain\Settings\ValueObjects\{SettingKey, SettingValue};
+use App\Domain\Settings\ValueObjects\SettingKey;
+use App\Domain\Settings\ValueObjects\SettingValue;
 use App\Domain\Shared\Entity;
 use App\Domain\Shared\Timestamps;
 use App\Domain\Shared\Uuid;
@@ -18,6 +19,7 @@ final class SiteSetting extends Entity
 {
     // Mutable properties
     private SettingValue $value;
+
     private Timestamps $timestamps;
 
     // Immutable properties (readonly)

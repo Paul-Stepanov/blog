@@ -2,24 +2,20 @@
 
 declare(strict_types=1);
 
-use App\Infrastructure\Http\Controllers\Admin\{
-    AdminArticleController,
-    AdminCategoryController,
-    AdminContactMessageController,
-    AdminMediaController,
-    AdminSettingsController,
-    AdminTagController,
-    AdminUserController
-};
+use App\Infrastructure\Http\Controllers\Admin\AdminArticleController;
+use App\Infrastructure\Http\Controllers\Admin\AdminCategoryController;
+use App\Infrastructure\Http\Controllers\Admin\AdminContactMessageController;
+use App\Infrastructure\Http\Controllers\Admin\AdminMediaController;
+use App\Infrastructure\Http\Controllers\Admin\AdminSettingsController;
+use App\Infrastructure\Http\Controllers\Admin\AdminTagController;
+use App\Infrastructure\Http\Controllers\Admin\AdminUserController;
 use App\Infrastructure\Http\Controllers\Admin\AuthController;
-use App\Infrastructure\Http\Controllers\Api\{
-    ArticleController,
-    CategoryController,
-    ContactController,
-    HealthController,
-    SettingsController,
-    TagController
-};
+use App\Infrastructure\Http\Controllers\Api\ArticleController;
+use App\Infrastructure\Http\Controllers\Api\CategoryController;
+use App\Infrastructure\Http\Controllers\Api\ContactController;
+use App\Infrastructure\Http\Controllers\Api\HealthController;
+use App\Infrastructure\Http\Controllers\Api\SettingsController;
+use App\Infrastructure\Http\Controllers\Api\TagController;
 use Illuminate\Support\Facades\Route;
 
 /*

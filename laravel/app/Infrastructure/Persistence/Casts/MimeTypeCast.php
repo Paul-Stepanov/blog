@@ -18,11 +18,8 @@ final readonly class MimeTypeCast implements CastsAttributes
     /**
      * Cast the given value from database to Domain MimeType.
      *
-     * @param Model $model
-     * @param string $key
-     * @param string|null $value
-     * @param array<string, mixed> $attributes
-     * @return MimeType|null
+     * @param  string|null  $value
+     * @param  array<string, mixed>  $attributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): ?MimeType
     {
@@ -36,11 +33,8 @@ final readonly class MimeTypeCast implements CastsAttributes
     /**
      * Cast the given Domain MimeType to database string.
      *
-     * @param Model $model
-     * @param string $key
-     * @param MimeType|string|null $value
-     * @param array<string, mixed> $attributes
-     * @return string|null
+     * @param  MimeType|string|null  $value
+     * @param  array<string, mixed>  $attributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
     {

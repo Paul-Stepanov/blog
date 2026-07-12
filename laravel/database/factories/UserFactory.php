@@ -32,7 +32,7 @@ final class UserFactory extends Factory
             'uuid' => fake()->uuid(),
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'password' => static::$password ??= Hash::make('password123'),
+            'password' => self::$password ??= Hash::make('password123'),
             'role' => UserRole::ADMIN->value,
             'remember_token' => str()->random(10),
         ];

@@ -43,6 +43,7 @@ final class SettingsController extends Controller
      *     path="/api/settings",
      *     summary="Get public settings",
      *     tags={"Settings"},
+     *
      *     @OA\Response(response=200, description="Public settings")
      * )
      */
@@ -68,14 +69,16 @@ final class SettingsController extends Controller
      *     path="/api/settings/{key}",
      *     summary="Get setting by key",
      *     tags={"Settings"},
+     *
      *     @OA\Parameter(name="key", in="path", required=true, @OA\Schema(type="string")),
+     *
      *     @OA\Response(response=200, description="Setting value"),
      *     @OA\Response(response=404, description="Setting not found or not public")
      * )
      */
     public function getSettingByKey(string $key): JsonResponse
     {
-        if (!in_array($key, self::PUBLIC_SETTINGS, true)) {
+        if (! in_array($key, self::PUBLIC_SETTINGS, true)) {
             return response()->json([
                 'success' => false,
                 'error' => 'setting_not_public',

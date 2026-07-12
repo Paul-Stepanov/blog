@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\User\Services;
 
-use App\Application\User\DTOs\{AuthRequest, UserDTO};
-use App\Domain\User\Repositories\UserRepositoryInterface;
+use App\Application\User\DTOs\AuthRequest;
+use App\Application\User\DTOs\UserDTO;
 use App\Domain\Shared\Uuid;
+use App\Domain\User\Repositories\UserRepositoryInterface;
 
 /**
  * Authentication Application Service.
@@ -22,7 +23,7 @@ final readonly class AuthenticationService
     /**
      * Authenticate user by credentials.
      *
-     * @param AuthRequest $request Login credentials
+     * @param  AuthRequest  $request  Login credentials
      * @return UserDTO|null Authenticated user or null if failed
      */
     public function login(AuthRequest $request): ?UserDTO
@@ -33,7 +34,7 @@ final readonly class AuthenticationService
             return null;
         }
 
-        if (!$user->verifyPassword($request->password)) {
+        if (! $user->verifyPassword($request->password)) {
             return null;
         }
 
@@ -43,7 +44,7 @@ final readonly class AuthenticationService
     /**
      * Get user by ID.
      *
-     * @param string $userId User UUID string
+     * @param  string  $userId  User UUID string
      * @return UserDTO|null User or null if not found
      */
     public function getUserById(string $userId): ?UserDTO
@@ -61,7 +62,7 @@ final readonly class AuthenticationService
     /**
      * Verify user exists and is active.
      *
-     * @param string $userId User UUID string
+     * @param  string  $userId  User UUID string
      * @return bool True if user exists and can login
      */
     public function canAuthenticate(string $userId): bool

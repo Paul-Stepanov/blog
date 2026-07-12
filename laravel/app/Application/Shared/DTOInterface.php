@@ -20,8 +20,7 @@ interface DTOInterface extends JsonSerializable
     /**
      * Create DTO from Domain Entity.
      *
-     * @param TEntity $entity
-     * @return static
+     * @param  TEntity  $entity
      */
     public static function fromEntity(Entity $entity): static;
 
