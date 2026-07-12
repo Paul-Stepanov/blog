@@ -6,6 +6,7 @@ namespace App\Infrastructure\Http\Controllers;
 
 use App\Domain\Media\Services\FileStorageInterface;
 use App\Domain\Media\ValueObjects\FilePath;
+use App\Domain\Shared\Exceptions\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -44,7 +45,7 @@ final readonly class FileDownloadController
         // Create FilePath value object (validates path)
         try {
             $filePath = FilePath::fromString('private/'.$decodedPath);
-        } catch (\InvalidArgumentException $e) {
+        } catch (ValidationException) {
             abort(400, 'Invalid file path');
         }
 
@@ -94,7 +95,7 @@ final readonly class FileDownloadController
         // Create FilePath value object
         try {
             $filePath = FilePath::fromString('private/'.$decodedPath);
-        } catch (\InvalidArgumentException) {
+        } catch (ValidationException) {
             abort(400, 'Invalid file path');
         }
 
