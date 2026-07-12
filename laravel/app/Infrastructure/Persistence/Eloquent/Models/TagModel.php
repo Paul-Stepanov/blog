@@ -33,7 +33,7 @@ final class TagModel extends Model
     protected static $factory = TagFactory::class;
 
     /**
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'uuid',

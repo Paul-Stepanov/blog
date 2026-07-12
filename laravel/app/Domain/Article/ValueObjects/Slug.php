@@ -42,7 +42,7 @@ final class Slug extends ValueObject
         $slug = transliterator_transliterate('Any-Latin; Latin-ASCII; Lower()', $title);
 
         // Replace non-alphanumeric characters with hyphens
-        $slug = preg_replace('/[^a-z0-9]+/i', '-', $slug ?? $title);
+        $slug = preg_replace('/[^a-z0-9]+/i', '-', $slug !== false ? $slug : $title);
 
         // Remove leading/trailing hyphens and multiple hyphens
         $slug = preg_replace('/-+/', '-', trim($slug ?? '', '-'));

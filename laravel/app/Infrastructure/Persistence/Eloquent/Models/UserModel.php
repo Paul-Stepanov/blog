@@ -35,7 +35,7 @@ final class UserModel extends Authenticatable
     protected $table = 'users';
 
     /**
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'uuid',
@@ -57,7 +57,7 @@ final class UserModel extends Authenticatable
     ];
 
     /**
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         'password',

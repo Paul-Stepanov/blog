@@ -33,7 +33,7 @@ final class CategoryModel extends Model
     protected static $factory = CategoryFactory::class;
 
     /**
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'uuid',

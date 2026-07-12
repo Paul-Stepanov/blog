@@ -32,7 +32,7 @@ final class SiteSettingModel extends Model
     protected static $factory = SiteSettingFactory::class;
 
     /**
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'uuid',

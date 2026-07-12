@@ -36,7 +36,7 @@ final class ArticleModel extends Model
     protected static $factory = ArticleFactory::class;
 
     /**
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'uuid',

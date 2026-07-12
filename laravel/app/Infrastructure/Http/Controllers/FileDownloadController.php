@@ -8,7 +8,6 @@ use App\Domain\Media\Services\FileStorageInterface;
 use App\Domain\Media\ValueObjects\FilePath;
 use App\Domain\Shared\Exceptions\ValidationException;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -29,7 +28,7 @@ final readonly class FileDownloadController
      * @param  Request  $request  The HTTP request
      * @param  string  $path  Base64-encoded file path
      */
-    public function download(Request $request, string $path): Response|StreamedResponse
+    public function download(Request $request, string $path): StreamedResponse
     {
         // Validate signature
         if (! $request->hasValidSignature()) {
