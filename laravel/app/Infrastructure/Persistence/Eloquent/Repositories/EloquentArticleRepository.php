@@ -14,6 +14,7 @@ use App\Infrastructure\Persistence\Eloquent\Mappers\ArticleMapper;
 use App\Infrastructure\Persistence\Eloquent\Models\ArticleModel;
 use App\Infrastructure\Persistence\Eloquent\Models\TagModel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Eloquent implementation of Article Repository.
@@ -299,7 +300,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
      */
     public function countByStatus(): array
     {
-        $results = ArticleModel::query()
+        $results = DB::table('articles')
             ->selectRaw('status, COUNT(*) as count')
             ->groupBy('status')
             ->get();
@@ -311,7 +312,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
         ];
 
         foreach ($results as $row) {
-            $counts[$row->status] = $row->count;
+            $counts[(string) $row->status] = (int) $row->count;
         }
 
         return $counts;

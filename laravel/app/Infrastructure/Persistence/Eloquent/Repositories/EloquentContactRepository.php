@@ -11,6 +11,7 @@ use App\Domain\Shared\PaginatedResult;
 use App\Domain\Shared\Uuid;
 use App\Infrastructure\Persistence\Eloquent\Mappers\ContactMessageMapper;
 use App\Infrastructure\Persistence\Eloquent\Models\ContactMessageModel;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Eloquent implementation of Contact Repository.
@@ -241,7 +242,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
      */
     public function countByDate(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        $results = ContactMessageModel::query()
+        $results = DB::table('contact_messages')
             ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
             ->whereBetween('created_at', [$from, $to])
             ->groupBy('date')
@@ -250,7 +251,7 @@ final readonly class EloquentContactRepository implements ContactRepositoryInter
 
         $counts = [];
         foreach ($results as $row) {
-            $counts[$row->date] = $row->count;
+            $counts[(string) $row->date] = (int) $row->count;
         }
 
         return $counts;

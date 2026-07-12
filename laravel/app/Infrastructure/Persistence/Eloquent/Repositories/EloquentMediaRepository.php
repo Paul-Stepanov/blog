@@ -12,6 +12,7 @@ use App\Domain\Shared\PaginatedResult;
 use App\Domain\Shared\Uuid;
 use App\Infrastructure\Persistence\Eloquent\Mappers\MediaFileMapper;
 use App\Infrastructure\Persistence\Eloquent\Models\MediaFileModel;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Eloquent implementation of Media Repository.
@@ -287,7 +288,7 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
      */
     public function countByType(): array
     {
-        $results = MediaFileModel::query()
+        $results = DB::table('media_files')
             ->selectRaw("
                 CASE
                     WHEN mime_type LIKE 'image/%' THEN 'image'
@@ -308,8 +309,9 @@ final readonly class EloquentMediaRepository implements MediaRepositoryInterface
         ];
 
         foreach ($results as $row) {
-            if (isset($counts[$row->type])) {
-                $counts[$row->type] = $row->count;
+            $type = (string) $row->type;
+            if (isset($counts[$type])) {
+                $counts[$type] = (int) $row->count;
             }
         }
 
