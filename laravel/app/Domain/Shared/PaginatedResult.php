@@ -35,31 +35,6 @@ final readonly class PaginatedResult implements IteratorAggregate, JsonSerializa
     ) {}
 
     /**
-     * Create from Laravel paginator.
-     *
-     * @template TItem
-     *
-     * @param  iterable<TItem>  $laravelPaginator
-     * @param  callable(TItem): T  $mapper
-     * @return self<T>
-     */
-    public static function fromLaravel(iterable $laravelPaginator, callable $mapper): self
-    {
-        $items = [];
-        foreach ($laravelPaginator->items() as $item) {
-            $items[] = $mapper($item);
-        }
-
-        return new self(
-            items: $items,
-            total: $laravelPaginator->total(),
-            page: $laravelPaginator->currentPage(),
-            perPage: $laravelPaginator->perPage(),
-            lastPage: $laravelPaginator->lastPage()
-        );
-    }
-
-    /**
      * Create an empty result.
      *
      * @return self<T>
