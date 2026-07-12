@@ -8,6 +8,7 @@ use App\Domain\User\ValueObjects\UserRole;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * User Form Request.
@@ -24,6 +25,13 @@ final class UserRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('password') && filled($this->input('password'))) {
+            $this->merge(['password' => Hash::make($this->input('password'))]);
+        }
+    }
+
     /**
      * Get the validation rules.
      *
@@ -36,7 +44,7 @@ final class UserRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'min:1', 'max:255'],
-            'email' => ['required', 'email', 'max:254', 'unique:users,email,'.$userId],
+            'email' => ['required', 'email', 'max:254', 'unique:users,email,'.$userId.',uuid'],
             'password' => $isCreate ? ['required', 'string', 'min:8', 'max:72'] : ['nullable', 'string', 'min:8', 'max:72'],
             'role' => ['required', 'string', 'in:'.implode(',', UserRole::values())],
         ];

@@ -108,7 +108,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     public function findByGroup(string $group): array
     {
         $models = SiteSettingModel::query()
-            ->where('group', $group)
+            ->where('key', 'like', $group.'.%')
             ->orderBy('key', 'asc')
             ->get()
             ->all();
@@ -140,7 +140,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     public function getGroupAsKeyValue(string $group): array
     {
         $models = SiteSettingModel::query()
-            ->where('group', $group)
+            ->where('key', 'like', $group.'.%')
             ->orderBy('key', 'asc')
             ->get();
 
@@ -212,7 +212,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     public function deleteByGroup(string $group): void
     {
         SiteSettingModel::query()
-            ->where('group', $group)
+            ->where('key', 'like', $group.'.%')
             ->delete();
     }
 
@@ -230,7 +230,7 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
     public function countByGroup(string $group): int
     {
         return SiteSettingModel::query()
-            ->where('group', $group)
+            ->where('key', 'like', $group.'.%')
             ->count();
     }
 

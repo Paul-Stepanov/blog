@@ -21,13 +21,14 @@ final class SiteSettingFactory extends Factory
      */
     public function definition(): array
     {
-        $key = fake()->slug(2).'.'.fake()->slug();
+        $group = fake()->randomElement(['site', 'blog', 'seo', 'social', 'mail']);
+        $key = $group.'.'.fake()->word();
 
         return [
             'uuid' => fake()->uuid(),
             'key' => $key,
             'value' => fake()->sentence(),
-            'type' => fake()->randomElement(['string', 'boolean', 'integer']),
+            'type' => 'string',
         ];
     }
 }

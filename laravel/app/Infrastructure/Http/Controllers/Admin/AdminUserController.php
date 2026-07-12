@@ -80,7 +80,7 @@ final class AdminUserController extends Controller
         if ($user === null) {
             return response()->json([
                 'success' => false,
-                'error' => 'user_not_found',
+                'error' => 'entity_not_found',
                 'message' => "User not found with ID: {$id}",
             ], 404);
         }
@@ -152,7 +152,7 @@ final class AdminUserController extends Controller
         if ($user === null) {
             return response()->json([
                 'success' => false,
-                'error' => 'user_not_found',
+                'error' => 'entity_not_found',
                 'message' => "User not found with ID: {$id}",
             ], 404);
         }
@@ -183,7 +183,7 @@ final class AdminUserController extends Controller
         if (! $deleted) {
             return response()->json([
                 'success' => false,
-                'error' => 'user_not_found',
+                'error' => 'entity_not_found',
                 'message' => "User not found with ID: {$id}",
             ], 404);
         }

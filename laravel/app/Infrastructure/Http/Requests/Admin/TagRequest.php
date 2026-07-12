@@ -34,7 +34,7 @@ final class TagRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'min:1', 'max:50'],
-            'slug' => ['nullable', 'string', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', 'max:50', 'unique:tags,slug,'.$tagId],
+            'slug' => ['nullable', 'string', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', 'max:50', 'unique:tags,slug,'.$tagId.',uuid'],
         ];
     }
 

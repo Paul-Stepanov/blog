@@ -34,7 +34,7 @@ final class CategoryRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'min:1', 'max:100'],
-            'slug' => ['nullable', 'string', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', 'max:100', 'unique:categories,slug,'.$categoryId],
+            'slug' => ['nullable', 'string', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', 'max:100', 'unique:categories,slug,'.$categoryId.',uuid'],
             'description' => ['nullable', 'string', 'max:500'],
         ];
     }

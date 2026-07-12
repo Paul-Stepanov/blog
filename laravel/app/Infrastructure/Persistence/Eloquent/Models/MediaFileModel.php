@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Eloquent Model for MediaFile persistence.
@@ -64,6 +65,14 @@ final class MediaFileModel extends Model
     public function uploader(): BelongsTo
     {
         return $this->belongsTo(UserModel::class, 'uploader_uuid', 'uuid');
+    }
+
+    /**
+     * Get the articles using this file as cover image.
+     */
+    public function articles(): HasMany
+    {
+        return $this->hasMany(ArticleModel::class, 'cover_image_uuid', 'uuid');
     }
 
     /**

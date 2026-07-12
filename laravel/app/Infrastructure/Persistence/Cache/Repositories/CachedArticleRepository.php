@@ -15,15 +15,20 @@ use Illuminate\Contracts\Cache\Repository as CacheRepository;
  * Cached decorator for Article Repository.
  *
  * Decorates any ArticleRepositoryInterface implementation with caching.
- * Read operations are cached, write operations invalidate cache.
+ * Read operations are cached under the "articles" cache tag; every write
+ * operation flushes the whole tag, guaranteeing readers never observe stale
+ * data (no TTL lag between a mutation and the next list read). Tag-based
+ * flush works on the array store (tests) and Redis/Memcached (production).
  */
 final readonly class CachedArticleRepository implements ArticleRepositoryInterface
 {
-    private const TTL_READ = 3600; // 1 hour
+    private const string TAG = 'articles';
 
-    private const TTL_LIST = 1800; // 30 minutes
+    private const int TTL_READ = 3600; // 1 hour
 
-    private const TTL_COUNT = 300; // 5 minutes
+    private const int TTL_LIST = 1800; // 30 minutes
+
+    private const int TTL_COUNT = 300; // 5 minutes
 
     public function __construct(
         private ArticleRepositoryInterface $repository,
@@ -44,7 +49,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
             'perPage' => $perPage,
         ]);
 
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findByFilters($filters, $page, $perPage));
+        return $this->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findByFilters($filters, $page, $perPage));
     }
 
     /**
@@ -52,9 +57,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
      */
     public function findById(Uuid $id): ?Article
     {
-        $cacheKey = $this->buildEntityCacheKey($id);
-
-        return $this->cache->remember($cacheKey, self::TTL_READ, fn () => $this->repository->findById($id));
+        return $this->remember($this->buildEntityCacheKey($id), self::TTL_READ, fn () => $this->repository->findById($id));
     }
 
     /**
@@ -62,9 +65,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
      */
     public function getById(Uuid $id): Article
     {
-        $cacheKey = $this->buildEntityCacheKey($id);
-
-        return $this->cache->remember($cacheKey, self::TTL_READ, fn () => $this->repository->getById($id));
+        return $this->remember($this->buildEntityCacheKey($id), self::TTL_READ, fn () => $this->repository->getById($id));
     }
 
     /**
@@ -72,9 +73,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
      */
     public function findBySlug(string $slug): ?Article
     {
-        $cacheKey = $this->buildSlugCacheKey($slug);
-
-        return $this->cache->remember($cacheKey, self::TTL_READ, fn () => $this->repository->findBySlug($slug));
+        return $this->remember($this->buildSlugCacheKey($slug), self::TTL_READ, fn () => $this->repository->findBySlug($slug));
     }
 
     /**
@@ -82,15 +81,11 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
      */
     public function getBySlug(string $slug): Article
     {
-        $cacheKey = $this->buildSlugCacheKey($slug);
-
-        return $this->cache->remember($cacheKey, self::TTL_READ, fn () => $this->repository->getBySlug($slug));
+        return $this->remember($this->buildSlugCacheKey($slug), self::TTL_READ, fn () => $this->repository->getBySlug($slug));
     }
 
     /**
      * {@inheritDoc}
-     *
-     * @SuppressWarnings(PHPMD.DeprecatedMethod)
      */
     public function findPublished(int $page = 1, int $perPage = 12): PaginatedResult
     {
@@ -99,7 +94,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
             'perPage' => $perPage,
         ]);
 
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findPublished($page, $perPage));
+        return $this->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findPublished($page, $perPage));
     }
 
     /**
@@ -113,7 +108,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
             'perPage' => $perPage,
         ]);
 
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findByCategory($categorySlug, $page, $perPage));
+        return $this->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findByCategory($categorySlug, $page, $perPage));
     }
 
     /**
@@ -127,7 +122,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
             'perPage' => $perPage,
         ]);
 
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findByTag($tagSlug, $page, $perPage));
+        return $this->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findByTag($tagSlug, $page, $perPage));
     }
 
     /**
@@ -141,7 +136,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
             'perPage' => $perPage,
         ]);
 
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findByAuthor($authorId, $page, $perPage));
+        return $this->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findByAuthor($authorId, $page, $perPage));
     }
 
     /**
@@ -158,9 +153,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
      */
     public function getLatest(int $limit = 5): array
     {
-        $cacheKey = $this->buildListCacheKey('latest', ['limit' => $limit]);
-
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->getLatest($limit));
+        return $this->remember($this->buildListCacheKey('latest', ['limit' => $limit]), self::TTL_LIST, fn () => $this->repository->getLatest($limit));
     }
 
     /**
@@ -168,9 +161,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
      */
     public function getFeatured(int $limit = 3): array
     {
-        $cacheKey = $this->buildListCacheKey('featured', ['limit' => $limit]);
-
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->getFeatured($limit));
+        return $this->remember($this->buildListCacheKey('featured', ['limit' => $limit]), self::TTL_LIST, fn () => $this->repository->getFeatured($limit));
     }
 
     /**
@@ -184,7 +175,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
             'perPage' => $perPage,
         ]);
 
-        return $this->cache->remember($cacheKey, self::TTL_COUNT, fn () => $this->repository->findAll($page, $perPage));
+        return $this->remember($cacheKey, self::TTL_COUNT, fn () => $this->repository->findAll($page, $perPage));
     }
 
     /**
@@ -198,7 +189,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
             'perPage' => $perPage,
         ]);
 
-        return $this->cache->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findByStatus($status, $page, $perPage));
+        return $this->remember($cacheKey, self::TTL_LIST, fn () => $this->repository->findByStatus($status, $page, $perPage));
     }
 
     /**
@@ -207,7 +198,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
     public function save(Article $article): void
     {
         $this->repository->save($article);
-        $this->invalidateArticleCache($article);
+        $this->flush();
     }
 
     /**
@@ -215,15 +206,8 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
      */
     public function delete(Uuid $id): void
     {
-        $article = $this->repository->findById($id);
         $this->repository->delete($id);
-
-        if ($article !== null) {
-            $this->invalidateArticleCache($article);
-        }
-
-        // Also invalidate by ID directly
-        $this->cache->forget($this->buildEntityCacheKey($id));
+        $this->flush();
     }
 
     /**
@@ -240,9 +224,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
      */
     public function countByStatus(): array
     {
-        $cacheKey = 'articles:count:by_status';
-
-        return $this->cache->remember($cacheKey, self::TTL_COUNT, fn () => $this->repository->countByStatus());
+        return $this->remember('articles:count:by_status', self::TTL_COUNT, fn () => $this->repository->countByStatus());
     }
 
     /**
@@ -251,12 +233,7 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
     public function syncTags(Uuid $articleId, array $tagIds): void
     {
         $this->repository->syncTags($articleId, $tagIds);
-
-        // Invalidate article cache
-        $this->cache->forget($this->buildEntityCacheKey($articleId));
-
-        // Invalidate list caches (tags changed)
-        $this->invalidateListCaches();
+        $this->flush();
     }
 
     /**
@@ -277,6 +254,8 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
 
     /**
      * Build cache key for list queries.
+     *
+     * @param  array<string, mixed>  $params
      */
     private function buildListCacheKey(string $type, array $params = []): string
     {
@@ -286,30 +265,23 @@ final readonly class CachedArticleRepository implements ArticleRepositoryInterfa
     }
 
     /**
-     * Invalidate all cache for a specific article.
+     * Remember a value under the articles tag.
+     *
+     * @template T
+     *
+     * @param  callable(): T  $callback
+     * @return T
      */
-    private function invalidateArticleCache(Article $article): void
+    private function remember(string $key, int $ttl, callable $callback): mixed
     {
-        // Invalidate by ID
-        $this->cache->forget($this->buildEntityCacheKey($article->getId()));
-
-        // Invalidate by slug
-        $this->cache->forget($this->buildSlugCacheKey($article->getSlug()->getValue()));
-
-        // Invalidate list caches
-        $this->invalidateListCaches();
+        return $this->cache->tags([self::TAG])->remember($key, $ttl, $callback);
     }
 
     /**
-     * Invalidate all list caches.
+     * Invalidate the entire articles cache (entity, slug, list, count).
      */
-    private function invalidateListCaches(): void
+    private function flush(): void
     {
-        // Use cache tags if supported (Redis, Memcached)
-        // For file/database cache, we rely on TTL
-        // In production with Redis, use: $this->cache->tags(['articles'])->flush();
-
-        // Invalidate known list keys
-        $this->cache->forget('articles:count:by_status');
+        $this->cache->tags([self::TAG])->flush();
     }
 }

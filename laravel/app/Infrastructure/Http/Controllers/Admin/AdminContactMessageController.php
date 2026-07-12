@@ -77,7 +77,7 @@ final class AdminContactMessageController extends Controller
         if ($message === null) {
             return response()->json([
                 'success' => false,
-                'error' => 'message_not_found',
+                'error' => 'entity_not_found',
                 'message' => "Message not found with ID: {$id}",
             ], 404);
         }
@@ -151,7 +151,7 @@ final class AdminContactMessageController extends Controller
         if (! $deleted) {
             return response()->json([
                 'success' => false,
-                'error' => 'message_not_found',
+                'error' => 'entity_not_found',
                 'message' => "Message not found with ID: {$id}",
             ], 404);
         }

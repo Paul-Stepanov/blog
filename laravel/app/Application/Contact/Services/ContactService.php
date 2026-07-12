@@ -8,6 +8,7 @@ use App\Application\Contact\Commands\SendMessageCommand;
 use App\Application\Contact\DTOs\ContactMessageDTO;
 use App\Domain\Contact\Entities\ContactMessage;
 use App\Domain\Contact\Repositories\ContactRepositoryInterface;
+use App\Domain\Shared\Exceptions\EntityNotFoundException;
 use App\Domain\Shared\PaginatedResult;
 use App\Domain\Shared\Uuid;
 
@@ -44,30 +45,38 @@ final readonly class ContactService
 
     /**
      * Mark a message as read.
+     *
+     * @throws EntityNotFoundException If the message does not exist
      */
     public function markAsRead(string $messageId): void
     {
         $uuid = Uuid::fromString($messageId);
         $message = $this->contactRepository->findById($uuid);
 
-        if ($message !== null) {
-            $message->markAsRead();
-            $this->contactRepository->save($message);
+        if ($message === null) {
+            throw EntityNotFoundException::forEntity('ContactMessage', $uuid);
         }
+
+        $message->markAsRead();
+        $this->contactRepository->save($message);
     }
 
     /**
      * Mark a message as unread.
+     *
+     * @throws EntityNotFoundException If the message does not exist
      */
     public function markAsUnread(string $messageId): void
     {
         $uuid = Uuid::fromString($messageId);
         $message = $this->contactRepository->findById($uuid);
 
-        if ($message !== null) {
-            $message->markAsUnread();
-            $this->contactRepository->save($message);
+        if ($message === null) {
+            throw EntityNotFoundException::forEntity('ContactMessage', $uuid);
         }
+
+        $message->markAsUnread();
+        $this->contactRepository->save($message);
     }
 
     /**

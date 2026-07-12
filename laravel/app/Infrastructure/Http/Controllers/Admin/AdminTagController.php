@@ -9,6 +9,7 @@ use App\Application\Article\Commands\UpdateTagCommand;
 use App\Application\Article\Services\TagService;
 use App\Http\Controllers\Controller;
 use App\Infrastructure\Http\Requests\Admin\TagRequest;
+use App\Infrastructure\Http\Resources\TagListResource;
 use App\Infrastructure\Http\Resources\TagResource;
 use Illuminate\Http\JsonResponse;
 
@@ -40,7 +41,7 @@ final class AdminTagController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => TagResource::collection($tags),
+            'data' => TagListResource::collection($tags),
         ]);
     }
 
@@ -65,7 +66,7 @@ final class AdminTagController extends Controller
         if ($tag === null) {
             return response()->json([
                 'success' => false,
-                'error' => 'tag_not_found',
+                'error' => 'entity_not_found',
                 'message' => "Tag not found with ID: {$id}",
             ], 404);
         }
@@ -133,7 +134,7 @@ final class AdminTagController extends Controller
         if ($tag === null) {
             return response()->json([
                 'success' => false,
-                'error' => 'tag_not_found',
+                'error' => 'entity_not_found',
                 'message' => "Tag not found with ID: {$id}",
             ], 404);
         }
@@ -164,7 +165,7 @@ final class AdminTagController extends Controller
         if (! $deleted) {
             return response()->json([
                 'success' => false,
-                'error' => 'tag_not_found',
+                'error' => 'entity_not_found',
                 'message' => "Tag not found with ID: {$id}",
             ], 404);
         }
