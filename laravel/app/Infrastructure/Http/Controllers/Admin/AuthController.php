@@ -9,7 +9,9 @@ use App\Application\User\Services\AuthenticationService;
 use App\Http\Controllers\Controller;
 use App\Infrastructure\Http\Requests\Admin\LoginRequest;
 use App\Infrastructure\Http\Resources\UserResource;
-use Illuminate\Http\{JsonResponse, Request};
+use App\Infrastructure\Persistence\Eloquent\Models\UserModel;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -30,11 +32,14 @@ final class AuthController extends Controller
      *     path="/api/admin/auth/login",
      *     summary="Admin login",
      *     tags={"Admin Auth"},
+     *
      *     @OA\RequestBody(required=true, @OA\JsonContent(
      *         required={"email", "password"},
+     *
      *         @OA\Property(property="email", type="string", format="email"),
      *         @OA\Property(property="password", type="string", format="password")
      *     )),
+     *
      *     @OA\Response(response=200, description="Login successful"),
      *     @OA\Response(response=401, description="Invalid credentials"),
      *     @OA\Response(response=422, description="Validation error"),
@@ -58,8 +63,12 @@ final class AuthController extends Controller
             ], 401);
         }
 
-        // Use Laravel's built-in auth for session management
-        Auth::loginUsingId($user->id);
+        $userModel = UserModel::query()->where('uuid', $user->id)->first();
+
+        if ($userModel !== null) {
+            Auth::login($userModel);
+        }
+
         $request->session()->regenerate();
 
         return response()->json([
@@ -76,12 +85,13 @@ final class AuthController extends Controller
      *     path="/api/admin/auth/logout",
      *     summary="Admin logout",
      *     tags={"Admin Auth"},
+     *
      *     @OA\Response(response=200, description="Logout successful")
      * )
      */
     public function logout(Request $request): JsonResponse
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -99,6 +109,7 @@ final class AuthController extends Controller
      *     path="/api/admin/user",
      *     summary="Get current admin user",
      *     tags={"Admin Auth"},
+     *
      *     @OA\Response(response=200, description="Current user data"),
      *     @OA\Response(response=401, description="Unauthenticated")
      * )
@@ -115,7 +126,7 @@ final class AuthController extends Controller
             ], 401);
         }
 
-        $userDTO = $this->authService->getUserById($user->id);
+        $userDTO = $this->authService->getUserById($user->uuid);
 
         if ($userDTO === null) {
             return response()->json([

@@ -43,6 +43,7 @@ final class MediaFileMapper
             'uuid' => $entity->getId()->getValue(),
             'filename' => $entity->getFilename(),
             'path' => $this->getFilePathValue($entity->getPath()),
+            'url' => $entity->getPublicUrl(),
             'mime_type' => $this->getMimeTypeValue($entity->getMimeType()),
             'size_bytes' => $entity->getSizeBytes(),
             'width' => $entity->getDimensions()?->getWidth(),
@@ -56,13 +57,13 @@ final class MediaFileMapper
     /**
      * Convert collection of models to domain entities.
      *
-     * @param MediaFileModel[] $models
+     * @param  MediaFileModel[]  $models
      * @return MediaFile[]
      */
     public function toDomainCollection(array $models): array
     {
         return array_map(
-            fn(MediaFileModel $model): MediaFile => $this->toDomain($model),
+            fn (MediaFileModel $model): MediaFile => $this->toDomain($model),
             $models
         );
     }

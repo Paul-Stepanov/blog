@@ -7,6 +7,7 @@ namespace Tests\Feature\Api\Admin;
 use App\Domain\Article\ValueObjects\ArticleStatus;
 use App\Domain\User\ValueObjects\UserRole;
 use App\Infrastructure\Persistence\Eloquent\Models\ArticleModel;
+use App\Infrastructure\Persistence\Eloquent\Models\TagModel;
 use App\Infrastructure\Persistence\Eloquent\Models\UserModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -75,11 +76,11 @@ final class ArticleManagementTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        $response = $this->getJson("/api/admin/articles/{$article->id}");
+        $response = $this->getJson("/api/admin/articles/{$article->uuid}");
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
-            ->assertJsonPath('data.id', $article->id)
+            ->assertJsonPath('data.id', $article->uuid)
             ->assertJsonPath('data.title', $article->title);
     }
 
@@ -173,7 +174,7 @@ final class ArticleManagementTest extends TestCase
             'content' => 'Updated content.',
         ];
 
-        $response = $this->putJson("/api/admin/articles/{$article->id}", $payload);
+        $response = $this->putJson("/api/admin/articles/{$article->uuid}", $payload);
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
@@ -191,7 +192,7 @@ final class ArticleManagementTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        $response = $this->deleteJson("/api/admin/articles/{$article->id}");
+        $response = $this->deleteJson("/api/admin/articles/{$article->uuid}");
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true);
@@ -209,7 +210,7 @@ final class ArticleManagementTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        $response = $this->postJson("/api/admin/articles/{$article->id}/publish");
+        $response = $this->postJson("/api/admin/articles/{$article->uuid}/publish");
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
@@ -229,7 +230,7 @@ final class ArticleManagementTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        $response = $this->postJson("/api/admin/articles/{$article->id}/archive");
+        $response = $this->postJson("/api/admin/articles/{$article->uuid}/archive");
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
@@ -244,15 +245,15 @@ final class ArticleManagementTest extends TestCase
     public function testSyncArticleTags_WithValidTags_ReturnsSuccess(): void
     {
         $article = ArticleModel::factory()->create();
-        $tags = ['tag1', 'tag2', 'tag3'];
+        $tags = TagModel::factory()->count(3)->create();
 
         $this->actingAs($this->adminUser);
 
         $payload = [
-            'tags' => $tags,
+            'tags' => $tags->pluck('uuid')->all(),
         ];
 
-        $response = $this->putJson("/api/admin/articles/{$article->id}/tags", $payload);
+        $response = $this->putJson("/api/admin/articles/{$article->uuid}/tags", $payload);
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true);
@@ -268,7 +269,7 @@ final class ArticleManagementTest extends TestCase
             // Missing 'tags' key
         ];
 
-        $response = $this->putJson("/api/admin/articles/{$article->id}/tags", $payload);
+        $response = $this->putJson("/api/admin/articles/{$article->uuid}/tags", $payload);
 
         $response->assertStatus(422)
             ->assertJsonPath('success', false)

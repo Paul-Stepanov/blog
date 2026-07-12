@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Article\DTOs;
 
-use App\Application\Shared\{DTOFormattingTrait, DTOInterface};
+use App\Application\Shared\DTOFormattingTrait;
+use App\Application\Shared\DTOInterface;
 use App\Application\Shared\Exceptions\InvalidEntityTypeException;
 use App\Domain\Article\Entities\Article;
 use App\Domain\Shared\Entity;
@@ -20,14 +21,14 @@ final readonly class ArticleListDTO implements DTOInterface
     use DTOFormattingTrait;
 
     /**
-     * @param string $id UUID string
-     * @param string $title Article title
-     * @param string $slug URL-friendly identifier
-     * @param string $excerpt Short preview text
-     * @param string $status draft|published|archived
-     * @param string|null $categoryId Category UUID or null
-     * @param string|null $publishedAt ISO 8601 datetime or null
-     * @param int $readingTime Estimated reading time in minutes
+     * @param  string  $id  UUID string
+     * @param  string  $title  Article title
+     * @param  string  $slug  URL-friendly identifier
+     * @param  string  $excerpt  Short preview text
+     * @param  string  $status  draft|published|archived
+     * @param  string|null  $categoryId  Category UUID or null
+     * @param  string|null  $publishedAt  ISO 8601 datetime or null
+     * @param  int  $readingTime  Estimated reading time in minutes
      */
     public function __construct(
         public string $id,
@@ -38,16 +39,18 @@ final readonly class ArticleListDTO implements DTOInterface
         public ?string $categoryId,
         public ?string $publishedAt,
         public int $readingTime,
+        public string $createdAt,
+        public string $updatedAt,
     ) {}
 
     /**
      * Create from Domain Entity.
      *
-     * @param Entity $entity Domain article entity
+     * @param  Entity  $entity  Domain article entity
      */
     public static function fromEntity(Entity $entity): static
     {
-        if (!$entity instanceof Article) {
+        if (! $entity instanceof Article) {
             throw new InvalidEntityTypeException(
                 expectedType: Article::class,
                 actualType: $entity::class
@@ -55,6 +58,7 @@ final readonly class ArticleListDTO implements DTOInterface
         }
 
         $content = $entity->getContent();
+        $timestamps = $entity->getTimestamps();
 
         return new self(
             id: $entity->getId()->getValue(),
@@ -65,6 +69,8 @@ final readonly class ArticleListDTO implements DTOInterface
             categoryId: self::formatUuid($entity->getCategoryId()),
             publishedAt: self::formatDate($entity->getPublishedAt()),
             readingTime: $content->readingTime(),
+            createdAt: self::formatDate($timestamps->getCreatedAt()),
+            updatedAt: self::formatDate($timestamps->getUpdatedAt()),
         );
     }
 
@@ -85,6 +91,8 @@ final readonly class ArticleListDTO implements DTOInterface
             'published_at' => $this->publishedAt,
             'reading_time' => $this->readingTime,
             'reading_time_text' => self::getReadingTimeText($this->readingTime),
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 }

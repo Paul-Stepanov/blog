@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Article\DTOs;
 
-use App\Application\Shared\{DTOFormattingTrait, DTOInterface};
+use App\Application\Shared\DTOFormattingTrait;
+use App\Application\Shared\DTOInterface;
 use App\Application\Shared\Exceptions\InvalidEntityTypeException;
 use App\Domain\Article\Entities\Category;
 use App\Domain\Shared\Entity;
@@ -20,26 +21,27 @@ final readonly class CategoryListDTO implements DTOInterface
     use DTOFormattingTrait;
 
     /**
-     * @param string $id UUID string
-     * @param string $name Category name
-     * @param string $slug URL-friendly identifier
-     * @param int $articleCount Number of articles in this category
+     * @param  string  $id  UUID string
+     * @param  string  $name  Category name
+     * @param  string  $slug  URL-friendly identifier
+     * @param  int  $articleCount  Number of articles in this category
      */
     public function __construct(
         public string $id,
         public string $name,
         public string $slug,
+        public ?string $description = null,
         public int $articleCount = 0,
     ) {}
 
     /**
      * Create from Domain Entity.
      *
-     * @param Entity $entity Domain category entity
+     * @param  Entity  $entity  Domain category entity
      */
     public static function fromEntity(Entity $entity): static
     {
-        if (!$entity instanceof Category) {
+        if (! $entity instanceof Category) {
             throw new InvalidEntityTypeException(
                 expectedType: Category::class,
                 actualType: $entity::class
@@ -50,13 +52,14 @@ final readonly class CategoryListDTO implements DTOInterface
             id: $entity->getId()->getValue(),
             name: $entity->getName(),
             slug: $entity->getSlug()->getValue(),
+            description: $entity->getDescription(),
         );
     }
 
     /**
      * Create from array data (for category with article count).
      *
-     * @param array{category: Category, count: int} $data
+     * @param  array{category: Category, count: int}  $data
      */
     public static function fromArrayData(array $data): static
     {
@@ -64,6 +67,7 @@ final readonly class CategoryListDTO implements DTOInterface
             id: $data['category']->getId()->getValue(),
             name: $data['category']->getName(),
             slug: $data['category']->getSlug()->getValue(),
+            description: $data['category']->getDescription(),
             articleCount: $data['count'],
         );
     }
@@ -79,6 +83,7 @@ final readonly class CategoryListDTO implements DTOInterface
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
+            'description' => $this->description,
             'article_count' => $this->articleCount,
         ];
     }

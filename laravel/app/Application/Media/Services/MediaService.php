@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Application\Media\Services;
 
 use App\Application\Media\DTOs\MediaFileDTO;
-use App\Application\Media\Exceptions\{FileUploadFailedException, MediaFileNotFoundException};
+use App\Application\Media\Exceptions\FileUploadFailedException;
+use App\Application\Media\Exceptions\MediaFileNotFoundException;
 use App\Domain\Media\Entities\MediaFile;
 use App\Domain\Media\Repositories\MediaRepositoryInterface;
 use App\Domain\Media\Services\FileStorageInterface;
-use App\Domain\Media\ValueObjects\{FilePath, ImageDimensions, MimeType};
+use App\Domain\Media\ValueObjects\FilePath;
+use App\Domain\Media\ValueObjects\ImageDimensions;
+use App\Domain\Media\ValueObjects\MimeType;
 use App\Domain\Shared\Exceptions\ValidationException;
 use App\Domain\Shared\Uuid;
 
@@ -28,14 +31,15 @@ final readonly class MediaService
     /**
      * Upload a file.
      *
-     * @param string $filename Original filename
-     * @param string $content File content (binary)
-     * @param string $mimeTypeString MIME type string
-     * @param int $sizeBytes File size in bytes
-     * @param int|null $width Image width (if applicable)
-     * @param int|null $height Image height (if applicable)
-     * @param string $altText Alt text for accessibility
+     * @param  string  $filename  Original filename
+     * @param  string  $content  File content (binary)
+     * @param  string  $mimeTypeString  MIME type string
+     * @param  int  $sizeBytes  File size in bytes
+     * @param  int|null  $width  Image width (if applicable)
+     * @param  int|null  $height  Image height (if applicable)
+     * @param  string  $altText  Alt text for accessibility
      * @return MediaFileDTO Uploaded file data
+     *
      * @throws FileUploadFailedException If storage fails
      * @throws ValidationException If MIME type, path, or dimensions are invalid
      */
@@ -51,13 +55,13 @@ final readonly class MediaService
         $mimeType = MimeType::fromString($mimeTypeString);
 
         $path = FilePath::generateForUpload(
-            directory: 'uploads',
+            directory: 'public/uploads',
             filename: $filename
         );
 
         $stored = $this->fileStorage->store($content, $path, $mimeType);
 
-        if (!$stored) {
+        if (! $stored) {
             throw FileUploadFailedException::storageFailed(
                 filename: $filename,
                 reason: 'Storage driver returned false'
@@ -120,6 +124,7 @@ final readonly class MediaService
     /**
      * Delete a file.
      *
+     * @throws MediaFileNotFoundException If file not found
      * @throws ValidationException If UUID format is invalid
      */
     public function deleteFile(string $fileId): void
@@ -127,10 +132,12 @@ final readonly class MediaService
         $uuid = Uuid::fromString($fileId);
         $mediaFile = $this->mediaRepository->findById($uuid);
 
-        if ($mediaFile !== null) {
-            $this->fileStorage->delete($mediaFile->getPath());
-            $this->mediaRepository->delete($uuid);
+        if ($mediaFile === null) {
+            throw MediaFileNotFoundException::byId($uuid->getValue());
         }
+
+        $this->fileStorage->delete($mediaFile->getPath());
+        $this->mediaRepository->delete($uuid);
     }
 
     /**

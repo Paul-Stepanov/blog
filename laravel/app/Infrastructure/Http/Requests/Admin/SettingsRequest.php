@@ -9,14 +9,14 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 /**
- * Article Tags Sync Form Request.
+ * Settings Batch Form Request.
  *
- * Validates tag synchronization for articles.
+ * Validates a batch update of site settings (a key => value map).
  */
-final class ArticleTagsRequest extends FormRequest
+final class SettingsRequest extends FormRequest
 {
     /**
-     * Authorization - requires authentication.
+     * Authorization — requires authentication (route is behind auth:sanctum).
      */
     public function authorize(): bool
     {
@@ -31,8 +31,8 @@ final class ArticleTagsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tags' => ['required', 'array', 'max:10'],
-            'tags.*' => ['required', 'uuid', 'exists:tags,uuid'],
+            'settings' => ['required', 'array', 'min:1'],
+            'settings.*' => ['required'],
         ];
     }
 
@@ -44,12 +44,9 @@ final class ArticleTagsRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'tags.required' => 'Теги обязательны.',
-            'tags.array' => 'Теги должны быть массивом.',
-            'tags.max' => 'Максимум 10 тегов.',
-            'tags.*.required' => 'ID тега обязателен.',
-            'tags.*.uuid' => 'ID тега должен быть валидным UUID.',
-            'tags.*.exists' => 'Тег не найден.',
+            'settings.required' => 'Настройки обязательны.',
+            'settings.array' => 'Настройки должны быть объектом key-value.',
+            'settings.min' => 'Должна быть хотя бы одна настройка.',
         ];
     }
 

@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Http\Controllers\Admin;
 
-use App\Application\Article\Commands\{
-    ArchiveArticleCommand,
-    CreateArticleCommand,
-    PublishArticleCommand,
-    UpdateArticleCommand
-};
+use App\Application\Article\Commands\ArchiveArticleCommand;
+use App\Application\Article\Commands\CreateArticleCommand;
+use App\Application\Article\Commands\PublishArticleCommand;
+use App\Application\Article\Commands\UpdateArticleCommand;
 use App\Application\Article\Services\ArticleService;
 use App\Http\Controllers\Controller;
-use App\Infrastructure\Http\Requests\{Api\CreateArticleRequest, Api\UpdateArticleRequest, Admin\ArticleTagsRequest};
-use App\Infrastructure\Http\Resources\{ArticleResource, ArticleListResource};
-use Illuminate\Http\{JsonResponse, Request};
+use App\Infrastructure\Http\Requests\Admin\ArticleTagsRequest;
+use App\Infrastructure\Http\Requests\Api\CreateArticleRequest;
+use App\Infrastructure\Http\Requests\Api\UpdateArticleRequest;
+use App\Infrastructure\Http\Resources\ArticleListResource;
+use App\Infrastructure\Http\Resources\ArticleResource;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * Admin Article Management Controller.
@@ -34,8 +36,10 @@ final class AdminArticleController extends Controller
      *     path="/api/admin/articles",
      *     summary="Get all articles (admin)",
      *     tags={"Admin Articles"},
+     *
      *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer")),
      *     @OA\Parameter(name="per_page", in="query", @OA\Schema(type="integer", maximum=100)),
+     *
      *     @OA\Response(response=200, description="List of articles")
      * )
      */
@@ -67,7 +71,9 @@ final class AdminArticleController extends Controller
      *     path="/api/admin/articles/{id}",
      *     summary="Get article by ID (admin)",
      *     tags={"Admin Articles"},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string", format="uuid")),
+     *
      *     @OA\Response(response=200, description="Article details"),
      *     @OA\Response(response=404, description="Article not found")
      * )
@@ -79,7 +85,7 @@ final class AdminArticleController extends Controller
         if ($article === null) {
             return response()->json([
                 'success' => false,
-                'error' => 'article_not_found',
+                'error' => 'entity_not_found',
                 'message' => "Article not found with ID: {$id}",
             ], 404);
         }
@@ -97,8 +103,10 @@ final class AdminArticleController extends Controller
      *     path="/api/admin/articles",
      *     summary="Create article",
      *     tags={"Admin Articles"},
+     *
      *     @OA\RequestBody(required=true, @OA\JsonContent(
      *         required={"title", "content"},
+     *
      *         @OA\Property(property="title", type="string"),
      *         @OA\Property(property="content", type="string"),
      *         @OA\Property(property="slug", type="string"),
@@ -107,6 +115,7 @@ final class AdminArticleController extends Controller
      *         @OA\Property(property="cover_image_id", type="string", format="uuid"),
      *         @OA\Property(property="tags", type="array", @OA\Items(type="string", format="uuid"))
      *     )),
+     *
      *     @OA\Response(response=201, description="Article created"),
      *     @OA\Response(response=422, description="Validation error")
      * )
@@ -130,13 +139,16 @@ final class AdminArticleController extends Controller
      *     path="/api/admin/articles/{id}",
      *     summary="Update article",
      *     tags={"Admin Articles"},
+     *
      *     @OA\RequestBody(required=true, @OA\JsonContent(
+     *
      *         @OA\Property(property="title", type="string"),
      *         @OA\Property(property="content", type="string"),
      *         @OA\Property(property="slug", type="string"),
      *         @OA\Property(property="category_id", type="string", format="uuid"),
      *         @OA\Property(property="cover_image_id", type="string", format="uuid")
      *     )),
+     *
      *     @OA\Response(response=200, description="Article updated"),
      *     @OA\Response(response=404, description="Article not found")
      * )
@@ -149,7 +161,7 @@ final class AdminArticleController extends Controller
         if ($article === null) {
             return response()->json([
                 'success' => false,
-                'error' => 'article_not_found',
+                'error' => 'entity_not_found',
                 'message' => "Article not found with ID: {$id}",
             ], 404);
         }
@@ -168,6 +180,7 @@ final class AdminArticleController extends Controller
      *     path="/api/admin/articles/{id}",
      *     summary="Delete article",
      *     tags={"Admin Articles"},
+     *
      *     @OA\Response(response=200, description="Article deleted"),
      *     @OA\Response(response=404, description="Article not found")
      * )
@@ -176,10 +189,10 @@ final class AdminArticleController extends Controller
     {
         $deleted = $this->articleService->deleteArticle($id);
 
-        if (!$deleted) {
+        if (! $deleted) {
             return response()->json([
                 'success' => false,
-                'error' => 'article_not_found',
+                'error' => 'entity_not_found',
                 'message' => "Article not found with ID: {$id}",
             ], 404);
         }
@@ -197,6 +210,7 @@ final class AdminArticleController extends Controller
      *     path="/api/admin/articles/{id}/publish",
      *     summary="Publish article",
      *     tags={"Admin Articles"},
+     *
      *     @OA\Response(response=200, description="Article published"),
      *     @OA\Response(response=404, description="Article not found")
      * )
@@ -209,7 +223,7 @@ final class AdminArticleController extends Controller
         if ($article === null) {
             return response()->json([
                 'success' => false,
-                'error' => 'article_not_found',
+                'error' => 'entity_not_found',
                 'message' => "Article not found with ID: {$id}",
             ], 404);
         }
@@ -228,6 +242,7 @@ final class AdminArticleController extends Controller
      *     path="/api/admin/articles/{id}/archive",
      *     summary="Archive article",
      *     tags={"Admin Articles"},
+     *
      *     @OA\Response(response=200, description="Article archived"),
      *     @OA\Response(response=404, description="Article not found")
      * )
@@ -240,7 +255,7 @@ final class AdminArticleController extends Controller
         if ($article === null) {
             return response()->json([
                 'success' => false,
-                'error' => 'article_not_found',
+                'error' => 'entity_not_found',
                 'message' => "Article not found with ID: {$id}",
             ], 404);
         }
@@ -259,10 +274,13 @@ final class AdminArticleController extends Controller
      *     path="/api/admin/articles/{id}/tags",
      *     summary="Sync article tags",
      *     tags={"Admin Articles"},
+     *
      *     @OA\RequestBody(required=true, @OA\JsonContent(
      *         required={"tags"},
+     *
      *         @OA\Property(property="tags", type="array", @OA\Items(type="string", format="uuid"))
      *     )),
+     *
      *     @OA\Response(response=200, description="Tags synced"),
      *     @OA\Response(response=404, description="Article not found")
      * )
@@ -276,7 +294,7 @@ final class AdminArticleController extends Controller
         if ($article === null) {
             return response()->json([
                 'success' => false,
-                'error' => 'article_not_found',
+                'error' => 'entity_not_found',
                 'message' => "Article not found with ID: {$id}",
             ], 404);
         }

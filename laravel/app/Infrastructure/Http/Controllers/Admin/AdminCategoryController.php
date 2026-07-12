@@ -9,6 +9,7 @@ use App\Application\Article\Commands\UpdateCategoryCommand;
 use App\Application\Article\Services\CategoryService;
 use App\Http\Controllers\Controller;
 use App\Infrastructure\Http\Requests\Admin\CategoryRequest;
+use App\Infrastructure\Http\Resources\CategoryListResource;
 use App\Infrastructure\Http\Resources\CategoryResource;
 use Illuminate\Http\JsonResponse;
 
@@ -30,6 +31,7 @@ final class AdminCategoryController extends Controller
      *     path="/api/admin/categories",
      *     summary="Get all categories (admin)",
      *     tags={"Admin Categories"},
+     *
      *     @OA\Response(response=200, description="List of categories")
      * )
      */
@@ -39,7 +41,7 @@ final class AdminCategoryController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => CategoryResource::collection($categories),
+            'data' => CategoryListResource::collection($categories),
         ]);
     }
 
@@ -50,7 +52,9 @@ final class AdminCategoryController extends Controller
      *     path="/api/admin/categories/{id}",
      *     summary="Get category by ID (admin)",
      *     tags={"Admin Categories"},
+     *
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string", format="uuid")),
+     *
      *     @OA\Response(response=200, description="Category details"),
      *     @OA\Response(response=404, description="Category not found")
      * )
@@ -62,7 +66,7 @@ final class AdminCategoryController extends Controller
         if ($category === null) {
             return response()->json([
                 'success' => false,
-                'error' => 'category_not_found',
+                'error' => 'entity_not_found',
                 'message' => "Category not found with ID: {$id}",
             ], 404);
         }
@@ -80,12 +84,15 @@ final class AdminCategoryController extends Controller
      *     path="/api/admin/categories",
      *     summary="Create category",
      *     tags={"Admin Categories"},
+     *
      *     @OA\RequestBody(required=true, @OA\JsonContent(
      *         required={"name"},
+     *
      *         @OA\Property(property="name", type="string"),
      *         @OA\Property(property="slug", type="string"),
      *         @OA\Property(property="description", type="string")
      *     )),
+     *
      *     @OA\Response(response=201, description="Category created"),
      *     @OA\Response(response=422, description="Validation error")
      * )
@@ -109,11 +116,14 @@ final class AdminCategoryController extends Controller
      *     path="/api/admin/categories/{id}",
      *     summary="Update category",
      *     tags={"Admin Categories"},
+     *
      *     @OA\RequestBody(required=true, @OA\JsonContent(
+     *
      *         @OA\Property(property="name", type="string"),
      *         @OA\Property(property="slug", type="string"),
      *         @OA\Property(property="description", type="string")
      *     )),
+     *
      *     @OA\Response(response=200, description="Category updated"),
      *     @OA\Response(response=404, description="Category not found")
      * )
@@ -126,7 +136,7 @@ final class AdminCategoryController extends Controller
         if ($category === null) {
             return response()->json([
                 'success' => false,
-                'error' => 'category_not_found',
+                'error' => 'entity_not_found',
                 'message' => "Category not found with ID: {$id}",
             ], 404);
         }
@@ -145,6 +155,7 @@ final class AdminCategoryController extends Controller
      *     path="/api/admin/categories/{id}",
      *     summary="Delete category",
      *     tags={"Admin Categories"},
+     *
      *     @OA\Response(response=200, description="Category deleted"),
      *     @OA\Response(response=404, description="Category not found")
      * )
@@ -153,10 +164,10 @@ final class AdminCategoryController extends Controller
     {
         $deleted = $this->categoryService->deleteCategory($id);
 
-        if (!$deleted) {
+        if (! $deleted) {
             return response()->json([
                 'success' => false,
-                'error' => 'category_not_found',
+                'error' => 'entity_not_found',
                 'message' => "Category not found with ID: {$id}",
             ], 404);
         }

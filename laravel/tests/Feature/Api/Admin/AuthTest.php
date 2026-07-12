@@ -160,16 +160,15 @@ final class AuthTest extends TestCase
 
     public function testLogout_WithAuthenticatedUser_ReturnsSuccess(): void
     {
-        $this->actingAs($this->adminUser);
+        $this->actingAs($this->adminUser, 'web');
 
         $response = $this->postJson('/api/admin/auth/logout');
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
             ->assertJsonPath('message', 'Logged out successfully.');
-
-        // Verify user is logged out
-        $this->assertGuest();
+        
+        $this->assertGuest('web');
     }
 
     public function testLogout_WithoutAuthentication_ReturnsUnauthorized(): void
@@ -189,8 +188,8 @@ final class AuthTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
-            ->assertJsonPath('data.id', $this->adminUser->id)
-            ->assertJsonPath('data.email', $this->adminUser->email)
+            ->assertJsonPath('data.id', $this->adminUser->uuid)
+            ->assertJsonPath('data.email', $this->adminUser->email->getValue())
             ->assertJsonStructure([
                 'success',
                 'data' => [

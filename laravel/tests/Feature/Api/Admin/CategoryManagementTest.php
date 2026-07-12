@@ -71,11 +71,11 @@ final class CategoryManagementTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        $response = $this->getJson("/api/admin/categories/{$category->id}");
+        $response = $this->getJson("/api/admin/categories/{$category->uuid}");
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
-            ->assertJsonPath('data.id', $category->id)
+            ->assertJsonPath('data.id', $category->uuid)
             ->assertJsonPath('data.name', $category->name);
     }
 
@@ -192,7 +192,7 @@ final class CategoryManagementTest extends TestCase
             'description' => 'Updated description',
         ];
 
-        $response = $this->putJson("/api/admin/categories/{$category->id}", $payload);
+        $response = $this->putJson("/api/admin/categories/{$category->uuid}", $payload);
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
@@ -234,7 +234,7 @@ final class CategoryManagementTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        $response = $this->deleteJson("/api/admin/categories/{$category->id}");
+        $response = $this->deleteJson("/api/admin/categories/{$category->uuid}");
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true);

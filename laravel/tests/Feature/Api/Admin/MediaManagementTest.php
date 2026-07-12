@@ -43,12 +43,12 @@ final class MediaManagementTest extends TestCase
 
         $this->actingAs($this->adminUser);
 
-        $response = $this->getJson("/api/admin/media/{$media->id}");
+        $response = $this->getJson("/api/admin/media/{$media->uuid}");
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
-            ->assertJsonPath('data.id', $media->id)
-            ->assertJsonPath('data.file_name', $media->file_name);
+            ->assertJsonPath('data.id', $media->uuid)
+            ->assertJsonPath('data.file_name', $media->filename);
     }
 
     public function testGetMediaFile_WithInvalidId_ReturnsNotFound(): void
@@ -66,7 +66,7 @@ final class MediaManagementTest extends TestCase
     {
         $media = MediaFileModel::factory()->create();
 
-        $response = $this->getJson("/api/admin/media/{$media->id}");
+        $response = $this->getJson("/api/admin/media/{$media->uuid}");
 
         $response->assertStatus(401)
             ->assertJsonPath('success', false)
@@ -98,9 +98,11 @@ final class MediaManagementTest extends TestCase
                     'height',
                 ],
             ]);
+        
+        $storedPath = $response->json('data.file_path');
+        $relativeOnPublicDisk = preg_replace('#^public/#', '', (string) $storedPath);
 
-        // Verify file was stored
-        Storage::disk('public')->assertExists($file->hashName('uploads'));
+        Storage::disk('public')->assertExists($relativeOnPublicDisk);
     }
 
     public function testUploadFile_WithMissingFile_ReturnsValidationError(): void
@@ -165,7 +167,7 @@ final class MediaManagementTest extends TestCase
             'alt_text' => 'Updated alt text',
         ];
 
-        $response = $this->putJson("/api/admin/media/{$media->id}/alt-text", $payload);
+        $response = $this->putJson("/api/admin/media/{$media->uuid}/alt-text", $payload);
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
@@ -180,7 +182,7 @@ final class MediaManagementTest extends TestCase
     public function testRenameFile_WithValidName_ReturnsSuccess(): void
     {
         $media = MediaFileModel::factory()->create([
-            'file_name' => 'original-name.jpg',
+            'filename' => 'original-name.jpg',
         ]);
 
         $this->actingAs($this->adminUser);
@@ -189,7 +191,7 @@ final class MediaManagementTest extends TestCase
             'file_name' => 'new-name.jpg',
         ];
 
-        $response = $this->putJson("/api/admin/media/{$media->id}/rename", $payload);
+        $response = $this->putJson("/api/admin/media/{$media->uuid}/rename", $payload);
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
@@ -197,7 +199,7 @@ final class MediaManagementTest extends TestCase
 
         $this->assertDatabaseHas('media_files', [
             'id' => $media->id,
-            'file_name' => 'new-name.jpg',
+            'filename' => 'new-name.jpg',
         ]);
     }
 
@@ -211,7 +213,7 @@ final class MediaManagementTest extends TestCase
             'file_name' => 'new-name.exe',
         ];
 
-        $response = $this->putJson("/api/admin/media/{$media->id}/rename", $payload);
+        $response = $this->putJson("/api/admin/media/{$media->uuid}/rename", $payload);
 
         $response->assertStatus(422)
             ->assertJsonPath('success', false)
@@ -229,12 +231,12 @@ final class MediaManagementTest extends TestCase
         Storage::disk('public')->putFileAs('uploads', $file, 'test-image.jpg');
 
         $media = MediaFileModel::factory()->create([
-            'file_path' => 'uploads/test-image.jpg',
+            'path' => 'public/uploads/test-image.jpg',
         ]);
 
         $this->actingAs($this->adminUser);
 
-        $response = $this->deleteJson("/api/admin/media/{$media->id}");
+        $response = $this->deleteJson("/api/admin/media/{$media->uuid}");
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Http\Resources;
 
 use App\Application\Article\DTOs\ArticleListDTO;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -14,9 +15,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 final class ArticleListResource extends JsonResource
 {
-    /**
-     * @param ArticleListDTO $resource
-     */
     public function __construct(ArticleListDTO $resource)
     {
         parent::__construct($resource);
@@ -25,7 +23,7 @@ final class ArticleListResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  Request  $request
      * @return array<string, mixed>
      */
     public function toArray($request): array
@@ -42,6 +40,8 @@ final class ArticleListResource extends JsonResource
             'category_id' => $article->categoryId,
             'published_at' => $article->publishedAt,
             'reading_time' => $article->readingTime,
+            'created_at' => $article->createdAt,
+            'updated_at' => $article->updatedAt,
         ];
     }
 }

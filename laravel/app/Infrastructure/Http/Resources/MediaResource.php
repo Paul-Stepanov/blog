@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Http\Resources;
 
 use App\Application\Media\DTOs\MediaFileDTO;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -14,9 +15,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 final class MediaResource extends JsonResource
 {
-    /**
-     * @param MediaFileDTO $resource
-     */
     public function __construct(MediaFileDTO $resource)
     {
         parent::__construct($resource);
@@ -25,7 +23,7 @@ final class MediaResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  Request  $request
      * @return array<string, mixed>
      */
     public function toArray($request): array
@@ -35,24 +33,19 @@ final class MediaResource extends JsonResource
 
         $data = [
             'id' => $media->id,
-            'filename' => $media->filename,
-            'path' => $media->path,
+            'file_name' => $media->filename,
+            'file_path' => $media->path,
             'public_url' => $media->publicUrl,
             'mime_type' => $media->mimeType,
-            'size_bytes' => $media->sizeBytes,
+            'file_size' => $media->sizeBytes,
+            'size_human' => $media->sizeHuman,
+            'width' => $media->width,
+            'height' => $media->height,
             'alt_text' => $media->altText,
+            'is_image' => $media->isImage,
             'created_at' => $media->createdAt,
             'updated_at' => $media->updatedAt,
         ];
-
-        // Add dimensions for images
-        if ($media->width !== null && $media->height !== null) {
-            $data['dimensions'] = [
-                'width' => $media->width,
-                'height' => $media->height,
-                'aspect_ratio' => $media->width / $media->height,
-            ];
-        }
 
         return $data;
     }

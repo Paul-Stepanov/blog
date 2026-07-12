@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\Models;
 
-use App\Domain\Media\ValueObjects\MimeType;
 use Database\Factories\MediaFileFactory;
+use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,7 +27,7 @@ final class MediaFileModel extends Model
     protected $table = 'media_files';
 
     /**
-     * @var class-string<\Illuminate\Database\Eloquent\Factories\Factory>
+     * @var class-string<Factory>
      */
     protected static $factory = MediaFileFactory::class;
 
@@ -46,10 +48,9 @@ final class MediaFileModel extends Model
     ];
 
     /**
-     * @var array<string, class-string<\Illuminate\Contracts\Database\Eloquent\CastsAttributes>|string>
+     * @var array<string, class-string<CastsAttributes>|string>
      */
     protected $casts = [
-        'mime_type' => MimeType::class,
         'size_bytes' => 'integer',
         'width' => 'integer',
         'height' => 'integer',
@@ -68,7 +69,7 @@ final class MediaFileModel extends Model
     /**
      * Scope for images only.
      */
-    public function scopeImages(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeImages(Builder $query): Builder
     {
         return $query->where('mime_type', 'LIKE', 'image/%');
     }
@@ -76,7 +77,7 @@ final class MediaFileModel extends Model
     /**
      * Scope for documents only.
      */
-    public function scopeDocuments(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeDocuments(Builder $query): Builder
     {
         return $query->where(function ($q) {
             $q->where('mime_type', 'LIKE', 'application/%')
@@ -87,7 +88,7 @@ final class MediaFileModel extends Model
     /**
      * Scope for videos only.
      */
-    public function scopeVideos(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeVideos(Builder $query): Builder
     {
         return $query->where('mime_type', 'LIKE', 'video/%');
     }
@@ -95,7 +96,7 @@ final class MediaFileModel extends Model
     /**
      * Scope for specific MIME type.
      */
-    public function scopeByMimeType(\Illuminate\Database\Eloquent\Builder $query, string $mimeType): \Illuminate\Database\Eloquent\Builder
+    public function scopeByMimeType(Builder $query, string $mimeType): Builder
     {
         return $query->where('mime_type', $mimeType);
     }
@@ -103,7 +104,7 @@ final class MediaFileModel extends Model
     /**
      * Scope for recent uploads.
      */
-    public function scopeRecent(\Illuminate\Database\Eloquent\Builder $query, int $limit = 10): \Illuminate\Database\Eloquent\Builder
+    public function scopeRecent(Builder $query, int $limit = 10): Builder
     {
         return $query->orderBy('created_at', 'desc')->limit($limit);
     }
@@ -111,7 +112,7 @@ final class MediaFileModel extends Model
     /**
      * Scope for search by filename.
      */
-    public function scopeSearch(\Illuminate\Database\Eloquent\Builder $query, string $term): \Illuminate\Database\Eloquent\Builder
+    public function scopeSearch(Builder $query, string $term): Builder
     {
         return $query->where(function ($q) use ($term) {
             $q->where('filename', 'LIKE', "%{$term}%")
@@ -122,7 +123,7 @@ final class MediaFileModel extends Model
     /**
      * Find by UUID.
      */
-    public function scopeByUuid(\Illuminate\Database\Eloquent\Builder $query, string $uuid): \Illuminate\Database\Eloquent\Builder
+    public function scopeByUuid(Builder $query, string $uuid): Builder
     {
         return $query->where('uuid', $uuid);
     }
@@ -130,7 +131,7 @@ final class MediaFileModel extends Model
     /**
      * Find by path.
      */
-    public function scopeByPath(\Illuminate\Database\Eloquent\Builder $query, string $path): \Illuminate\Database\Eloquent\Builder
+    public function scopeByPath(Builder $query, string $path): Builder
     {
         return $query->where('path', $path);
     }
@@ -172,7 +173,7 @@ final class MediaFileModel extends Model
             $bytes /= 1024;
         }
 
-        return round($bytes, 2) . ' ' . $units[$i];
+        return round($bytes, 2).' '.$units[$i];
     }
 
     /**
