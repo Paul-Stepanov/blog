@@ -37,8 +37,9 @@ final readonly class InterventionImageProcessor implements ImageProcessorInterfa
         try {
             $image = $this->manager->read($sourcePath->getValue());
             $image->scaleDown(width: $maxWidth, height: $maxHeight);
+            $image->save($targetPath->getValue());
 
-            return $image->save($targetPath->getValue()) !== null;
+            return true;
         } catch (\Exception) {
             return false;
         }
@@ -56,8 +57,9 @@ final readonly class InterventionImageProcessor implements ImageProcessorInterfa
         try {
             $image = $this->manager->read($sourcePath->getValue());
             $image->resize(width: $width, height: $height);
+            $image->save($targetPath->getValue());
 
-            return $image->save($targetPath->getValue()) !== null;
+            return true;
         } catch (\Exception) {
             return false;
         }
@@ -75,8 +77,9 @@ final readonly class InterventionImageProcessor implements ImageProcessorInterfa
         try {
             $image = $this->manager->read($sourcePath->getValue());
             $image->cover(width: $width, height: $height);
+            $image->save($targetPath->getValue());
 
-            return $image->save($targetPath->getValue()) !== null;
+            return true;
         } catch (\Exception) {
             return false;
         }
@@ -92,8 +95,9 @@ final readonly class InterventionImageProcessor implements ImageProcessorInterfa
     ): bool {
         try {
             $image = $this->manager->read($sourcePath->getValue());
+            $image->toWebp(quality: $quality)->save($targetPath->getValue());
 
-            return $image->toWebp(quality: $quality)->save($targetPath->getValue()) !== null;
+            return true;
         } catch (\Exception) {
             return false;
         }
@@ -109,8 +113,9 @@ final readonly class InterventionImageProcessor implements ImageProcessorInterfa
     ): bool {
         try {
             $image = $this->manager->read($sourcePath->getValue());
+            $image->toAvif(quality: $quality)->save($targetPath->getValue());
 
-            return $image->toAvif(quality: $quality)->save($targetPath->getValue()) !== null;
+            return true;
         } catch (\Exception) {
             return false;
         }
@@ -140,8 +145,9 @@ final readonly class InterventionImageProcessor implements ImageProcessorInterfa
     {
         try {
             $image = $this->manager->read($path->getValue());
+            $image->save($path->getValue(), quality: $quality);
 
-            return $image->save($path->getValue(), quality: $quality) !== null;
+            return true;
         } catch (\Exception) {
             return false;
         }
