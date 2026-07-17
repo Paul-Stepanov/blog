@@ -2,11 +2,11 @@
 /**
  * Root App component — Blog SPA.
  *
- * Оборачивает router-view в AppLayout (подключается в фазе F).
- * Пока — минимальный каркас.
+ * Оборачивает router-view в AppLayout.
  */
+import AppLayout from '@/components/layout/AppLayout.vue'
 </script>
 
 <template>
-  <router-view />
+  <AppLayout />
 </template>
