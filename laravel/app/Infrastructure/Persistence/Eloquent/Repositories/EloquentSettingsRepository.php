@@ -181,9 +181,19 @@ final readonly class EloquentSettingsRepository implements SettingsRepositoryInt
      */
     public function saveMany(array $settings): void
     {
-        foreach ($settings as $setting) {
-            $this->save($setting);
+        if ($settings === []) {
+            return;
         }
+
+        $rows = array_map(function (SiteSetting $setting): array {
+            $data = $this->mapper->toEloquent($setting);
+            $data['created_at'] = $setting->getTimestamps()->getCreatedAt()->format('Y-m-d H:i:s');
+            $data['updated_at'] = $setting->getTimestamps()->getUpdatedAt()->format('Y-m-d H:i:s');
+
+            return $data;
+        }, $settings);
+
+        SiteSettingModel::upsert($rows, ['uuid'], ['key', 'value', 'type', 'updated_at']);
     }
 
     /**

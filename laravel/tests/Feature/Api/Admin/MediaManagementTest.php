@@ -141,6 +141,24 @@ final class MediaManagementTest extends TestCase
             ]);
     }
 
+    public function test_upload_svg_file_is_rejected(): void
+    {
+        // SVG is rejected to prevent stored XSS (inline <script> payloads).
+        $this->actingAs($this->adminUser);
+
+        $svg = UploadedFile::fake()->create('malicious.svg', 1, 'image/svg+xml');
+
+        $this->postJson('/api/admin/media/upload', ['file' => $svg])
+            ->assertStatus(422)
+            ->assertJsonPath('success', false)
+            ->assertJsonPath('error', 'validation_error')
+            ->assertJsonStructure([
+                'errors' => [
+                    'file',
+                ],
+            ]);
+    }
+
     public function test_upload_file_with_large_file_returns_validation_error(): void
     {
         $this->actingAs($this->adminUser);

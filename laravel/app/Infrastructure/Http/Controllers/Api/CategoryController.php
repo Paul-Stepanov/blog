@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Http\Controllers\Api;
 
-use App\Domain\Article\Repositories\CategoryRepositoryInterface;
+use App\Application\Article\Services\CategoryService;
 use App\Http\Controllers\Controller;
 use App\Infrastructure\Http\Resources\CategoryCollectionResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * Public Category API Controller.
@@ -17,7 +18,7 @@ use Illuminate\Http\JsonResponse;
 final class CategoryController extends Controller
 {
     public function __construct(
-        private readonly CategoryRepositoryInterface $categoryRepository,
+        private readonly CategoryService $categoryService,
     ) {}
 
     /**
@@ -30,12 +31,15 @@ final class CategoryController extends Controller
      *     summary="Get categories with published articles",
      *     tags={"Categories"},
      *
+     *     @OA\Parameter(name="limit", in="query", @OA\Schema(type="integer", minimum=1, maximum=500)),
+     *
      *     @OA\Response(response=200, description="List of categories")
      * )
      */
-    public function getCategoriesWithArticles(): JsonResponse
+    public function getCategoriesWithArticles(Request $request): JsonResponse
     {
-        $categories = $this->categoryRepository->getWithPublishedArticles();
+        $limit = $this->resolveListLimit($request);
+        $categories = $this->categoryService->getCategoriesWithArticles($limit);
 
         return response()->json([
             'success' => true,
@@ -44,7 +48,7 @@ final class CategoryController extends Controller
     }
 
     /**
-     * Get a single category by slug with its articles.
+     * Get a single category by slug.
      *
      * @OA\Get(
      *     path="/api/categories/{slug}",
@@ -59,7 +63,7 @@ final class CategoryController extends Controller
      */
     public function getCategoryBySlug(string $slug): JsonResponse
     {
-        $category = $this->categoryRepository->findBySlug($slug);
+        $category = $this->categoryService->getCategoryBySlug($slug);
 
         if ($category === null) {
             return response()->json([
@@ -71,12 +75,15 @@ final class CategoryController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => [
-                'id' => $category->getId()->getValue(),
-                'name' => $category->getName(),
-                'slug' => $category->getSlug()->getValue(),
-                'description' => $category->getDescription(),
-            ],
+            'data' => $category->toArray(),
         ]);
+    }
+
+    /**
+     * Resolve a capped list-limit query parameter (?limit, default 100, max 500).
+     */
+    private function resolveListLimit(Request $request): int
+    {
+        return min(max((int) $request->input('limit', 100), 1), 500);
     }
 }

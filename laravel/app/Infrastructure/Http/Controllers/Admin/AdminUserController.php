@@ -146,7 +146,11 @@ final class AdminUserController extends Controller
      */
     public function updateUser(UserRequest $request, string $id): JsonResponse
     {
-        $command = UpdateUserCommand::fromRequest($request, $id);
+        $command = UpdateUserCommand::fromRequest(
+            $request,
+            $id,
+            (string) $request->user()?->uuid,
+        );
         $user = $this->userService->updateUser($command);
 
         if ($user === null) {

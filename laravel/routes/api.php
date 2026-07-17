@@ -76,11 +76,11 @@ Route::middleware(['throttle:3,60'])->group(function (): void {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['throttle:5,1'])->prefix('admin/auth')->name('api.admin.auth.')->group(function (): void {
+Route::middleware(['throttle:login'])->prefix('admin/auth')->name('api.admin.auth.')->group(function (): void {
     Route::post('login', [AuthController::class, 'login'])->name('login');
 });
 
-Route::middleware(['auth:sanctum'])->prefix('admin/auth')->name('api.admin.auth.')->group(function (): void {
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin/auth')->name('api.admin.auth.')->group(function (): void {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('user', [AuthController::class, 'getCurrentUser'])->name('user');
 });
@@ -91,7 +91,7 @@ Route::middleware(['auth:sanctum'])->prefix('admin/auth')->name('api.admin.auth.
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth:sanctum', 'throttle:120,1'])
+Route::middleware(['auth:sanctum', 'admin', 'throttle:120,1'])
     ->prefix('admin')
     ->name('api.admin.')
     ->group(function (): void {

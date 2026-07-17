@@ -41,6 +41,16 @@ final readonly class TagService
     }
 
     /**
+     * Get all tags ordered by name (public list).
+     *
+     * @return array<Tag>
+     */
+    public function getAllTagsOrdered(?int $limit = 100): array
+    {
+        return $this->tagRepository->findAllOrderedByName($limit);
+    }
+
+    /**
      * Get tag by ID.
      */
     public function getTagById(string $id): ?TagDTO
@@ -69,29 +79,17 @@ final readonly class TagService
     }
 
     /**
-     * Get popular tags.
+     * Get popular tags with their article counts (single query).
      *
      * @return array<TagListDTO>
      */
     public function getPopularTags(int $limit = 10): array
     {
-        $tags = $this->tagRepository->getPopular($limit);
-
-        $tagsWithCount = $this->tagRepository->getWithArticleCount();
-
-        $countMap = [];
-        foreach ($tagsWithCount as $data) {
-            $countMap[$data['tag']->getId()->getValue()] = $data['count'];
-        }
+        $tagsWithCount = $this->tagRepository->getPopular($limit);
 
         return array_map(
-            fn (Tag $tag) => new TagListDTO(
-                id: $tag->getId()->getValue(),
-                name: $tag->getName(),
-                slug: $tag->getSlug()->getValue(),
-                articleCount: $countMap[$tag->getId()->getValue()] ?? 0,
-            ),
-            $tags
+            static fn (array $data) => TagListDTO::fromArrayData($data),
+            $tagsWithCount
         );
     }
 

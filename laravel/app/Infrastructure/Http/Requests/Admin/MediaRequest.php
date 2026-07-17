@@ -33,7 +33,7 @@ final class MediaRequest extends FormRequest
         $isUpdate = $this->isMethod('PUT') || $this->isMethod('PATCH');
 
         return [
-            'file' => $isUpdate ? ['nullable'] : ['required', 'file', 'max:5120', 'mimes:jpeg,jpg,png,gif,webp,svg,avif'],
+            'file' => $isUpdate ? ['nullable'] : ['required', 'file', 'max:5120', 'mimes:jpeg,jpg,png,gif,webp,avif'],
             'alt_text' => ['nullable', 'string', 'max:255'],
             'file_name' => ['nullable', 'string', 'max:255'],
         ];
@@ -50,7 +50,7 @@ final class MediaRequest extends FormRequest
             'file.required' => 'Файл обязателен.',
             'file.file' => 'Загруженный файл должен быть валидным файлом.',
             'file.max' => 'Размер файла не может превышать 5MB.',
-            'file.mimes' => 'Формат файла не поддерживается. Разрешены изображения: jpeg, jpg, png, gif, webp, svg, avif.',
+            'file.mimes' => 'Формат файла не поддерживается. Разрешены изображения: jpeg, jpg, png, gif, webp, avif.',
             'alt_text.max' => 'Alt текст не может быть длиннее 255 символов.',
             'file_name.max' => 'Имя файла не может быть длиннее 255 символов.',
         ];

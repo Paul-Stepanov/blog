@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Article\Entities;
 
 use App\Domain\Article\ValueObjects\ArticleContent;
+use App\Domain\Article\ValueObjects\ArticleReadContext;
 use App\Domain\Article\ValueObjects\ArticleStatus;
 use App\Domain\Article\ValueObjects\Slug;
 use App\Domain\Shared\DomainEvent;
@@ -45,6 +46,8 @@ final class Article extends Entity
 
     private Timestamps $timestamps;
 
+    private ArticleReadContext $readContext;
+
     public function __construct(
         Uuid $id,
         string $title,
@@ -57,6 +60,7 @@ final class Article extends Entity
         ?Uuid $coverImageId,
         ?DateTimeImmutable $publishedAt,
         Timestamps $timestamps,
+        ?ArticleReadContext $readContext = null,
     ) {
         parent::__construct($id);
 
@@ -70,6 +74,7 @@ final class Article extends Entity
         $this->coverImageId = $coverImageId;
         $this->publishedAt = $publishedAt;
         $this->timestamps = $timestamps;
+        $this->readContext = $readContext ?? ArticleReadContext::empty();
     }
 
     /**
@@ -115,6 +120,7 @@ final class Article extends Entity
         ?Uuid $coverImageId,
         ?DateTimeImmutable $publishedAt,
         Timestamps $timestamps,
+        ?ArticleReadContext $readContext = null,
     ): self {
         return new self(
             id: $id,
@@ -128,6 +134,7 @@ final class Article extends Entity
             coverImageId: $coverImageId,
             publishedAt: $publishedAt,
             timestamps: $timestamps,
+            readContext: $readContext,
         );
     }
 
@@ -290,6 +297,15 @@ final class Article extends Entity
     public function getTimestamps(): Timestamps
     {
         return $this->timestamps;
+    }
+
+    /**
+     * Read-side snapshot (category/tags/author/cover) for presentation.
+     * Empty on the write path; populated by the mapper from eager-loaded relations.
+     */
+    public function getReadContext(): ArticleReadContext
+    {
+        return $this->readContext;
     }
 
     public function isPublished(): bool

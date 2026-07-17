@@ -236,4 +236,69 @@ final class UserManagementTest extends TestCase
             ->assertJsonPath('success', false)
             ->assertJsonPath('error', 'entity_not_found');
     }
+
+    public function test_update_cannot_change_own_role(): void
+    {
+        // Self-escalation guard: an admin must not change their own role.
+        $this->actingAs($this->adminUser);
+
+        $payload = [
+            'name' => $this->adminUser->name,
+            'email' => $this->adminUser->email->getValue(),
+            'role' => UserRole::AUTHOR->value,
+        ];
+
+        $this->putJson("/api/admin/users/{$this->adminUser->uuid}", $payload)
+            ->assertStatus(400)
+            ->assertJsonPath('success', false)
+            ->assertJsonPath('error', 'domain_validation_error');
+
+        // Role must remain unchanged
+        $this->assertDatabaseHas('users', [
+            'id' => $this->adminUser->id,
+            'role' => UserRole::ADMIN->value,
+        ]);
+    }
+
+    public function test_demoting_admin_allowed_when_multiple_admins(): void
+    {
+        $secondAdmin = UserModel::factory()->admin()->create();
+        $this->actingAs($this->adminUser);
+
+        $payload = [
+            'name' => $secondAdmin->name,
+            'email' => $secondAdmin->email->getValue(),
+            'role' => UserRole::EDITOR->value,
+        ];
+
+        $this->putJson("/api/admin/users/{$secondAdmin->uuid}", $payload)
+            ->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.role', UserRole::EDITOR->value);
+    }
+
+    public function test_delete_last_admin_is_forbidden(): void
+    {
+        // adminUser is the only admin; removing them must be refused.
+        $this->actingAs($this->adminUser);
+
+        $this->deleteJson("/api/admin/users/{$this->adminUser->uuid}")
+            ->assertStatus(400)
+            ->assertJsonPath('success', false)
+            ->assertJsonPath('error', 'domain_validation_error');
+
+        $this->assertDatabaseHas('users', ['id' => $this->adminUser->id]);
+    }
+
+    public function test_delete_admin_allowed_when_multiple_admins(): void
+    {
+        $secondAdmin = UserModel::factory()->admin()->create();
+        $this->actingAs($this->adminUser);
+
+        $this->deleteJson("/api/admin/users/{$secondAdmin->uuid}")
+            ->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseMissing('users', ['id' => $secondAdmin->id]);
+    }
 }

@@ -110,12 +110,15 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
     /**
      * {@inheritDoc}
      */
-    public function findAllOrderedByName(): array
+    public function findAllOrderedByName(?int $limit = 100): array
     {
-        $models = TagModel::query()
-            ->orderBy('name', 'asc')
-            ->get()
-            ->all();
+        $query = TagModel::query()->orderBy('name', 'asc');
+
+        if ($limit !== null) {
+            $query->limit($limit);
+        }
+
+        $models = $query->get()->all();
 
         return $this->mapper->toDomainCollection($models);
     }
@@ -151,10 +154,17 @@ final readonly class EloquentTagRepository implements TagRepositoryInterface
             ->whereHas('articles')
             ->orderBy('articles_count', 'desc')
             ->limit($limit)
-            ->get()
-            ->all();
+            ->get();
 
-        return $this->mapper->toDomainCollection($models);
+        $result = [];
+        foreach ($models as $model) {
+            $result[] = [
+                'tag' => $this->mapper->toDomain($model),
+                'count' => (int) $model->articles_count,
+            ];
+        }
+
+        return $result;
     }
 
     /**

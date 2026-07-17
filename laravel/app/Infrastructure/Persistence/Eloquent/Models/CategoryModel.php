@@ -62,14 +62,6 @@ final class CategoryModel extends Model
     }
 
     /**
-     * Get published articles count for this category.
-     */
-    public function getPublishedArticlesCountAttribute(): int
-    {
-        return $this->articles()->published()->count();
-    }
-
-    /**
      * Scope for ordering by name.
      */
     public function scopeOrderedByName(Builder $query): Builder

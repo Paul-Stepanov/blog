@@ -13,6 +13,7 @@ use App\Infrastructure\Persistence\Eloquent\Models\UserModel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 
 /**
  * Admin Authentication Controller.
@@ -63,6 +64,16 @@ final class AuthController extends Controller
             ], 401);
         }
 
+        // Login gate: only admins may enter the admin area.
+        // AuthenticationService stays a pure credential check; role is an admin concern.
+        if (! $user->isAdmin()) {
+            return response()->json([
+                'success' => false,
+                'error' => 'forbidden',
+                'message' => 'Access to the admin panel requires admin privileges.',
+            ], 403);
+        }
+
         $userModel = UserModel::query()->where('uuid', $user->id)->first();
 
         if ($userModel !== null) {
@@ -71,11 +82,27 @@ final class AuthController extends Controller
 
         $request->session()->regenerate();
 
+        // Clear the per-account brute-force counter after a successful admin login.
+        RateLimiter::clear($this->loginThrottleKey($request));
+
         return response()->json([
             'success' => true,
             'message' => 'Login successful.',
             'data' => new UserResource($user),
         ]);
+    }
+
+    /**
+     * Build the throttle key matching the named 'login' limiter (see AppServiceProvider).
+     *
+     * Laravel hashes named-limiter keys as md5(<limiter-name>.<by-key>) by default,
+     * so we mirror that here for a precise clear().
+     */
+    private function loginThrottleKey(LoginRequest $request): string
+    {
+        $byKey = $request->validated('email').'|'.$request->ip();
+
+        return md5('login'.$byKey);
     }
 
     /**

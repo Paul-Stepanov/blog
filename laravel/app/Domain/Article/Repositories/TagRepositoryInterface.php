@@ -63,9 +63,10 @@ interface TagRepositoryInterface
     /**
      * Get tags ordered by name.
      *
+     * @param  int|null  $limit  Cap on the number of tags (null = unlimited)
      * @return array<Tag>
      */
-    public function findAllOrderedByName(): array;
+    public function findAllOrderedByName(?int $limit = 100): array;
 
     /**
      * Get tags with article count.
@@ -75,9 +76,9 @@ interface TagRepositoryInterface
     public function getWithArticleCount(): array;
 
     /**
-     * Get most used tags.
+     * Get most used tags with their article counts.
      *
-     * @return array<Tag>
+     * @return array{tag: Tag, count: int}[]
      */
     public function getPopular(int $limit = 10): array;
 

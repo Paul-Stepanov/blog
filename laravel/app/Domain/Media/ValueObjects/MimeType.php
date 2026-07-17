@@ -25,7 +25,6 @@ final class MimeType extends ValueObject
         'image/png',
         'image/gif',
         'image/webp',
-        'image/svg+xml',
         'image/avif',
         // Documents
         'application/pdf',
@@ -44,7 +43,6 @@ final class MimeType extends ValueObject
         'image/png',
         'image/gif',
         'image/webp',
-        'image/svg+xml',
         'image/avif',
     ];
 
@@ -75,7 +73,6 @@ final class MimeType extends ValueObject
             'png' => 'image/png',
             'gif' => 'image/gif',
             'webp' => 'image/webp',
-            'svg' => 'image/svg+xml',
             'avif' => 'image/avif',
             'pdf' => 'application/pdf',
             'txt' => 'text/plain',
@@ -175,7 +172,6 @@ final class MimeType extends ValueObject
             'image/png' => 'png',
             'image/gif' => 'gif',
             'image/webp' => 'webp',
-            'image/svg+xml' => 'svg',
             'image/avif' => 'avif',
             'application/pdf' => 'pdf',
             'text/plain' => 'txt',

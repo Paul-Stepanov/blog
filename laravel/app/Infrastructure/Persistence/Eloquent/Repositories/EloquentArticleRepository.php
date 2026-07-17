@@ -33,7 +33,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
         int $page = 1,
         int $perPage = 12
     ): PaginatedResult {
-        $query = ArticleModel::query()->with(['category', 'tags']);
+        $query = ArticleModel::query()->with(['category', 'tags', 'author', 'coverImage']);
 
         $this->applyFilters($query, $filters);
         $this->applyOrdering($query, $filters);
@@ -123,7 +123,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     public function findByCategory(string $categorySlug, int $page = 1, int $perPage = 12): PaginatedResult
     {
         $query = ArticleModel::query()
-            ->with(['category', 'tags'])
+            ->with(['category', 'tags', 'author', 'coverImage'])
             ->where('status', 'published')
             ->whereNotNull('published_at')
             ->whereHas('category', fn ($q) => $q->where('slug', $categorySlug))
@@ -150,7 +150,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     public function findByTag(string $tagSlug, int $page = 1, int $perPage = 12): PaginatedResult
     {
         $query = ArticleModel::query()
-            ->with(['category', 'tags'])
+            ->with(['category', 'tags', 'author', 'coverImage'])
             ->where('status', 'published')
             ->whereNotNull('published_at')
             ->whereHas('tags', fn ($q) => $q->where('slug', $tagSlug))
@@ -177,7 +177,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     public function findByAuthor(Uuid $authorId, int $page = 1, int $perPage = 12): PaginatedResult
     {
         $query = ArticleModel::query()
-            ->with(['category', 'tags'])
+            ->with(['category', 'tags', 'author', 'coverImage'])
             ->where('author_uuid', $authorId->getValue())
             ->orderBy('created_at', 'desc');
 
@@ -214,7 +214,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     public function getLatest(int $limit = 5): array
     {
         $models = ArticleModel::query()
-            ->with(['category', 'tags'])
+            ->with(['category', 'tags', 'author', 'coverImage'])
             ->where('status', 'published')
             ->whereNotNull('published_at')
             ->orderBy('published_at', 'desc')
@@ -400,7 +400,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     private function findModelById(Uuid $id): ?ArticleModel
     {
         return ArticleModel::query()
-            ->with(['category', 'tags'])
+            ->with(['category', 'tags', 'author', 'coverImage'])
             ->where('uuid', $id->getValue())
             ->first();
     }
@@ -411,7 +411,7 @@ final readonly class EloquentArticleRepository implements ArticleRepositoryInter
     private function findModelBySlug(string $slug): ?ArticleModel
     {
         return ArticleModel::query()
-            ->with(['category', 'tags'])
+            ->with(['category', 'tags', 'author', 'coverImage'])
             ->where('slug', $slug)
             ->first();
     }

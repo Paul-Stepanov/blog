@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\Public;
 
+use App\Domain\Article\ValueObjects\ArticleStatus;
+use App\Infrastructure\Persistence\Eloquent\Models\ArticleModel;
 use App\Infrastructure\Persistence\Eloquent\Models\TagModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -71,6 +73,25 @@ final class TagApiTest extends TestCase
                     ],
                 ],
             ]);
+    }
+
+    public function test_get_popular_tags_returns_tags_with_article_count(): void
+    {
+        // Single-query path: popular tags carry articles_count from the same query.
+        $article = ArticleModel::factory()->create([
+            'status' => ArticleStatus::PUBLISHED,
+            'published_at' => now(),
+        ]);
+        $article->tags()->sync([$this->tag->id]);
+
+        $response = $this->getJson('/api/tags/popular');
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $popular = collect($response->json('data'))->firstWhere('slug', 'test-tag');
+        $this->assertNotNull($popular, 'popular tag missing');
+        $this->assertSame(1, $popular['articles_count']);
     }
 
     public function test_get_tag_by_slug_with_valid_slug_returns_tag(): void

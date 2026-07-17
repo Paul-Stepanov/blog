@@ -87,6 +87,29 @@ final class AuthTest extends TestCase
             ->assertJsonPath('error', 'invalid_credentials');
     }
 
+    public function test_login_with_non_admin_role_is_forbidden(): void
+    {
+        // Valid credentials, but role is not admin → login gate rejects (403)
+        UserModel::factory()->author()->create([
+            'email' => 'author@example.com',
+            'password' => Hash::make('password123'),
+        ]);
+
+        $payload = [
+            'email' => 'author@example.com',
+            'password' => 'password123',
+        ];
+
+        $this->postJson('/api/admin/auth/login', $payload)
+            ->assertStatus(403)
+            ->assertJsonPath('success', false)
+            ->assertJsonPath('error', 'forbidden')
+            ->assertJsonPath('message', 'Access to the admin panel requires admin privileges.');
+
+        // A non-admin must never receive a session
+        $this->assertGuest('web');
+    }
+
     public function test_login_with_missing_email_returns_validation_error(): void
     {
         $payload = [

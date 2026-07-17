@@ -273,6 +273,17 @@ final readonly class EloquentUserRepository implements UserRepositoryInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function countAdmins(): int
+    {
+        return UserModel::query()
+            ->where('role', UserRole::ADMIN->value)
+            ->lockForUpdate()
+            ->count();
+    }
+
+    /**
      * Find model by UUID.
      */
     private function findModelById(Uuid $id): ?UserModel

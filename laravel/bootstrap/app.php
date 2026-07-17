@@ -2,6 +2,7 @@
 
 use App\Domain\Shared\Exceptions\DomainException;
 use App\Domain\Shared\Exceptions\EntityNotFoundException;
+use App\Infrastructure\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -23,6 +24,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // CORS for API routes
         $middleware->api(prepend: [
             HandleCors::class,
+        ]);
+
+        // Defense-in-depth: only admins reach the admin API surface
+        $middleware->alias([
+            'admin' => EnsureUserIsAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

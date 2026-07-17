@@ -49,6 +49,16 @@ final class UserFactory extends Factory
     }
 
     /**
+     * Indicate that the user is an editor.
+     */
+    public function editor(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::EDITOR->value,
+        ]);
+    }
+
+    /**
      * Indicate that the user is an author.
      */
     public function author(): static

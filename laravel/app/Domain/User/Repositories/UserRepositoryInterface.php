@@ -121,4 +121,12 @@ interface UserRepositoryInterface
      * @return array<string, int>
      */
     public function countByRole(): array;
+
+    /**
+     * Count administrators.
+     *
+     * Implementation SHOULD acquire a lock (lockForUpdate) so the caller can
+     * assert the "at least one admin" invariant atomically inside a transaction.
+     */
+    public function countAdmins(): int;
 }

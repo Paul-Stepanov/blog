@@ -11,7 +11,8 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 /**
  * Admin Login Request.
  *
- * Validates login credentials with rate limiting protection.
+ * Validates login credentials. Brute-force protection is applied at the route
+ * level via the named 'login' rate limiter (throttle:login), keyed by email|ip.
  */
 final class LoginRequest extends FormRequest
 {

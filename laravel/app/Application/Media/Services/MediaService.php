@@ -54,6 +54,8 @@ final readonly class MediaService
     ): MediaFileDTO {
         $mimeType = MimeType::fromString($mimeTypeString);
 
+        $mimeType->ensureAllowed();
+
         $path = FilePath::generateForUpload(
             directory: 'public/uploads',
             filename: $filename

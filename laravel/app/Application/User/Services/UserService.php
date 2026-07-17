@@ -7,12 +7,14 @@ namespace App\Application\User\Services;
 use App\Application\User\Commands\CreateUserCommand;
 use App\Application\User\Commands\UpdateUserCommand;
 use App\Application\User\DTOs\UserDTO;
+use App\Domain\Shared\Exceptions\ValidationException;
 use App\Domain\Shared\PaginatedResult;
 use App\Domain\Shared\Uuid;
 use App\Domain\User\Entities\User;
 use App\Domain\User\Repositories\UserRepositoryInterface;
 use App\Domain\User\ValueObjects\Password;
 use App\Domain\User\ValueObjects\UserRole;
+use Illuminate\Support\Facades\DB;
 
 /**
  * User Application Service.
@@ -93,6 +95,8 @@ final readonly class UserService
 
     /**
      * Update an existing user.
+     *
+     * @throws ValidationException On self-escalation or last-admin invariant violation
      */
     public function updateUser(UpdateUserCommand $command): ?UserDTO
     {
@@ -102,33 +106,66 @@ final readonly class UserService
             return null;
         }
 
-        // Update name if provided
-        if ($command->name !== null) {
-            $user->updateProfile($command->name);
+        // Invariant: a user must not change their own role (self-escalation guard).
+        if ($command->role !== null && $command->actorId === $command->userId) {
+            throw ValidationException::forField(
+                'role',
+                'You cannot change your own role.'
+            );
         }
 
-        // Update email if provided
-        if ($command->email !== null) {
-            $user->changeEmail($command->email);
-        }
+        $demotesAdmin = $command->role !== null
+            && $user->getRole()->isAdmin()
+            && ! $command->role->isAdmin();
 
-        // Update password if provided
-        if ($command->password !== null) {
-            $user->changePassword(Password::fromHash($command->password));
-        }
+        if ($demotesAdmin) {
+            // Atomic last-admin check under a row lock: count + apply + save
+            // must run in one transaction to close the demotion race window.
+            DB::transaction(function () use ($user, $command): void {
+                if ($this->userRepository->countAdmins() <= 1) {
+                    throw ValidationException::forField(
+                        'role',
+                        'Cannot remove the last administrator.'
+                    );
+                }
 
-        // Update role if provided
-        if ($command->role !== null) {
-            $user->changeRole($command->role);
+                $this->applyUserUpdates($user, $command);
+                $this->userRepository->save($user);
+            });
+        } else {
+            $this->applyUserUpdates($user, $command);
+            $this->userRepository->save($user);
         }
-
-        $this->userRepository->save($user);
 
         return UserDTO::fromEntity($user);
     }
 
     /**
+     * Apply the updatable fields from the command to the entity.
+     */
+    private function applyUserUpdates(User $user, UpdateUserCommand $command): void
+    {
+        if ($command->name !== null) {
+            $user->updateProfile($command->name);
+        }
+
+        if ($command->email !== null) {
+            $user->changeEmail($command->email);
+        }
+
+        if ($command->password !== null) {
+            $user->changePassword(Password::fromHash($command->password));
+        }
+
+        if ($command->role !== null) {
+            $user->changeRole($command->role);
+        }
+    }
+
+    /**
      * Delete a user.
+     *
+     * @throws ValidationException When deleting the last administrator
      */
     public function deleteUser(string $id): bool
     {
@@ -139,7 +176,21 @@ final readonly class UserService
             return false;
         }
 
-        $this->userRepository->delete($userId);
+        // Invariant: never delete the last remaining admin.
+        if ($user->getRole()->isAdmin()) {
+            DB::transaction(function () use ($userId): void {
+                if ($this->userRepository->countAdmins() <= 1) {
+                    throw ValidationException::forField(
+                        'role',
+                        'Cannot delete the last administrator.'
+                    );
+                }
+
+                $this->userRepository->delete($userId);
+            });
+        } else {
+            $this->userRepository->delete($userId);
+        }
 
         return true;
     }

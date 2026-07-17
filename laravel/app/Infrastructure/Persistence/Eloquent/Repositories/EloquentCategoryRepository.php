@@ -110,13 +110,17 @@ final readonly class EloquentCategoryRepository implements CategoryRepositoryInt
     /**
      * {@inheritDoc}
      */
-    public function getWithPublishedArticles(): array
+    public function getWithPublishedArticles(?int $limit = 100): array
     {
-        $models = CategoryModel::query()
+        $query = CategoryModel::query()
             ->whereHas('articles', fn ($q) => $q->where('status', 'published'))
-            ->orderBy('name', 'asc')
-            ->get()
-            ->all();
+            ->orderBy('name', 'asc');
+
+        if ($limit !== null) {
+            $query->limit($limit);
+        }
+
+        $models = $query->get()->all();
 
         return $this->mapper->toDomainCollection($models);
     }

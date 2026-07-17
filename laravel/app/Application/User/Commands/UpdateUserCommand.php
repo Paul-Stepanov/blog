@@ -17,7 +17,8 @@ use App\Infrastructure\Http\Requests\Admin\UserRequest;
 final readonly class UpdateUserCommand
 {
     /**
-     * @param  string  $userId  User ID (primitive for parsing)
+     * @param  string  $userId  Target user ID (primitive for parsing)
+     * @param  string  $actorId  ID of the user performing the update (self-escalation guard)
      * @param  string|null  $name  New name
      * @param  Email|null  $email  New email
      * @param  string|null  $password  New hashed password
@@ -25,6 +26,7 @@ final readonly class UpdateUserCommand
      */
     public function __construct(
         public string $userId,
+        public string $actorId,
         public ?string $name = null,
         public ?Email $email = null,
         public ?string $password = null,
@@ -35,11 +37,14 @@ final readonly class UpdateUserCommand
      * Create command from Form Request.
      *
      * Handles transformation from HTTP layer to Application layer.
+     *
+     * @param  string  $actorId  UUID of the authenticated actor (Auth::user()->uuid)
      */
-    public static function fromRequest(UserRequest $request, string $id): self
+    public static function fromRequest(UserRequest $request, string $id, string $actorId): self
     {
         return new self(
             userId: $id,
+            actorId: $actorId,
             name: $request->validated('name'),
             email: $request->validated('email') !== null
                 ? Email::fromString($request->validated('email'))

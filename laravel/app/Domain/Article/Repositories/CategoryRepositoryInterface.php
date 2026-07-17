@@ -66,9 +66,10 @@ interface CategoryRepositoryInterface
     /**
      * Get categories that have published articles.
      *
+     * @param  int|null  $limit  Cap on the number of categories (null = unlimited)
      * @return array<Category>
      */
-    public function getWithPublishedArticles(): array;
+    public function getWithPublishedArticles(?int $limit = 100): array;
 
     /**
      * Save category (create or update).

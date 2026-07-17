@@ -6,8 +6,14 @@ namespace App\Infrastructure\Persistence\Eloquent\Mappers;
 
 use App\Domain\Article\Entities\Article;
 use App\Domain\Article\ValueObjects\ArticleContent;
+use App\Domain\Article\ValueObjects\ArticleReadContext;
 use App\Domain\Article\ValueObjects\ArticleStatus;
 use App\Infrastructure\Persistence\Eloquent\Models\ArticleModel;
+use App\Infrastructure\Persistence\Eloquent\Models\CategoryModel;
+use App\Infrastructure\Persistence\Eloquent\Models\MediaFileModel;
+use App\Infrastructure\Persistence\Eloquent\Models\TagModel;
+use App\Infrastructure\Persistence\Eloquent\Models\UserModel;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Mapper for Article Entity <-> ArticleModel.
@@ -33,6 +39,63 @@ final class ArticleMapper
             coverImageId: $this->mapNullableUuid($model->cover_image_uuid),
             publishedAt: $this->parseDateTime($model->published_at?->toDateTimeString()),
             timestamps: $this->mapTimestamps($model),
+            readContext: $this->buildReadContext($model),
+        );
+    }
+
+    /**
+     * Build the read-side snapshot from eager-loaded relations.
+     *
+     * Falls back to an empty snapshot when relations are not loaded (write path),
+     * so the mapper is safe to use outside read queries.
+     */
+    private function buildReadContext(ArticleModel $model): ArticleReadContext
+    {
+        $category = null;
+        if ($model->relationLoaded('category')) {
+            $categoryModel = $model->category;
+            if ($categoryModel instanceof CategoryModel) {
+                $category = [
+                    'name' => $categoryModel->name,
+                    'slug' => $categoryModel->slug->getValue(),
+                ];
+            }
+        }
+
+        $tags = [];
+        if ($model->relationLoaded('tags')) {
+            foreach ($model->tags as $tag) {
+                if (! $tag instanceof TagModel) {
+                    continue;
+                }
+                $tags[] = [
+                    'name' => $tag->name,
+                    'slug' => $tag->slug->getValue(),
+                ];
+            }
+        }
+
+        $author = null;
+        if ($model->relationLoaded('author')) {
+            $authorModel = $model->author;
+            if ($authorModel instanceof UserModel) {
+                $author = ['name' => $authorModel->name];
+            }
+        }
+
+        $coverImageUrl = null;
+        if ($model->relationLoaded('coverImage')) {
+            $coverModel = $model->coverImage;
+            if ($coverModel instanceof MediaFileModel) {
+                $coverImageUrl = (string) Storage::disk('public')->url($coverModel->path);
+            }
+        }
+
+        return new ArticleReadContext(
+            category: $category,
+            tags: $tags,
+            author: $author,
+            coverImageUrl: $coverImageUrl,
         );
     }
 

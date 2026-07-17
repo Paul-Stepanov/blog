@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Http\Controllers\Api;
 
-use App\Domain\Article\Repositories\TagRepositoryInterface;
+use App\Application\Article\DTOs\TagListDTO;
+use App\Application\Article\Services\TagService;
 use App\Http\Controllers\Controller;
 use App\Infrastructure\Http\Resources\TagCollectionResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * Public Tag API Controller.
@@ -17,7 +19,7 @@ use Illuminate\Http\JsonResponse;
 final class TagController extends Controller
 {
     public function __construct(
-        private readonly TagRepositoryInterface $tagRepository,
+        private readonly TagService $tagService,
     ) {}
 
     /**
@@ -28,12 +30,15 @@ final class TagController extends Controller
      *     summary="Get all tags",
      *     tags={"Tags"},
      *
+     *     @OA\Parameter(name="limit", in="query", @OA\Schema(type="integer", minimum=1, maximum=500)),
+     *
      *     @OA\Response(response=200, description="List of tags")
      * )
      */
-    public function getAllTags(): JsonResponse
+    public function getAllTags(Request $request): JsonResponse
     {
-        $tags = $this->tagRepository->findAllOrderedByName();
+        $limit = min(max((int) $request->input('limit', 100), 1), 500);
+        $tags = $this->tagService->getAllTagsOrdered($limit);
 
         return response()->json([
             'success' => true,
@@ -54,14 +59,22 @@ final class TagController extends Controller
      *     @OA\Response(response=200, description="List of popular tags")
      * )
      */
-    public function getPopularTags(): JsonResponse
+    public function getPopularTags(Request $request): JsonResponse
     {
-        $limit = min((int) request()->input('limit', 10), 50);
-        $tags = $this->tagRepository->getPopular($limit);
+        $limit = min(max((int) $request->input('limit', 10), 1), 50);
+        $tags = $this->tagService->getPopularTags($limit);
 
         return response()->json([
             'success' => true,
-            'data' => new TagCollectionResource($tags),
+            'data' => array_map(
+                static fn (TagListDTO $tag): array => [
+                    'id' => $tag->id,
+                    'name' => $tag->name,
+                    'slug' => $tag->slug,
+                    'articles_count' => $tag->articleCount,
+                ],
+                $tags
+            ),
         ]);
     }
 
@@ -81,7 +94,7 @@ final class TagController extends Controller
      */
     public function getTagBySlug(string $slug): JsonResponse
     {
-        $tag = $this->tagRepository->findBySlug($slug);
+        $tag = $this->tagService->getTagBySlug($slug);
 
         if ($tag === null) {
             return response()->json([
@@ -93,11 +106,7 @@ final class TagController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => [
-                'id' => $tag->getId()->getValue(),
-                'name' => $tag->getName(),
-                'slug' => $tag->getSlug()->getValue(),
-            ],
+            'data' => $tag->toArray(),
         ]);
     }
 }

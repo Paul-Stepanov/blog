@@ -51,6 +51,13 @@ final readonly class ArticleDTO implements DTOInterface
         public string $updatedAt,
         public int $wordCount,
         public int $readingTime,
+        /** @var array{name: string, slug: string}|null */
+        public ?array $category = null,
+        /** @var list<array{name: string, slug: string}> */
+        public array $tags = [],
+        /** @var array{name: string}|null */
+        public ?array $author = null,
+        public ?string $coverImageUrl = null,
     ) {}
 
     /**
@@ -69,6 +76,7 @@ final readonly class ArticleDTO implements DTOInterface
 
         $timestamps = $entity->getTimestamps();
         $content = $entity->getContent();
+        $readContext = $entity->getReadContext();
 
         return new self(
             id: $entity->getId()->getValue(),
@@ -85,6 +93,10 @@ final readonly class ArticleDTO implements DTOInterface
             updatedAt: self::formatDate($timestamps->getUpdatedAt()),
             wordCount: $content->wordCount(),
             readingTime: $content->readingTime(),
+            category: $readContext->category,
+            tags: $readContext->tags,
+            author: $readContext->author,
+            coverImageUrl: $readContext->coverImageUrl,
         );
     }
 
@@ -103,8 +115,12 @@ final readonly class ArticleDTO implements DTOInterface
             'excerpt' => $this->excerpt,
             'status' => $this->status,
             'category_id' => $this->categoryId,
+            'category' => $this->category,
             'author_id' => $this->authorId,
+            'author' => $this->author,
             'cover_image_id' => $this->coverImageId,
+            'cover_image_url' => $this->coverImageUrl,
+            'tags' => $this->tags,
             'published_at' => $this->publishedAt,
             'created_at' => $this->createdAt,
             'updated_at' => $this->updatedAt,

@@ -12,6 +12,7 @@ use App\Domain\Settings\ValueObjects\SettingKey;
 use App\Domain\Settings\ValueObjects\SettingValue;
 use App\Domain\Shared\Exceptions\ValidationException;
 use App\Domain\Shared\Uuid;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Settings Application Service.
@@ -103,33 +104,35 @@ final readonly class SettingsService
      */
     public function setMany(array $settings): array
     {
-        $result = [];
+        return DB::transaction(function () use ($settings): array {
+            $result = [];
 
-        $entities = [];
-        foreach ($settings as $keyString => $value) {
-            $key = SettingKey::fromString($keyString);
-            $settingValue = SettingValue::fromMixed($value);
+            $entities = [];
+            foreach ($settings as $keyString => $value) {
+                $key = SettingKey::fromString($keyString);
+                $settingValue = SettingValue::fromMixed($value);
 
-            $existing = $this->settingsRepository->findByKey($key);
+                $existing = $this->settingsRepository->findByKey($key);
 
-            if ($existing !== null) {
-                $existing->updateValue($settingValue);
-                $entities[] = $existing;
-                $result[] = SettingsDTO::fromEntity($existing);
-            } else {
-                $setting = SiteSetting::create(
-                    id: Uuid::generate(),
-                    key: $key,
-                    value: $settingValue,
-                );
-                $entities[] = $setting;
-                $result[] = SettingsDTO::fromEntity($setting);
+                if ($existing !== null) {
+                    $existing->updateValue($settingValue);
+                    $entities[] = $existing;
+                    $result[] = SettingsDTO::fromEntity($existing);
+                } else {
+                    $setting = SiteSetting::create(
+                        id: Uuid::generate(),
+                        key: $key,
+                        value: $settingValue,
+                    );
+                    $entities[] = $setting;
+                    $result[] = SettingsDTO::fromEntity($setting);
+                }
             }
-        }
 
-        $this->settingsRepository->saveMany($entities);
+            $this->settingsRepository->saveMany($entities);
 
-        return $result;
+            return $result;
+        });
     }
 
     /**

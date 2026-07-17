@@ -41,6 +41,16 @@ final readonly class CategoryService
     }
 
     /**
+     * Get categories that have at least one published article (public list).
+     *
+     * @return array<Category>
+     */
+    public function getCategoriesWithArticles(?int $limit = 100): array
+    {
+        return $this->categoryRepository->getWithPublishedArticles($limit);
+    }
+
+    /**
      * Get category by ID.
      */
     public function getCategoryById(string $id): ?CategoryDTO

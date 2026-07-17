@@ -41,6 +41,10 @@ final readonly class ArticleListDTO implements DTOInterface
         public int $readingTime,
         public string $createdAt,
         public string $updatedAt,
+        public ?array $category = null,
+        /** @var list<array{name: string, slug: string}> */
+        public array $tags = [],
+        public ?string $coverImageUrl = null,
     ) {}
 
     /**
@@ -59,6 +63,7 @@ final readonly class ArticleListDTO implements DTOInterface
 
         $content = $entity->getContent();
         $timestamps = $entity->getTimestamps();
+        $readContext = $entity->getReadContext();
 
         return new self(
             id: $entity->getId()->getValue(),
@@ -71,6 +76,9 @@ final readonly class ArticleListDTO implements DTOInterface
             readingTime: $content->readingTime(),
             createdAt: self::formatDate($timestamps->getCreatedAt()),
             updatedAt: self::formatDate($timestamps->getUpdatedAt()),
+            category: $readContext->category,
+            tags: $readContext->tags,
+            coverImageUrl: $readContext->coverImageUrl,
         );
     }
 
@@ -88,6 +96,9 @@ final readonly class ArticleListDTO implements DTOInterface
             'excerpt' => $this->excerpt,
             'status' => $this->status,
             'category_id' => $this->categoryId,
+            'category' => $this->category,
+            'tags' => $this->tags,
+            'cover_image_url' => $this->coverImageUrl,
             'published_at' => $this->publishedAt,
             'reading_time' => $this->readingTime,
             'reading_time_text' => self::getReadingTimeText($this->readingTime),
