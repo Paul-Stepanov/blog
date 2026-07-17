@@ -17,4 +17,19 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  server: {
+    // Fallback для прямого доступа к Vite dev-серверу (http://localhost:5173).
+    // Канон dev — через nginx (:80), там same-origin и прокси не нужен.
+    // Здесь — на случай прямого доступа к :5173: /api и /sanctum → nginx.
+    proxy: {
+      '/api': {
+        target: 'http://localhost',
+        changeOrigin: true,
+      },
+      '/sanctum': {
+        target: 'http://localhost',
+        changeOrigin: true,
+      },
+    },
+  },
 })

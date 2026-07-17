@@ -1,0 +1,26 @@
+/**
+ * Bento Grid — правила размещения ячеек.
+ *
+ * Responsive через @container queries (родитель BentoGrid имеет container-type).
+ * Применяется к любому элементу с классом .bento-item (GridItem и Card).
+ */
+
+.bento-item {
+  grid-column: span var(--span-lg, 4);
+  grid-row: span var(--row-span, 1);
+  min-width: 0; /* предотвращает overflow grid-дочерними элементами */
+}
+
+/* Tablet */
+@container (max-width: 1023px) {
+  .bento-item {
+    grid-column: span var(--span-md, 4);
+  }
+}
+
+/* Mobile */
+@container (max-width: 767px) {
+  .bento-item {
+    grid-column: span var(--span-sm, 1);
+  }
+}
