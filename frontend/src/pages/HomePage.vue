@@ -29,7 +29,7 @@ useSeo({ title: 'Blog — Home' })
 }
 
 .home__lead {
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-base);
   color: var(--color-text-secondary);
   max-width: 60ch;

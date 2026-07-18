@@ -103,7 +103,7 @@ function onClick(event: MouseEvent): void {
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-weight: var(--weight-medium);
   line-height: 1;
   white-space: nowrap;

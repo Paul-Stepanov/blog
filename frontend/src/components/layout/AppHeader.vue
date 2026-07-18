@@ -94,7 +94,7 @@ const mobileOpen = computed({
 }
 
 .header__logo {
-  font-family: var(--font-display);
+  font-family: var(--font-display), serif;
   font-size: var(--text-lg);
   font-weight: var(--weight-bold);
   color: var(--color-text-primary);
@@ -107,7 +107,7 @@ const mobileOpen = computed({
 }
 
 .header__link {
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   color: var(--color-text-secondary);
@@ -144,7 +144,7 @@ const mobileOpen = computed({
 .drawer__link {
   display: block;
   padding: var(--space-3);
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-base);
   color: var(--color-text-primary);
   text-decoration: none;

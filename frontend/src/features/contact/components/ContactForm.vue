@@ -121,7 +121,7 @@ async function onSubmit(): Promise<void> {
   background: var(--color-accent-soft);
   border-left: 3px solid var(--color-warning);
   border-radius: var(--radius-sm);
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-sm);
   color: var(--color-text-primary);
 }

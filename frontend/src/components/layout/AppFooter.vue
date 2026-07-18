@@ -34,7 +34,7 @@
 }
 
 .footer__copy {
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
 }
@@ -45,7 +45,7 @@
 }
 
 .footer__link {
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
   text-decoration: none;

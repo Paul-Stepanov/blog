@@ -6,7 +6,7 @@
  */
 
 html {
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: 100%;
   font-weight: var(--weight-regular);
   line-height: var(--leading-normal);
@@ -27,7 +27,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-display);
+  font-family: var(--font-display), serif;
   font-weight: var(--weight-bold);
   line-height: var(--leading-tight);
   color: var(--color-text-primary);
@@ -60,7 +60,7 @@ h6 {
 
 /* Hero — выносится в utility для переиспользования в BentoCard hero */
 .text-hero {
-  font-family: var(--font-display);
+  font-family: var(--font-display), serif;
   font-size: var(--text-3xl);
   font-weight: var(--weight-bold);
   line-height: var(--leading-tight);
@@ -68,14 +68,14 @@ h6 {
 
 /* Body — long-form статья */
 .text-body {
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-base);
   line-height: var(--leading-normal);
 }
 
 /* Теги / мета — uppercase caps (канон Nature Distilled) */
 .text-caps {
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-xs);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-caps);
@@ -87,7 +87,7 @@ code,
 pre,
 kbd,
 samp {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), monospace;
   font-size: 0.875em;
 }
 

@@ -93,7 +93,7 @@ useTextareaAutosize({
 }
 
 .field__label {
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   color: var(--color-text-primary);
@@ -106,7 +106,7 @@ useTextareaAutosize({
 .field__textarea {
   width: 100%;
   padding: var(--space-3) var(--space-4);
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-base);
   line-height: var(--leading-normal);
   color: var(--color-text-primary);

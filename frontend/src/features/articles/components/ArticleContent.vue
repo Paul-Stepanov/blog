@@ -32,21 +32,21 @@ const sanitized = computed(() =>
 <style scoped>
 .article-content {
   max-width: 65ch;
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-base);
   line-height: var(--leading-normal);
   color: var(--color-text-primary);
 }
 
 .article-content :deep(h2) {
-  font-family: var(--font-display);
+  font-family: var(--font-display), serif;
   font-size: var(--text-xl);
   line-height: var(--leading-tight);
   margin: var(--space-7) 0 var(--space-3);
 }
 
 .article-content :deep(h3) {
-  font-family: var(--font-display);
+  font-family: var(--font-display), serif;
   font-size: var(--text-lg);
   line-height: var(--leading-tight);
   margin: var(--space-6) 0 var(--space-2);
@@ -94,12 +94,12 @@ const sanitized = computed(() =>
   background: var(--color-bg-inset);
   border-radius: var(--radius-md);
   overflow-x: auto;
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), monospace;
   font-size: var(--text-sm);
 }
 
 .article-content :deep(code) {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), monospace;
   font-size: 0.9em;
 }
 

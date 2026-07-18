@@ -65,7 +65,7 @@ function onClick(event: MouseEvent): void {
 .tag {
   display: inline-flex;
   align-items: center;
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-caps);
   text-transform: uppercase;

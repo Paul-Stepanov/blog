@@ -91,7 +91,7 @@ const describedBy = computed(() => {
 }
 
 .field__label {
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   color: var(--color-text-primary);
@@ -119,7 +119,7 @@ const describedBy = computed(() => {
 .field__input {
   width: 100%;
   padding: var(--space-3) var(--space-4);
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-base);
   color: var(--color-text-primary);
   background: var(--color-bg-card);

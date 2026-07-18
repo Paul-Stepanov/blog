@@ -69,7 +69,7 @@ defineProps<Props>()
   list-style: none;
   margin: 0;
   padding: 0;
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-sm);
 }
 

@@ -27,14 +27,14 @@ useSeo({ title: '404 — Not Found' })
 }
 
 .not-found__code {
-  font-family: var(--font-display);
+  font-family: var(--font-display), serif;
   font-size: var(--text-3xl);
   font-weight: var(--weight-bold);
   color: var(--color-accent);
 }
 
 .not-found__title {
-  font-family: var(--font-display);
+  font-family: var(--font-display), serif;
   font-size: var(--text-xl);
 }
 </style>

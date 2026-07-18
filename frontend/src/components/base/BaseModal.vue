@@ -195,7 +195,7 @@ const sizeClass = computed(() => `modal__panel--${props.size}`)
 }
 
 .modal__title {
-  font-family: var(--font-display);
+  font-family: var(--font-display), serif;
   font-size: var(--text-lg);
 }
 

@@ -123,7 +123,7 @@ const published = computed(() => formatDate(props.article.published_at))
 }
 
 .article-card__title {
-  font-family: var(--font-display);
+  font-family: var(--font-display), serif;
   font-size: var(--text-lg);
   line-height: var(--leading-tight);
   font-weight: var(--weight-bold);
@@ -141,7 +141,7 @@ const published = computed(() => formatDate(props.article.published_at))
 }
 
 .article-card__excerpt {
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-sm);
   line-height: var(--leading-normal);
   color: var(--color-text-secondary);
@@ -158,7 +158,7 @@ const published = computed(() => formatDate(props.article.published_at))
   align-items: center;
   gap: var(--space-4);
   margin-top: auto;
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-xs);
   color: var(--color-text-secondary);
 }

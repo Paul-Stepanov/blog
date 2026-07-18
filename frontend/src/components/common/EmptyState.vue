@@ -51,14 +51,14 @@ withDefaults(defineProps<Props>(), {
 }
 
 .empty-state__title {
-  font-family: var(--font-display);
+  font-family: var(--font-display), serif;
   font-size: var(--text-lg);
   color: var(--color-text-primary);
   margin: 0;
 }
 
 .empty-state__message {
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;
   font-size: var(--text-base);
   color: var(--color-text-secondary);
   max-width: 40ch;
