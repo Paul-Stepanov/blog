@@ -9,7 +9,7 @@
  * <EmptyState message="Статей не найдено" />
  * ```
  */
-import type { Component } from 'vue'
+import { computed, type Component } from 'vue'
 import { Inbox } from 'lucide-vue-next'
 
 interface Props {
@@ -18,15 +18,16 @@ interface Props {
   icon?: Component
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   title: 'Ничего не найдено',
-  icon: Inbox,
 })
+
+const iconComponent = computed<Component>(() => props.icon ?? Inbox)
 </script>
 
 <template>
   <div class="empty-state">
-    <component :is="icon" class="empty-state__icon" aria-hidden="true" />
+    <component :is="iconComponent" class="empty-state__icon" aria-hidden="true" />
     <h2 v-if="title" class="empty-state__title">{{ title }}</h2>
     <p class="empty-state__message">{{ message }}</p>
     <slot name="action" />

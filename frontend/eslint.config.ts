@@ -22,6 +22,16 @@ export default defineConfigWithVueTs(
   ...pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
 
+  // Common UI-примитивы (Pagination, Breadcrumbs) — однословные имена валидны;
+  // правило multi-word имеет смысл для бизнес-компонентов, не для примитивов.
+  {
+    name: 'app/common-ui-single-word',
+    files: ['src/components/common/**/*.vue'],
+    rules: {
+      'vue/multi-word-component-names': 'off',
+    },
+  },
+
   {
     ...pluginPlaywright.configs['flat/recommended'],
     files: ['e2e/**/*.{test,spec}.{js,ts,jsx,tsx}'],

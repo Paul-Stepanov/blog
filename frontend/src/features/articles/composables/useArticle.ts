@@ -11,12 +11,12 @@
  * ```
  */
 
-import { toRef, watch } from 'vue'
+import { toRef, watch, type MaybeRefOrGetter } from 'vue'
 import { articleService } from '@/services/articleService'
 import { useAsyncData } from '@/composables/useAsyncData'
 import type { Article } from '@/types/api'
 
-export function useArticle(slug: Parameters<typeof toRef<string>>[0]) {
+export function useArticle(slug: MaybeRefOrGetter<string>) {
   const slugRef = toRef(slug)
 
   const { data: article, loading, error, execute, refresh } = useAsyncData<Article, string>(

@@ -15,7 +15,35 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',
-    component: () => import('@/pages/HomePage.vue'),
+    component: () => import('@/features/home/pages/HomePage.vue'),
+    meta: { title: 'Главная' },
+  },
+  {
+    path: '/articles',
+    name: 'articles',
+    component: () => import('@/features/articles/pages/ArticlesListPage.vue'),
+    meta: { title: 'Статьи' },
+  },
+  {
+    path: '/articles/:slug',
+    name: 'article',
+    component: () => import('@/features/articles/pages/ArticleDetailPage.vue'),
+  },
+  {
+    path: '/categories/:slug',
+    name: 'category',
+    component: () => import('@/features/categories/pages/CategoryPage.vue'),
+  },
+  {
+    path: '/tags/:slug',
+    name: 'tag',
+    component: () => import('@/features/tags/pages/TagPage.vue'),
+  },
+  {
+    path: '/contact',
+    name: 'contact',
+    component: () => import('@/features/contact/pages/ContactPage.vue'),
+    meta: { title: 'Контакты' },
   },
   {
     path: '/:pathMatch(.*)*',

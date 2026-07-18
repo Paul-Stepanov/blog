@@ -4,7 +4,7 @@ import ArticleContent from '../ArticleContent.vue'
 
 describe('ArticleContent (DOMPurify sanitize)', () => {
   it('strips <script> tags (XSS protection)', () => {
-    const html = '<p>hello</p><script>alert(1)<\/script>'
+    const html = '<p>hello</p><script>alert(1)</script>'
     const wrapper = mount(ArticleContent, { props: { html } })
 
     expect(wrapper.html()).not.toContain('<script')

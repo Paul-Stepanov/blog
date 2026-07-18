@@ -17,9 +17,9 @@ import BaseModal from '@/components/base/BaseModal.vue'
 const ui = useUiStore()
 
 const navLinks = [
-  { to: '/articles', label: 'Articles' },
-  { to: '/categories', label: 'Categories' },
-  { to: '/tags', label: 'Tags' },
+  { to: '/', label: 'Главная' },
+  { to: '/articles', label: 'Статьи' },
+  { to: '/contact', label: 'Контакты' },
 ] as const
 
 // v-model мост к store: BaseModal закрывается → closeMobileMenu
