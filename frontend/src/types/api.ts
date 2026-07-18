@@ -66,7 +66,7 @@ export interface ArticleListItem {
 export interface ArticleListParams {
   page?: number
   per_page?: number
-  category?: string // slug
+  category_id?: string // UUID категории
   search?: string
 }
 
@@ -87,6 +87,17 @@ export interface CategoryListItem {
   article_count: number
 }
 
+/**
+ * Лёгкая категория для публичного списка (GET /api/categories).
+ * CategoryCollectionResource отдаёт {id, name, slug, description} БЕЗ article_count/timestamps.
+ */
+export interface CategorySummary {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+}
+
 export interface Tag {
   id: string
   name: string
@@ -102,6 +113,26 @@ export interface TagListItem {
   article_count: number
 }
 
+/**
+ * Лёгкий тег для публичного списка (GET /api/tags).
+ * TagCollectionResource отдаёт {id, name, slug} БЕЗ timestamps/count.
+ */
+export interface TagSummary {
+  id: string
+  name: string
+  slug: string
+}
+
+/**
+ * Популярный тег (GET /api/tags/popular).
+ */
+export interface PopularTag {
+  id: string
+  name: string
+  slug: string
+  articles_count: number
+}
+
 export interface SiteSetting {
   id: string
   key: string
@@ -110,6 +141,20 @@ export interface SiteSetting {
   type: string
   created_at: string
   updated_at: string
+}
+
+/**
+ * Публичные настройки (GET /api/settings).
+ * SettingsController::getPublicSettings отдаёт плоский key-value map, НЕ массив SiteSetting.
+ * White-listed: site.*, seo.*, social.*.
+ */
+export type PublicSettings = Record<string, string>
+
+/** Ответ GET /api/settings/{key}: {key, value, value_type}. */
+export interface SettingValueResponse {
+  key: string
+  value: string
+  value_type: string
 }
 
 export interface MediaFile {

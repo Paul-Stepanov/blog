@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { createHead } from '@unhead/vue/client'
 
 // Fonts — self-hosted via @fontsource-variable (variable-fonts, font-display: swap)
 import '@fontsource-variable/fraunces'
@@ -17,6 +18,7 @@ import router from './router'
 
 const app = createApp(App)
 
+app.use(createHead())
 app.use(createPinia())
 app.use(router)
 
