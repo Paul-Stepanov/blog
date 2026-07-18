@@ -35,7 +35,6 @@ const spanStyle = computed(() => useBentoSpan(props)())
 </script>
 
 <template>
-  <!-- class/style падают на корень BaseCard через fallthrough attrs -->
   <BaseCard
     class="bento-item"
     :style="spanStyle"

@@ -23,6 +23,8 @@ final class SettingKey extends ValueObject
         'site.title' => 'string',
         'site.description' => 'string',
         'site.author' => 'string',
+        'site.author_bio' => 'string',
+        'site.author_photo_url' => 'string',
         'site.email' => 'string',
         'site.url' => 'string',
         'site.logo_url' => 'string',

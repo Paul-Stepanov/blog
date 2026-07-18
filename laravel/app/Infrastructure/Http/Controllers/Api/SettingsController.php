@@ -21,6 +21,8 @@ final class SettingsController extends Controller
         'site.title',
         'site.description',
         'site.author',
+        'site.author_bio',
+        'site.author_photo_url',
         'site.url',
         'seo.meta_title',
         'seo.meta_description',
