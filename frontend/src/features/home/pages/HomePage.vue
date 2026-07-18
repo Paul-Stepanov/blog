@@ -46,6 +46,24 @@ const authorInitials = computed(() => {
     .join('')
 })
 
+const authorRole = 'Backend-инженер'
+
+const nameParts = computed(() => {
+  const parts = author.value.trim().split(/\s+/).filter(Boolean)
+  const first = parts[0] ?? author.value
+  const last = parts.length > 1 ? parts.slice(1).join(' ') : first
+  return { first, last }
+})
+
+const focusAreas: readonly string[] = [
+  'PHP & Laravel',
+  'Domain-Driven Design',
+  'Чистая архитектура',
+  'Тестирование',
+  'Производительность',
+  'PostgreSQL · Redis',
+]
+
 const SOCIAL_ICONS: Record<string, Component> = {
   github: markRaw(Github),
   twitter: markRaw(Twitter),
@@ -91,7 +109,6 @@ onMounted(() => {
 
 <template>
   <BentoGrid as="main" class="home">
-    <!-- Авторский Hero -->
     <BentoCard :col-span="12" :col-span-sm="12" padding="lg" class="home__hero">
       <div class="hero__atmosphere" aria-hidden="true">
         <span class="hero__glow"></span>
@@ -115,29 +132,18 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="hero__content">
+        <div class="hero__identity">
           <p class="hero__eyebrow text-caps">
             <span class="hero__eyebrow-dot" aria-hidden="true"></span>
-            Авторский блог
+            {{ authorRole }}
           </p>
 
-          <h1 class="hero__name">{{ author }}</h1>
+          <h1 class="hero__name">
+            <span class="hero__name-first">{{ nameParts.first }}</span>
+            <span class="hero__name-last">{{ nameParts.last }}</span>
+          </h1>
 
           <p v-if="authorBio" class="hero__bio">{{ authorBio }}</p>
-
-          <div v-if="socialLinks.length" class="hero__socials">
-            <a
-              v-for="link in socialLinks"
-              :key="link.key"
-              :href="link.url"
-              class="hero__social"
-              target="_blank"
-              rel="noopener noreferrer"
-              :aria-label="link.label"
-            >
-              <component :is="link.icon" aria-hidden="true" />
-            </a>
-          </div>
 
           <div class="hero__actions">
             <BaseButton
@@ -152,7 +158,37 @@ onMounted(() => {
               Связаться
             </BaseButton>
           </div>
+
+          <div v-if="socialLinks.length" class="hero__socials">
+            <a
+              v-for="link in socialLinks"
+              :key="link.key"
+              :href="link.url"
+              class="hero__social"
+              target="_blank"
+              rel="noopener noreferrer"
+              :aria-label="link.label"
+            >
+              <component :is="link.icon" aria-hidden="true" />
+            </a>
+          </div>
         </div>
+
+        <aside class="hero__focus">
+          <h2 class="hero__focus-label text-caps">О чём пишу</h2>
+          <ul class="hero__focus-list">
+            <li
+              v-for="(area, index) in focusAreas"
+              :key="area"
+              class="hero__focus-item"
+            >
+              <span class="hero__focus-index" aria-hidden="true">
+                {{ String(index + 1).padStart(2, '0') }}
+              </span>
+              <span class="hero__focus-text">{{ area }}</span>
+            </li>
+          </ul>
+        </aside>
       </div>
 
       <div class="hero__footnote">
@@ -161,7 +197,6 @@ onMounted(() => {
       </div>
     </BentoCard>
 
-    <!-- Свежие публикации -->
     <BentoCard :col-span="8" :col-span-md="12" :col-span-sm="12" padding="lg" class="home__latest">
       <header class="home__section-head">
         <h2 class="home__section-title">Свежие публикации</h2>
@@ -183,7 +218,6 @@ onMounted(() => {
       </div>
     </BentoCard>
 
-    <!-- Облако категорий + популярные теги -->
     <BentoCard :col-span="4" :col-span-md="12" :col-span-sm="12" padding="lg" class="home__sidebar">
       <section class="home__panel">
         <h2 class="home__panel-title">Категории</h2>
@@ -219,7 +253,6 @@ onMounted(() => {
       </section>
     </BentoCard>
 
-    <!-- Превью контактов / CTA -->
     <BentoCard :col-span="12" :col-span-sm="12" padding="lg" class="home__contact">
       <div class="home__contact-inner">
         <div class="home__contact-text">
@@ -245,9 +278,9 @@ onMounted(() => {
 .home__hero {
   position: relative;
   overflow: hidden;
+  container-type: inline-size;
 }
 
-/* === Атмосфера: свет + органичное кольцо + зерно «бумаги» === */
 .hero__atmosphere {
   position: absolute;
   inset: 0;
@@ -260,12 +293,12 @@ onMounted(() => {
   inset: 0;
   background:
     radial-gradient(
-      circle at 84% 6%,
+      circle at 88% 4%,
       rgba(255, 252, 244, 0.95),
-      rgba(255, 252, 244, 0) 46%
+      rgba(255, 252, 244, 0) 42%
     ),
     radial-gradient(
-      circle at 102% 104%,
+      circle at 100% 100%,
       rgba(74, 108, 91, 0.1),
       rgba(74, 108, 91, 0) 52%
     );
@@ -273,13 +306,13 @@ onMounted(() => {
 
 .hero__ring {
   position: absolute;
-  top: -84px;
-  right: -84px;
-  width: 300px;
-  height: 300px;
+  top: -96px;
+  right: -96px;
+  width: 320px;
+  height: 320px;
   border: 1px solid var(--color-accent-soft);
   border-radius: 50%;
-  opacity: 0.75;
+  opacity: 0.7;
 }
 
 .hero__grain {
@@ -291,54 +324,81 @@ onMounted(() => {
   mix-blend-mode: multiply;
 }
 
-/* === Композиция === */
 .hero__inner {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--space-9);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-7);
   align-items: center;
 }
 
-/* === Портрет в рамке-матплате === */
+@container (min-width: 600px) {
+  .hero__inner {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-9);
+  }
+
+  .hero__focus {
+    grid-column: 1 / -1;
+  }
+}
+
+@container (min-width: 940px) {
+  .hero__inner {
+    grid-template-columns: auto minmax(0, 1fr) minmax(248px, 300px);
+    gap: var(--space-9);
+    align-items: stretch;
+  }
+
+  .hero__focus {
+    grid-column: auto;
+  }
+}
+
 .hero__portrait {
   position: relative;
-  width: clamp(150px, 17vw, 210px);
+  width: clamp(220px, 24vw, 340px);
+  justify-self: center;
 }
 
 .hero__portrait::before {
   content: '';
   position: absolute;
   inset: 0;
-  transform: translate(12px, 12px);
+  transform: translate(14px, 14px);
   background: linear-gradient(140deg, var(--color-accent), var(--color-accent-strong));
   border-radius: var(--radius-lg);
   transition: transform var(--dur) var(--ease);
 }
 
 .hero__portrait:hover::before {
-  transform: translate(16px, 16px);
+  transform: translate(18px, 18px);
 }
 
 .hero__portrait-frame {
   position: relative;
   z-index: 1;
   aspect-ratio: 4 / 5;
-  padding: var(--space-2);
+  padding: var(--space-3);
   background: var(--color-bg-elevated);
   border-radius: var(--radius-lg);
   box-shadow:
-    0 2px 6px rgba(43, 40, 33, 0.06),
-    0 22px 44px -18px rgba(43, 40, 33, 0.32);
+    0 2px 8px rgba(43, 40, 33, 0.06),
+    0 28px 56px -20px rgba(43, 40, 33, 0.34);
 }
 
 .hero__portrait-img,
 .hero__monogram {
   width: 100%;
   height: 100%;
-  border-radius: calc(var(--radius-lg) - var(--space-2));
+  border-radius: calc(var(--radius-lg) - var(--space-3));
   object-fit: cover;
+  transition: transform var(--dur) var(--ease);
+}
+
+.hero__portrait:hover .hero__portrait-img {
+  transform: scale(1.03);
 }
 
 .hero__monogram {
@@ -348,17 +408,44 @@ onMounted(() => {
   background: var(--color-bg-inset);
   font-family: var(--font-display), serif;
   font-weight: var(--weight-bold);
-  font-size: var(--text-2xl);
+  font-size: var(--text-3xl);
   letter-spacing: -0.02em;
   color: var(--color-accent-strong);
 }
 
-/* === Текстовая композиция === */
-.hero__content {
+.hero__status {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-5);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-card);
+  font-family: var(--font-body), sans-serif;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.hero__status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-success);
+  box-shadow: 0 0 0 3px rgba(74, 108, 91, 0.18);
+}
+
+.hero__identity {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-4);
+  min-width: 0;
 }
 
 .hero__eyebrow {
@@ -379,27 +466,44 @@ onMounted(() => {
 .hero__name {
   margin: 0;
   font-family: var(--font-display), serif;
-  font-weight: var(--weight-bold);
-  font-size: clamp(2.5rem, 6vw, var(--text-3xl));
-  line-height: var(--leading-tight);
-  letter-spacing: -0.025em;
   font-optical-sizing: auto;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
   color: var(--color-text-primary);
 }
 
+.hero__name-first {
+  display: block;
+  font-weight: var(--weight-bold);
+  font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+  opacity: 0.78;
+}
+
+.hero__name-last {
+  display: block;
+  font-style: italic;
+  font-weight: var(--weight-bold);
+  font-size: clamp(3rem, 6.8vw, 5.25rem);
+}
+
 .hero__bio {
-  max-width: 52ch;
+  max-width: 40ch;
   font-family: var(--font-body), sans-serif;
-  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  font-size: clamp(1rem, 1.25vw, 1.2rem);
   line-height: var(--leading-normal);
   color: var(--color-text-secondary);
 }
 
-/* === Соцсети === */
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+}
+
 .hero__socials {
   display: flex;
   gap: var(--space-3);
-  margin-top: var(--space-1);
 }
 
 .hero__social {
@@ -432,15 +536,59 @@ onMounted(() => {
   height: 18px;
 }
 
-/* === CTA === */
-.hero__actions {
+.hero__focus {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: var(--space-3);
-  margin-top: var(--space-2);
+  align-self: stretch;
+  padding: var(--space-6);
+  background: var(--color-bg-inset);
+  border-radius: var(--radius-lg);
 }
 
-/* === Нижняя маст-линия с подписью === */
+.hero__focus-label {
+  color: var(--color-text-secondary);
+}
+
+.hero__focus-list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hero__focus-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.hero__focus-item:last-child {
+  border-bottom: none;
+}
+
+.hero__focus-index {
+  flex-shrink: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-xs);
+  color: var(--color-accent-strong);
+}
+
+.hero__focus-text {
+  font-family: var(--font-body), sans-serif;
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  color: var(--color-text-primary);
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.hero__focus-item:hover .hero__focus-text {
+  color: var(--color-accent-strong);
+}
+
 .hero__footnote {
   position: relative;
   z-index: 1;
@@ -471,7 +619,25 @@ onMounted(() => {
   transform: rotate(45deg);
 }
 
-/* === Entrance — ступенчатое появление === */
+@container (max-width: 599px) {
+  .hero__inner {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .hero__identity {
+    align-items: center;
+  }
+
+  .hero__portrait {
+    width: clamp(190px, 52vw, 250px);
+  }
+
+  .hero__footnote {
+    justify-content: center;
+  }
+}
+
 @keyframes hero-rise {
   from {
     opacity: 0;
@@ -488,8 +654,9 @@ onMounted(() => {
 .hero__eyebrow,
 .hero__name,
 .hero__bio,
-.hero__socials,
 .hero__actions,
+.hero__socials,
+.hero__focus,
 .hero__footnote {
   animation: hero-rise var(--dur-slow) var(--ease) both;
 }
@@ -510,16 +677,20 @@ onMounted(() => {
   animation-delay: 0.26s;
 }
 
-.hero__socials {
+.hero__actions {
   animation-delay: 0.34s;
 }
 
-.hero__actions {
+.hero__socials {
   animation-delay: 0.42s;
 }
 
-.hero__footnote {
+.hero__focus {
   animation-delay: 0.5s;
+}
+
+.hero__footnote {
+  animation-delay: 0.58s;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -527,8 +698,9 @@ onMounted(() => {
   .hero__eyebrow,
   .hero__name,
   .hero__bio,
-  .hero__socials,
   .hero__actions,
+  .hero__socials,
+  .hero__focus,
   .hero__footnote {
     animation: none;
   }
@@ -568,24 +740,6 @@ onMounted(() => {
 @media (max-width: 767px) {
   .home__latest-grid {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .hero__inner {
-    grid-template-columns: 1fr;
-    justify-items: center;
-    text-align: center;
-  }
-
-  .hero__content {
-    align-items: center;
-  }
-
-  .hero__portrait {
-    width: clamp(130px, 42vw, 180px);
-  }
-
-  .hero__footnote {
-    justify-content: center;
   }
 }
 
